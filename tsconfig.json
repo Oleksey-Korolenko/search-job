@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "baseUrl": "src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "ES6",
+    "paths": {
+      "@middlewares/*": ["middlewares/*"],
+      "@query/*": ["query/*"],
+      "@config/*": ["config/*"],
+      "@modules/*": ["modules/*"],
+      "@custom-types/*": ["types/*"],
+      "@logger/*": ["logger/*"]
+    },
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "exclude": ["./node_modules"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
+}
