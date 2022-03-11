@@ -1,5 +1,5 @@
 import { AppConfigService } from '@config/config.service';
-import { TelegramConfigType } from '@config/modules/telegram';
+import { TelegramConfigType } from '@config/modules';
 import { LoggerService } from '@logger/logger.service';
 import EQueryCode from '@query/enum/query.enum';
 import ETypeOperation from '@query/enum/type-operation.enum';

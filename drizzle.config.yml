@@ -1,0 +1,3 @@
+migrationRootFolder: drizzle
+dataFolder: './src/db/tables'
+migrationFolder: drizzle

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "dotenv": "^10.0.0",
+    "drizzle-kit": "^0.9.38",
+    "drizzle-orm": "^0.10.22",
     "express": "^4.17.1",
     "http-status-codes": "^2.2.0",
     "lodash": "^4.17.21",

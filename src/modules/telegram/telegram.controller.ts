@@ -1,11 +1,12 @@
 import QueryService from '@query/query.service';
+import { DB } from 'drizzle-orm';
 import { Request, Response, Router } from 'express';
 import { ITelegramCommandRessponse, ITelegramUpdateResponse } from '.';
 import ETelegramCommandType from './enum/command-type.enum';
 import TelegramApiService from './telegram.api.service';
 import TelegramService from './telegram.service';
 
-export default async (router: typeof Router) => {
+export default async (router: typeof Router, db: DB) => {
   const routes = router();
 
   const telegramService = new TelegramService();
