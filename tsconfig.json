@@ -13,7 +13,8 @@
       "@config/*": ["config/*"],
       "@modules/*": ["modules/*"],
       "@custom-types/*": ["types/*"],
-      "@logger/*": ["logger/*"]
+      "@logger/*": ["logger/*"],
+      "@db/*": ["db/*"]
     },
     "skipLibCheck": true,
     "resolveJsonModule": true

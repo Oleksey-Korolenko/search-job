@@ -3,7 +3,7 @@ import requireAll from 'require-all';
 import dotenv from 'dotenv';
 import { catchError } from './middlewares';
 import { LoggerService } from './logger';
-import { connect } from 'db';
+import { connect } from './db';
 
 const bootstrap = async () => {
   process.env.APP_ROOT = __dirname;
