@@ -7,3 +7,4 @@ export * from './cities';
 export * from './cities-to-users';
 export * from './skills';
 export * from './skills-to-workers';
+export * from './employers';
