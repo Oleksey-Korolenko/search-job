@@ -1,5 +1,9 @@
 const messagesInUkrainian = {
-  START: 'Файно!',
+  START: {
+    BUTTON: {
+      TYPE_LANGUAGE: 'Українською',
+    },
+  },
 };
 
 export default messagesInUkrainian;

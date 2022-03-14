@@ -1,13 +1,41 @@
 import { IArgsForPreparedText } from '.';
-import messagesInUkraine from './messages/uk';
+import {
+  IInlineKeyboardButton,
+  IInlineKeyboardMarkup,
+  ITelegramTextFormatterExtra,
+  ITelegramTextFormatterResponse,
+} from './interface';
+import messages from './messages';
 
 export default class TelegramView {
-  public start = (): string => {
+  public selectLanguage = (): ITelegramTextFormatterResponse => {
     let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
 
-    text += this.#preparedText(messagesInUkraine.START, {});
+    text += this.#preparedText(messages.en.START.DEFAULT, {});
 
-    return text;
+    extra.reply_markup = this.#getLanguageButtonsKeyboardMarkup();
+
+    return { text, extra };
+  };
+
+  #getLanguageButtonsKeyboardMarkup = (): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        [
+          {
+            text: messages.en.START.BUTTON.TYPE_LANGUAGE,
+            callback_data: `lang_type:en`,
+          },
+        ],
+        [
+          {
+            text: messages.uk.START.BUTTON.TYPE_LANGUAGE,
+            callback_data: `lang_type:uk`,
+          },
+        ],
+      ] as IInlineKeyboardButton[][],
+    };
   };
 
   #preparedText = (text: string, args: IArgsForPreparedText): string => {

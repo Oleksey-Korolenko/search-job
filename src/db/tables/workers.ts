@@ -4,7 +4,7 @@ import CategoryItemTable from './category-items';
 import TelegramTable from './telegram';
 
 export const EWorkExperienceInMonthsType = createEnum({
-  alias: 'work-experience-in-months-type',
+  alias: 'work_experience_in_months_type',
   values: [
     '0',
     '6',
@@ -25,7 +25,7 @@ export const EWorkExperienceInMonthsType = createEnum({
 });
 
 export const EEnglishLevelsType = createEnum({
-  alias: 'english-levels-type',
+  alias: 'english_levels_type',
   values: [
     'No English',
     'Begginner/Elementary',

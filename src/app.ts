@@ -11,9 +11,9 @@ const bootstrap = async () => {
   const app = express();
   const router = express.Router;
 
-  const db = await connect();
-
   dotenv.config();
+
+  const db = await connect();
 
   app.use(express.json({ limit: '3mb' }));
 

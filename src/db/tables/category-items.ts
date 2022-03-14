@@ -1,5 +1,5 @@
 import { AbstractTable, ExtractModel } from 'drizzle-orm';
-import CategoryTable from './category';
+import CategoryTable from './categories';
 
 export default class CategoryItemTable extends AbstractTable<CategoryItemTable> {
   public id = this.serial('id').primaryKey();
@@ -13,7 +13,7 @@ export default class CategoryItemTable extends AbstractTable<CategoryItemTable> 
     .notNull();
 
   public tableName(): string {
-    return 'category-item';
+    return 'category_item';
   }
 }
 

@@ -10,9 +10,9 @@ export default class TelegramService {
     this.#telegramView = new TelegramView();
   }
 
-  public start = async (chatId: number | string) => {
-    const text = this.#telegramView.start();
+  public selectLanguage = async (chatId: number | string) => {
+    const { text, extra } = this.#telegramView.selectLanguage();
 
-    await this.#telegramApiService.sendMessage(chatId, text);
+    await this.#telegramApiService.sendMessage(chatId, text, extra);
   };
 }

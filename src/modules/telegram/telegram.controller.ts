@@ -22,7 +22,7 @@ export default async (router: typeof Router, db: DB) => {
     ) {
       switch (checkedBody.message.text.split('@')[0]) {
         case ETelegramCommandType.START: {
-          await telegramService.start(checkedBody.message.chat.id);
+          await telegramService.selectLanguage(checkedBody.message.chat.id);
           break;
         }
       }
