@@ -5,7 +5,7 @@ import {
   ITelegramTextFormatterExtra,
   ITelegramTextFormatterResponse,
 } from './interface';
-import messages from './messages';
+import messages, { languagePackType } from './messages';
 
 export default class TelegramView {
   public selectLanguage = (): ITelegramTextFormatterResponse => {
@@ -32,6 +32,40 @@ export default class TelegramView {
           {
             text: messages.uk.START.BUTTON.TYPE_LANGUAGE,
             callback_data: `lang_type:uk`,
+          },
+        ],
+      ] as IInlineKeyboardButton[][],
+    };
+  };
+
+  public selectRole = (
+    k: keyof languagePackType
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[k].SELECT_ROLE.DEFAULT, {});
+
+    extra.reply_markup = this.#getRoleButtonsKeyboardMarkup(k);
+
+    return { text, extra };
+  };
+
+  #getRoleButtonsKeyboardMarkup = (
+    k: keyof languagePackType
+  ): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        [
+          {
+            text: messages[k].SELECT_ROLE.BUTTON.WORKER,
+            callback_data: `role_type:${k},worker`,
+          },
+        ],
+        [
+          {
+            text: messages[k].SELECT_ROLE.BUTTON.EMPLOYER,
+            callback_data: `role_type:${k},employer`,
           },
         ],
       ] as IInlineKeyboardButton[][],

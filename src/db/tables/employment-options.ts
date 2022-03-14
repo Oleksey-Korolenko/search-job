@@ -8,7 +8,7 @@ export default class EmpoymentOptionsTable extends AbstractTable<EmpoymentOption
   public translate = this.jsonb('translate').notNull();
 
   public tableName(): string {
-    return 'empoyment_options';
+    return 'employment_options';
   }
 }
 

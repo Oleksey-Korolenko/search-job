@@ -6,4 +6,6 @@ const languagePack = {
   en: enMessage,
 };
 
+export type languagePackType = typeof languagePack;
+
 export default languagePack;
