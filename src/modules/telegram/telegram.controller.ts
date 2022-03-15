@@ -5,14 +5,14 @@ import { ITelegramCommandRessponse, ITelegramUpdateResponse } from '.';
 import ETelegramButtonType from './enum/button-type.enum';
 import ETelegramCommandType from './enum/command-type.enum';
 import { ITelegramButtonResponse } from './interface';
-import { languagePackType } from './messages';
+import { languageTypes } from './messages';
 import TelegramApiService from './telegram.api.service';
 import TelegramService from './telegram.service';
 
 export default async (router: typeof Router, db: DB) => {
   const routes = router();
 
-  const telegramService = new TelegramService();
+  const telegramService = new TelegramService(db);
   await new TelegramApiService().setWebhook();
   const queryService = QueryService;
 
@@ -28,6 +28,9 @@ export default async (router: typeof Router, db: DB) => {
           await telegramService.selectLanguage(checkedBody.message.chat.id);
           break;
         }
+        default: {
+          break;
+        }
       }
     }
   };
@@ -41,34 +44,39 @@ export default async (router: typeof Router, db: DB) => {
     }
 
     const operationType = checkedBody.callback_query.data.split(':')[0];
-    const lang = checkedBody.callback_query.data.split(':')[1];
+    const item = checkedBody.callback_query.data.split(':')[1];
 
     switch (operationType) {
       case ETelegramButtonType.SELECT_LANGUAGE: {
+        await telegramService.saveTelegramInfo({
+          userId: checkedBody.callback_query.message.from.id,
+          language: item as languageTypes,
+          username: checkedBody.callback_query.message.from.username
+        });
         await telegramService.selectRole(
-          lang as keyof languagePackType,
           checkedBody.callback_query.message.chat.id,
-          checkedBody.callback_query.message.message_id
+          checkedBody.callback_query.message.message_id,
+          checkedBody.callback_query.message.from.id
         );
+        break;
+      }
+      default: {
         break;
       }
     }
   };
 
   routes.post('/update', async (req: Request, res: Response) => {
-    const body:
-      | ITelegramUpdateResponse
-      | ITelegramCommandRessponse
-      | ITelegramButtonResponse = req.body;
+    console.log(req.body);
 
-    if ({}.hasOwnProperty.call(body, 'message')) {
-      const checkedBody = body as unknown as
+    if ({}.hasOwnProperty.call(req.body, 'message')) {
+      const checkedBody = req.body as
         | ITelegramUpdateResponse
         | ITelegramCommandRessponse;
 
       await tgCommandHandler(checkedBody);
-    } else if ({}.hasOwnProperty.call(body, 'callback_query')) {
-      const checkedBody = body as unknown as ITelegramButtonResponse;
+    } else if ({}.hasOwnProperty.call(req.body, 'callback_query')) {
+      const checkedBody = req.body as ITelegramButtonResponse;
 
       await tgButtonHandler(checkedBody, res);
     }

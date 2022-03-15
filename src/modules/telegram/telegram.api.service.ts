@@ -5,7 +5,7 @@ import EQueryCode from '@query/enum/query.enum';
 import ETypeOperation from '@query/enum/type-operation.enum';
 import {
   IQueryAttributes,
-  IQueryParams,
+  IQueryParams
 } from '@query/interface/query.inteface';
 import QueryService from '@query/query.service';
 import { Logger } from 'winston';
@@ -14,7 +14,7 @@ import {
   ITelegramQueryHeaders,
   ITelegramResponse,
   ITelegramTextFormatterExtra,
-  ITelegramUpdateQueryBody,
+  ITelegramUpdateQueryBody
 } from '.';
 
 export default class TelegramApiService {
@@ -27,7 +27,7 @@ export default class TelegramApiService {
   constructor() {
     this.#config = new AppConfigService().get('telegram');
     this.#baseHeaders = {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     };
     this.#baseAttributes = {
       hostname: 'api.telegram.org',
@@ -35,8 +35,8 @@ export default class TelegramApiService {
       method: 'GET',
       port: 443,
       headers: {
-        ...this.#baseHeaders,
-      },
+        ...this.#baseHeaders
+      }
     };
     this.#queryService = new QueryService();
     this.#logger = new LoggerService().getLogger();
@@ -46,10 +46,10 @@ export default class TelegramApiService {
     const response = await this.#request<{}>(
       {
         ...this.#baseAttributes,
-        path: `/bot${this.#config.token}/setWebhook`,
+        path: `/bot${this.#config.token}/setWebhook`
       },
       {
-        url: `${this.#config.webhookHost}/api/telegram/update`,
+        url: `${this.#config.webhookHost}/api/telegram/update`
       },
       ETypeOperation.DEFAULT,
       {},
@@ -74,7 +74,7 @@ export default class TelegramApiService {
       {
         ...this.#baseAttributes,
         method: 'POST',
-        path: `/bot${this.#config.token}/sendMessage`,
+        path: `/bot${this.#config.token}/sendMessage`
       },
       {},
       ETypeOperation.DEFAULT,
@@ -82,7 +82,7 @@ export default class TelegramApiService {
         chat_id,
         text,
         parse_mode: 'HTML',
-        ...extra,
+        ...extra
       },
       `Can't send message to telegram chat: [${chat_id}]!`
     );
@@ -98,7 +98,7 @@ export default class TelegramApiService {
       {
         ...this.#baseAttributes,
         method: 'POST',
-        path: `/bot${this.#config.token}/editMessageText`,
+        path: `/bot${this.#config.token}/editMessageText`
       },
       {},
       ETypeOperation.DEFAULT,
@@ -107,7 +107,7 @@ export default class TelegramApiService {
         text,
         message_id,
         parse_mode: 'HTML',
-        ...extra,
+        ...extra
       },
       `Can't send message to telegram chat: [${chat_id}]!`
     );

@@ -5,6 +5,12 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
+ CREATE TYPE language_type AS ENUM('[object Object]');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
  CREATE TYPE work_experience_in_months_type AS ENUM('0', '6', '12', '18', '24', '30', '36', '48', '60', '72', '84', '96', '108', '120', '-1');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -116,7 +122,7 @@ CREATE TABLE IF NOT EXISTS employers (
 	"name" character varying NOT NULL,
 	"position" character varying NOT NULL,
 	"company" character varying NOT NULL,
-	"is_uses_root_telegram_acc" boolean,
+	"is_uses_root_telegram_acc" boolean NOT NULL,
 	"extra_telegram_acc" character varying,
 	"phone" character varying NOT NULL,
 	"telegram_user_id" INT NOT NULL
@@ -143,6 +149,7 @@ VALUES
 	('Переїзд в інше місто', '{"en": "Moving to another city"}'),
 	('Relocate до США чи Європи', '{"en": "Relocate to the US or Europe"}');
 
+
 CREATE TABLE IF NOT EXISTS skills_to_workers (
 	"worker_id" INT NOT NULL,
 	"skill_id" INT NOT NULL
@@ -157,7 +164,9 @@ CREATE TABLE IF NOT EXISTS skills (
 
 CREATE TABLE IF NOT EXISTS telegram (
 	"id" SERIAL PRIMARY KEY,
-	"name" character varying NOT NULL
+	"username" character varying NOT NULL,
+	"user_id" INT NOT NULL,
+	"language_type" language_type NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS temporary_user (
@@ -174,7 +183,7 @@ CREATE TABLE IF NOT EXISTS workers (
 	"work_experience" work_experience_in_months_type,
 	"expected_salary" INT NOT NULL,
 	"position" character varying NOT NULL,
-	"english_levels" english_levels_type,
+	"english_levels" english_levels_type NOT NULL,
 	"work_experience_details" character varying,
 	"telegram_user_id" INT NOT NULL
 );

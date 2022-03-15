@@ -1,5 +1,5 @@
 enum ETelegramCommandType {
-  START = '/start',
+  START = '/start'
 }
 
 export default ETelegramCommandType;

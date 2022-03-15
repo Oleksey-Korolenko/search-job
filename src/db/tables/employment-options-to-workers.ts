@@ -4,16 +4,16 @@ import EmpoymentOptionsTable from './employment-options';
 
 export default class EmploymentOptionsToWorkersTable extends AbstractTable<EmploymentOptionsToWorkersTable> {
   public workerId = this.int('employer_id')
-    .foreignKey(WorkerTable, (table) => table.id)
+    .foreignKey(WorkerTable, table => table.id)
     .notNull();
 
   public employmentOptionsId = this.int('employment_options_id')
-    .foreignKey(EmpoymentOptionsTable, (table) => table.id)
+    .foreignKey(EmpoymentOptionsTable, table => table.id)
     .notNull();
 
   public manyToManyIndex = this.uniqueIndex([
     this.workerId,
-    this.employmentOptionsId,
+    this.employmentOptionsId
   ]);
 
   public tableName(): string {

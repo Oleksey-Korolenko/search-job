@@ -14,7 +14,7 @@ const db = (): DbConfigType => {
     password:
       process.env.DB_PASSWORD === undefined ? '' : process.env.DB_PASSWORD,
     database:
-      process.env.DB_DATABASE === undefined ? '' : process.env.DB_DATABASE,
+      process.env.DB_DATABASE === undefined ? '' : process.env.DB_DATABASE
   };
 
   return response;

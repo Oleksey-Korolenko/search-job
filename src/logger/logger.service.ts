@@ -20,10 +20,10 @@ export class LoggerService {
         http: 3,
         verbose: 4,
         debug: 5,
-        silly: 6,
+        silly: 6
       },
       format: format.combine(this.#format, format.colorize({ all: true })),
-      transports: [new winston.transports.Console()],
+      transports: [new winston.transports.Console()]
     });
   }
 }

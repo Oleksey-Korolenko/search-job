@@ -156,7 +156,7 @@
           "name": "is_uses_root_telegram_acc",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "extra_telegram_acc": {
           "name": "extra_telegram_acc",
@@ -334,9 +334,21 @@
           "primaryKey": true,
           "notNull": false
         },
-        "name": {
-          "name": "name",
+        "username": {
+          "name": "username",
           "type": "character varying",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chat_id": {
+          "name": "chat_id",
+          "type": "INT",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "language_type": {
+          "name": "language_type",
+          "type": "language_type",
           "primaryKey": false,
           "notNull": true
         }
@@ -426,7 +438,7 @@
           "name": "english_levels",
           "type": "english_levels_type",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "work_experience_details": {
           "name": "work_experience_details",
@@ -459,6 +471,26 @@
         "Intermediate": "Intermediate",
         "Upper-Intermediate": "Upper-Intermediate",
         "Advanced/Fluent": "Advanced/Fluent"
+      }
+    },
+    "language_type": {
+      "name": "language_type",
+      "values": {
+        "[object Object]": {
+          "START": {
+            "DEFAULT": "Please select a language for further work",
+            "BUTTON": {
+              "TYPE_LANGUAGE": "English"
+            }
+          },
+          "SELECT_ROLE": {
+            "DEFAULT": "Are you looking for a job or offering?",
+            "BUTTON": {
+              "WORKER": "Looking for",
+              "EMPLOYER": "Offering"
+            }
+          }
+        }
       }
     },
     "work_experience_in_months_type": {

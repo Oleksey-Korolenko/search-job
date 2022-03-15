@@ -1,6 +1,6 @@
 enum EQueryCode {
   BAD_REQUEST = 'BAD_REQUEST',
-  OK = 'OK',
+  OK = 'OK'
 }
 
 export default EQueryCode;

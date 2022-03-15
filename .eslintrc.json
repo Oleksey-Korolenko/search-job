@@ -3,7 +3,7 @@
     "browser": true,
     "es2021": true
   },
-  "extends": ["airbnb-base"],
+  "extends": ["airbnb-base", "prettier"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -12,10 +12,14 @@
   },
   "plugins": ["@typescript-eslint"],
   "settings": {
-    "import/extensions": {
+    "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "paths": ["src"]
+        "paths": "packages/*/src",
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      },
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
       }
     }
   },
@@ -25,6 +29,13 @@
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["error"],
     "class-methods-use-this": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "ts": "never"
+      }
+    ],
     "comma-dangle": [
       2,
       {
@@ -36,6 +47,7 @@
       }
     ],
     "no-underscore-dangle": ["error", { "allowAfterThis": true }],
-    "no-return-await": "error"
+    "no-return-await": "error",
+    "operator-linebreak": 0
   }
 }

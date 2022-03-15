@@ -1,17 +1,20 @@
+import { languageArray } from '@modules/telegram';
 import { AbstractTable, ExtractModel } from 'drizzle-orm';
 import { createEnum } from 'drizzle-orm/types/type';
 
 export const ELanguageType = createEnum({
   alias: 'language_type',
-  values: ['en', 'uk'],
+  values: languageArray
 });
 
 export default class TelegramTable extends AbstractTable<TelegramTable> {
   public id = this.serial('id').primaryKey();
 
-  public name = this.varchar('name').notNull();
+  public username = this.varchar('username').notNull();
 
-  public language = this.type(ELanguageType, 'language_type');
+  public userId = this.int('user_id').notNull();
+
+  public language = this.type(ELanguageType, 'language_type').notNull();
 
   public tableName(): string {
     return 'telegram';

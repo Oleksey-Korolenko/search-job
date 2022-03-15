@@ -6,7 +6,7 @@ import ETypeOperation from './enum/type-operation.enum';
 import {
   IQueryAttributes,
   IQueryParams,
-  IQueryResponse,
+  IQueryResponse
 } from './interface/query.inteface';
 
 export default class QueryService {
@@ -18,7 +18,7 @@ export default class QueryService {
     res.status(status);
     return res.send({
       status,
-      data,
+      data
     });
   };
 
@@ -74,12 +74,12 @@ export default class QueryService {
         const req = request(
           {
             ...attributes,
-            path: `${attributes.path}?${preparedParams}`,
+            path: `${attributes.path}?${preparedParams}`
           } as unknown as RequestOptions,
-          (res) => {
+          res => {
             let responseBody = '';
             res.setEncoding('utf8');
-            res.on('data', (chunk) => {
+            res.on('data', chunk => {
               responseBody += chunk;
             });
             res.on('end', () => {
@@ -87,12 +87,12 @@ export default class QueryService {
                 resolve({
                   code: EQueryCode.OK,
                   message: 'Everything is correct!',
-                  data: JSON.parse(responseBody),
+                  data: JSON.parse(responseBody)
                 } as IQueryResponse<ResponseType, EQueryCode>);
               } catch (e) {
                 reject({
                   code: EQueryCode.BAD_REQUEST,
-                  message: e?.message ?? 'Bad request!',
+                  message: e?.message ?? 'Bad request!'
                 } as IQueryResponse<ResponseType, EQueryCode>);
               }
             });
@@ -103,10 +103,10 @@ export default class QueryService {
           req.write(JSON.stringify(body));
         }
 
-        req.on('error', (e) => {
+        req.on('error', e => {
           reject({
             code: EQueryCode.BAD_REQUEST,
-            message: e.message ?? 'Bad request!',
+            message: e.message ?? 'Bad request!'
           } as IQueryResponse<ResponseType, EQueryCode>);
         });
 

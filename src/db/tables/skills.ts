@@ -9,7 +9,7 @@ export default class SkillTable extends AbstractTable<SkillTable> {
   public translate = this.jsonb('translate').notNull();
 
   public categoryItemId = this.int('category_item_id')
-    .foreignKey(CategoryItemTable, (table) => table.id)
+    .foreignKey(CategoryItemTable, table => table.id)
     .notNull();
 
   public tableName(): string {

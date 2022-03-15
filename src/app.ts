@@ -22,7 +22,7 @@ const bootstrap = async () => {
   const controllers = requireAll({
     dirname: `${__dirname}/modules`,
     filter: /^.+\.(controller)\.(t|j)s$/,
-    recursive: true,
+    recursive: true
   });
 
   for (const name in controllers) {

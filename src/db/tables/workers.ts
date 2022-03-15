@@ -20,8 +20,8 @@ export const EWorkExperienceInMonthsType = createEnum({
     '96',
     '108',
     '120',
-    '-1',
-  ],
+    '-1'
+  ]
 });
 
 export const EEnglishLevelsType = createEnum({
@@ -32,15 +32,15 @@ export const EEnglishLevelsType = createEnum({
     'Pre-Intermediate',
     'Intermediate',
     'Upper-Intermediate',
-    'Advanced/Fluent',
-  ],
+    'Advanced/Fluent'
+  ]
 });
 
 export default class WorkerTable extends AbstractTable<WorkerTable> {
   public id = this.serial('id').primaryKey();
 
   public categoryItemId = this.int('category_item_id')
-    .foreignKey(CategoryItemTable, (table) => table.id)
+    .foreignKey(CategoryItemTable, table => table.id)
     .notNull();
 
   public workExperience = this.type(
@@ -52,12 +52,15 @@ export default class WorkerTable extends AbstractTable<WorkerTable> {
 
   public position = this.varchar('position').notNull();
 
-  public englishLevel = this.type(EEnglishLevelsType, 'english_levels');
+  public englishLevel = this.type(
+    EEnglishLevelsType,
+    'english_levels'
+  ).notNull();
 
   public workExperienceDetails = this.varchar('work_experience_details');
 
   public telegramUserId = this.int('telegram_user_id')
-    .foreignKey(TelegramTable, (table) => table.id)
+    .foreignKey(TelegramTable, table => table.id)
     .notNull();
 
   public tableName(): string {

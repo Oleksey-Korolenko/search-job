@@ -1,7 +1,7 @@
 import {
   ITelegramMessage,
   ITelegramMessageEntity,
-  ITelegramMessageFrom,
+  ITelegramMessageFrom
 } from '.';
 
 export interface ITelegramButtonMessage extends ITelegramMessage {

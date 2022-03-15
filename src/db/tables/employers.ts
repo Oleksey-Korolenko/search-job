@@ -10,14 +10,16 @@ export default class EmployerTable extends AbstractTable<EmployerTable> {
 
   public company = this.varchar('company').notNull();
 
-  public isUsesRootTelegramAcc = this.bool('is_uses_root_telegram_acc');
+  public isUsesRootTelegramAcc = this.bool(
+    'is_uses_root_telegram_acc'
+  ).notNull();
 
   public extraTelegramAcc = this.varchar('extra_telegram_acc');
 
   public phone = this.varchar('phone').notNull();
 
   public telegramUserId = this.int('telegram_user_id')
-    .foreignKey(TelegramTable, (table) => table.id)
+    .foreignKey(TelegramTable, table => table.id)
     .notNull();
 
   public tableName(): string {

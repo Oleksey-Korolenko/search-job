@@ -8,7 +8,7 @@ const common = (): CommonConfigType => ({
   nodeEnv:
     process.env.NODE_ENV === undefined
       ? 'develop'
-      : (process.env.NODE_ENV as 'production' | 'develop'),
+      : (process.env.NODE_ENV as 'production' | 'develop')
 });
 
 export default common;

@@ -1,5 +1,5 @@
 enum ETypeOperation {
-  DEFAULT = 'default',
+  DEFAULT = 'default'
 }
 
 export default ETypeOperation;

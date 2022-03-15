@@ -9,7 +9,7 @@ export default class CategoryItemTable extends AbstractTable<CategoryItemTable> 
   public translate = this.jsonb('translate').notNull();
 
   public categoryId = this.int('category_id')
-    .foreignKey(CategoryTable, (table) => table.id)
+    .foreignKey(CategoryTable, table => table.id)
     .notNull();
 
   public tableName(): string {

@@ -3,9 +3,9 @@ import {
   IInlineKeyboardButton,
   IInlineKeyboardMarkup,
   ITelegramTextFormatterExtra,
-  ITelegramTextFormatterResponse,
+  ITelegramTextFormatterResponse
 } from './interface';
-import messages, { languagePackType } from './messages';
+import messages, { languageTypes } from './messages';
 
 export default class TelegramView {
   public selectLanguage = (): ITelegramTextFormatterResponse => {
@@ -25,22 +25,20 @@ export default class TelegramView {
         [
           {
             text: messages.en.START.BUTTON.TYPE_LANGUAGE,
-            callback_data: `lang_type:en`,
-          },
+            callback_data: `lang_type:en`
+          }
         ],
         [
           {
             text: messages.uk.START.BUTTON.TYPE_LANGUAGE,
-            callback_data: `lang_type:uk`,
-          },
-        ],
-      ] as IInlineKeyboardButton[][],
+            callback_data: `lang_type:uk`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
     };
   };
 
-  public selectRole = (
-    k: keyof languagePackType
-  ): ITelegramTextFormatterResponse => {
+  public selectRole = (k: languageTypes): ITelegramTextFormatterResponse => {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
 
@@ -51,24 +49,22 @@ export default class TelegramView {
     return { text, extra };
   };
 
-  #getRoleButtonsKeyboardMarkup = (
-    k: keyof languagePackType
-  ): IInlineKeyboardMarkup => {
+  #getRoleButtonsKeyboardMarkup = (k: languageTypes): IInlineKeyboardMarkup => {
     return {
       inline_keyboard: [
         [
           {
             text: messages[k].SELECT_ROLE.BUTTON.WORKER,
-            callback_data: `role_type:${k},worker`,
-          },
+            callback_data: `role_type:worker`
+          }
         ],
         [
           {
             text: messages[k].SELECT_ROLE.BUTTON.EMPLOYER,
-            callback_data: `role_type:${k},employer`,
-          },
-        ],
-      ] as IInlineKeyboardButton[][],
+            callback_data: `role_type:employer`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
     };
   };
 
@@ -81,7 +77,7 @@ export default class TelegramView {
 
     let preparedText: string = '';
 
-    textVatiableForReplace.forEach((it) => {
+    textVatiableForReplace.forEach(it => {
       const arg = args[it.split('{')[1].split('}')[0]];
 
       if (preparedText === '') {

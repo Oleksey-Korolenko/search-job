@@ -36,7 +36,7 @@ export default class TemporaryUserTable extends AbstractTable<TemporaryUserTable
   public createdAt = this.timestamp('created_at').notNull();
 
   public telegramUserId = this.int('telegram_user_id')
-    .foreignKey(TelegramTable, (table) => table.id)
+    .foreignKey(TelegramTable, table => table.id)
     .notNull();
 
   public tableName(): string {

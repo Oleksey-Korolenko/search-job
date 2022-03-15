@@ -20,11 +20,11 @@ export const connect = async () => {
         commonConfig.nodeEnv === 'develop'
           ? false
           : {
-              rejectUnauthorized: false,
-            },
+              rejectUnauthorized: false
+            }
     })
     .connect()
-    .then((res) => {
+    .then(res => {
       logger.info('DB connect successfully');
       return res;
     });

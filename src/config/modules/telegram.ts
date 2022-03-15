@@ -16,7 +16,7 @@ const telegram = (): TelegramConfigType => ({
   username:
     process.env.TELEGRAM_USERNAME === undefined
       ? ''
-      : process.env.TELEGRAM_USERNAME,
+      : process.env.TELEGRAM_USERNAME
 });
 
 export default telegram;

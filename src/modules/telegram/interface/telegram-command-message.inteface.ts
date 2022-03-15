@@ -1,7 +1,7 @@
 import {
   ITelegramMessage,
   ITelegramMessageEntity,
-  ITelegramUpdateResponse,
+  ITelegramUpdateResponse
 } from '.';
 
 export interface ITelegramCommandMessage extends ITelegramMessage {
