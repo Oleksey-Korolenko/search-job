@@ -3,7 +3,7 @@ import { CategoryType } from '@db/tables';
 import { DB } from 'drizzle-orm';
 import CategoryQueryService from './category.query.service';
 
-export default class TemporaryUserProcessorService extends DBConnection {
+export default class CategoryService extends DBConnection {
   #categoryQueryService: CategoryQueryService;
 
   constructor(db: DB) {
