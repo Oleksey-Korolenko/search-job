@@ -1,3 +1,4 @@
+import { Translate } from '@custom-types/translate.type';
 import { AbstractTable, ExtractModel } from 'drizzle-orm';
 
 export default class CityTable extends AbstractTable<CityTable> {
@@ -5,7 +6,7 @@ export default class CityTable extends AbstractTable<CityTable> {
 
   public name = this.varchar('name').notNull();
 
-  public translate = this.jsonb('translate').notNull();
+  public translate = this.jsonb<Translate>('translate').notNull();
 
   public tableName(): string {
     return 'city';

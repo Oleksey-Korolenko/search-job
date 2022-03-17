@@ -1,3 +1,4 @@
+import { Translate } from '@custom-types/translate.type';
 import { AbstractTable, ExtractModel } from 'drizzle-orm';
 import CategoryTable from './categories';
 
@@ -6,7 +7,7 @@ export default class CategoryItemTable extends AbstractTable<CategoryItemTable> 
 
   public name = this.varchar('name').notNull();
 
-  public translate = this.jsonb('translate').notNull();
+  public translate = this.jsonb<Translate>('translate').notNull();
 
   public categoryId = this.int('category_id')
     .foreignKey(CategoryTable, table => table.id)
