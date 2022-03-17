@@ -4,13 +4,13 @@ import { ValidationDefault } from '@custom-types/validation-default.type';
 import { ITelegramDBInput } from './interface';
 import { languageArray, languageTypes } from '@modules/telegram/messages';
 
-const telegramDBInputFields: Array<keyof ITelegramDBInput> = [
+export const telegramDBInputFields: Array<keyof ITelegramDBInput> = [
   'username',
   'language',
   'userId'
 ];
 
-class TelegramDBValidate extends ValidationDefault {
+export class TelegramDBValidate extends ValidationDefault {
   save = (payload: ITelegramDBInput): ITelegramDBInput => {
     this.#username(payload.username);
     this.#language(payload.language);
@@ -31,7 +31,7 @@ class TelegramDBValidate extends ValidationDefault {
     }
   };
 
-  #userId = (userId: number) => {
+  #userId = (userId: string) => {
     if (userId === undefined) {
       throw new ValidateError(`Payload atribute: [userId] doesn't exist!`);
     }
@@ -55,9 +55,3 @@ class TelegramDBValidate extends ValidationDefault {
     }
   };
 }
-
-export default {
-  telegramDBValidate: new TelegramDBValidate(),
-  TelegramDBValidate,
-  telegramDBFields: telegramDBInputFields
-};

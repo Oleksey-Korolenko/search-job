@@ -1,15 +1,15 @@
-import ukMessage from './uk';
+import uaMessage from './ua';
 import enMessage from './en';
 import { arrayValuesToType } from '@custom-types/array-values.type';
 
 const languagePack = {
-  uk: ukMessage,
+  ua: uaMessage,
   en: enMessage
 };
 
-export const languageArray: Array<keyof typeof languagePack> = Object.keys(
-  languagePack
-).map(key => languagePack[key]);
+export const languageArray = Object.keys(languagePack) as Array<
+  keyof typeof languagePack
+>;
 
 export type languageTypes = arrayValuesToType<typeof languageArray>;
 

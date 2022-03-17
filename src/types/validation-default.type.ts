@@ -47,16 +47,24 @@ export class ValidationDefault {
     }
   };
 
-  protected pick = <T>(obj: T, fields: Array<keyof T>): T => {
-    const trimObj = this.#trimAll<T>(obj);
+  protected pick = <T>(
+    obj: T,
+    fields: Array<keyof T>,
+    stringToNumber = false
+  ): T => {
+    const trimObj = this.#trimAll<T>(obj, stringToNumber);
     return _.pick(trimObj, fields) as T;
   };
 
-  #trimAll = <T>(obj: T): T => {
+  #trimAll = <T>(obj: T, stringToNumber: boolean): T => {
     const trimObj = obj;
 
     for (const key in obj) {
-      if (typeof obj[key] === 'string' && _.isInteger(+obj[key])) {
+      if (
+        typeof obj[key] === 'string' &&
+        _.isInteger(+obj[key]) &&
+        stringToNumber
+      ) {
         trimObj[key] = +obj[key] as unknown as T[Extract<keyof T, string>];
         continue;
       }
@@ -69,17 +77,20 @@ export class ValidationDefault {
         continue;
       }
 
-      trimObj[key] = this.#trimArray<T[Extract<keyof T, string>]>(obj[key]);
+      trimObj[key] = this.#trimArray<T[Extract<keyof T, string>]>(
+        obj[key],
+        stringToNumber
+      );
 
       if (isObject(obj[key])) {
-        trimObj[key] = this.#trimAll(obj[key]);
+        trimObj[key] = this.#trimAll(obj[key], stringToNumber);
       }
     }
 
     return trimObj;
   };
 
-  #trimArray = <T>(array: T): T => {
+  #trimArray = <T>(array: T, stringToNumber: boolean): T => {
     if (!isArray(array)) {
       return array;
     }
@@ -90,9 +101,9 @@ export class ValidationDefault {
       if (typeof item === 'string') {
         trimArray.push(item.trim());
       } else if (isArray(item)) {
-        trimArray.push(this.#trimArray(item));
+        trimArray.push(this.#trimArray(item, stringToNumber));
       } else if (isObject(item)) {
-        trimArray.push(this.#trimAll(item));
+        trimArray.push(this.#trimAll(item, stringToNumber));
       } else {
         trimArray.push(item);
       }

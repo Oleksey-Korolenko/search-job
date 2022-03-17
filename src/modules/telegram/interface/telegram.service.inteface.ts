@@ -1,3 +1,4 @@
+import { Translate } from '@custom-types/translate.type';
 import { IInlineKeyboardMarkup } from '.';
 
 export interface IArgsForPreparedText {
@@ -12,4 +13,15 @@ export interface ITelegramTextFormatterExtra {
 export interface ITelegramTextFormatterResponse {
   text: string;
   extra: ITelegramTextFormatterExtra;
+}
+
+export interface IPreparedTranslate {
+  id: number;
+  translate: string;
+}
+
+export interface INotPreparedTranslate {
+  id: number;
+  name: string;
+  translate: Translate;
 }

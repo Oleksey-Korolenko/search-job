@@ -11,6 +11,13 @@ const messagesInEnglish = {
       WORKER: 'Looking for',
       EMPLOYER: 'Offering'
     }
+  },
+  CATEGORY: {
+    DEFAULT: 'Please select one of the categories',
+    ITEM: 'Please select one of the items for the <strong>{category}</strong> category',
+    BUTTON: {
+      BACK: 'Back ⬅️'
+    }
   }
 };
 

@@ -4,4 +4,3 @@ export * from './telegram.query.inteface';
 export * from './telegram.service.inteface';
 export * from './telegram-inline-keyboard-button.inteface';
 export * from './telegram-button-message.inteface';
-export * from './telegram-args.inteface';

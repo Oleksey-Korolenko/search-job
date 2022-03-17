@@ -4,6 +4,7 @@ import { ValidationDefault } from '@custom-types/validation-default.type';
 import { ITemporaryUserInput } from './interface';
 import {
   EEnglishLevelsType,
+  EUserRole,
   EWorkExperienceInMonthsType,
   IEmployer,
   IWorker
@@ -13,14 +14,16 @@ import { arrayValuesToType } from '@custom-types/array-values.type';
 const temporaryUserInputFields: Array<keyof ITemporaryUserInput> = [
   'isReadyToSave',
   'telegramUserId',
-  'user'
+  'user',
+  'userRole'
 ];
 
 class TemporaryUserValidate extends ValidationDefault {
   save = (payload: ITemporaryUserInput): ITemporaryUserInput => {
     this.#telegramUserId(payload.telegramUserId);
     this.#isReadyToSave(payload.isReadyToSave);
-    this.#roleType(payload.user.type);
+    this.#userRole(payload.user.type);
+    this.#userRole(payload.userRole);
     this.#isWorker(payload.user as IWorker);
     this.#isEmployer(payload.user as IEmployer);
 
@@ -55,14 +58,14 @@ class TemporaryUserValidate extends ValidationDefault {
     }
   };
 
-  #roleType = (roleType: 'worker' | 'employer') => {
+  #userRole = (roleType: arrayValuesToType<typeof EUserRole.values>) => {
     if (roleType === undefined) {
-      throw new ValidateError(`Payload atribute: [roleType] doesn't exist!`);
+      throw new ValidateError(`Payload atribute: [userRole] doesn't exist!`);
     }
 
-    if (!['worker', 'employer'].includes(roleType)) {
+    if (!EUserRole.values.includes(roleType)) {
       throw new ValidateError(
-        `Payload atribute: [roleType] is not included in the existing list!`
+        `Payload atribute: [userRole] is not included in the existing list!`
       );
     }
   };

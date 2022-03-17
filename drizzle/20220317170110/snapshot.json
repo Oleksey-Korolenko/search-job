@@ -340,8 +340,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "chat_id": {
-          "name": "chat_id",
+        "user_id": {
+          "name": "user_id",
           "type": "INT",
           "primaryKey": false,
           "notNull": true
@@ -392,6 +392,12 @@
             "table": "telegram",
             "column": "id"
           }
+        },
+        "user_role": {
+          "name": "user_role",
+          "type": "user_role_type",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {}
@@ -489,8 +495,22 @@
               "WORKER": "Looking for",
               "EMPLOYER": "Offering"
             }
+          },
+          "CATEGORY": {
+            "DEFAULT": "Please select one of the categories",
+            "ITEM": "Please select one of the items for the <strong>{category}</strong> category",
+            "BUTTON": {
+              "BACK": "Back"
+            }
           }
         }
+      }
+    },
+    "user_role_type": {
+      "name": "user_role_type",
+      "values": {
+        "worker": "worker",
+        "employer": "employer"
       }
     },
     "work_experience_in_months_type": {

@@ -27,14 +27,14 @@ export default class TelegramDBQueryService extends DBConnection {
       .all()
       .then(res => res[0] as TelegramType | undefined);
 
-  public getByUserId = (userId: number) =>
+  public getByUserId = (userId: string) =>
     this.#telegramDB
       .select()
       .where(eq(this.#telegramDB.userId, userId))
       .all()
       .then(res => res[0] as TelegramType | undefined);
 
-  public updateLanguage = (userId: number, language: languageTypes) =>
+  public updateLanguage = (userId: string, language: languageTypes) =>
     this.#telegramDB
       .update()
       .set({

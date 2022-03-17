@@ -1,5 +1,6 @@
 import { arrayValuesToType } from '@custom-types/array-values.type';
 import { AbstractTable, ExtractModel } from 'drizzle-orm';
+import { createEnum } from 'drizzle-orm/types/type';
 import TelegramTable from './telegram';
 import { EWorkExperienceInMonthsType, EEnglishLevelsType } from './workers';
 
@@ -27,6 +28,11 @@ export interface IEmployer {
   phone?: string;
 }
 
+export const EUserRole = createEnum({
+  alias: 'user_role_type',
+  values: ['worker', 'employer']
+});
+
 export default class TemporaryUserTable extends AbstractTable<TemporaryUserTable> {
   public id = this.serial('id').primaryKey();
 
@@ -39,6 +45,8 @@ export default class TemporaryUserTable extends AbstractTable<TemporaryUserTable
   public telegramUserId = this.int('telegram_user_id')
     .foreignKey(TelegramTable, table => table.id)
     .notNull();
+
+  public userRole = this.type(EUserRole, 'user_role').notNull();
 
   public tableName(): string {
     return 'temporary_user';

@@ -12,7 +12,7 @@ export default class TelegramTable extends AbstractTable<TelegramTable> {
 
   public username = this.varchar('username').notNull();
 
-  public userId = this.int('user_id').notNull();
+  public userId = this.varchar('user_id').notNull();
 
   public language = this.type(ELanguageType, 'language_type').notNull();
 

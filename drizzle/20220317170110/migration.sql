@@ -5,7 +5,13 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
- CREATE TYPE language_type AS ENUM('[object Object]');
+ CREATE TYPE language_type AS ENUM('ua', 'en');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+ CREATE TYPE user_role_type AS ENUM('worker', 'employer');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -149,7 +155,6 @@ VALUES
 	('Переїзд в інше місто', '{"en": "Moving to another city"}'),
 	('Relocate до США чи Європи', '{"en": "Relocate to the US or Europe"}');
 
-
 CREATE TABLE IF NOT EXISTS skills_to_workers (
 	"worker_id" INT NOT NULL,
 	"skill_id" INT NOT NULL
@@ -165,7 +170,7 @@ CREATE TABLE IF NOT EXISTS skills (
 CREATE TABLE IF NOT EXISTS telegram (
 	"id" SERIAL PRIMARY KEY,
 	"username" character varying NOT NULL,
-	"user_id" INT NOT NULL,
+	"user_id" character varying NOT NULL,
 	"language_type" language_type NOT NULL
 );
 
@@ -174,7 +179,8 @@ CREATE TABLE IF NOT EXISTS temporary_user (
 	"is_ready_to_save" boolean NOT NULL,
 	"user" JSONB NOT NULL,
 	"created_at" timestamp without time zone NOT NULL,
-	"telegram_user_id" INT NOT NULL
+	"telegram_user_id" INT NOT NULL,
+	"user_role" user_role_type NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS workers (

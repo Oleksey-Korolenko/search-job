@@ -1,3 +1,5 @@
+import { arrayValuesToType } from '@custom-types/array-values.type';
+import { EUserRole } from '@db/tables';
 import QueryService from '@query/query.service';
 import { DB } from 'drizzle-orm';
 import { Request, Response, Router } from 'express';
@@ -49,14 +51,40 @@ export default async (router: typeof Router, db: DB) => {
     switch (operationType) {
       case ETelegramButtonType.SELECT_LANGUAGE: {
         await telegramService.saveTelegramInfo({
-          userId: checkedBody.callback_query.message.from.id,
+          userId: `${checkedBody.callback_query.message.from.id}`,
           language: item as languageTypes,
           username: checkedBody.callback_query.message.from.username
         });
         await telegramService.selectRole(
           checkedBody.callback_query.message.chat.id,
           checkedBody.callback_query.message.message_id,
-          checkedBody.callback_query.message.from.id
+          `${checkedBody.callback_query.message.from.id}`
+        );
+        break;
+      }
+      case ETelegramButtonType.SELECT_ROLE: {
+        await telegramService.actionForRole(
+          checkedBody.callback_query.message.chat.id,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.message.from.id}`,
+          item as arrayValuesToType<typeof EUserRole.values>
+        );
+        break;
+      }
+      case ETelegramButtonType.SELECT_CATEGORY: {
+        await telegramService.selectCategoryItems(
+          checkedBody.callback_query.message.chat.id,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.message.from.id}`,
+          +item
+        );
+        break;
+      }
+      case ETelegramButtonType.BACK: {
+        await telegramService.selectCategory(
+          checkedBody.callback_query.message.chat.id,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.message.from.id}`
         );
         break;
       }
@@ -67,8 +95,6 @@ export default async (router: typeof Router, db: DB) => {
   };
 
   routes.post('/update', async (req: Request, res: Response) => {
-    console.log(req.body);
-
     if ({}.hasOwnProperty.call(req.body, 'message')) {
       const checkedBody = req.body as
         | ITelegramUpdateResponse
