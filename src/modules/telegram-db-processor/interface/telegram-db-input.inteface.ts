@@ -1,6 +1,6 @@
 import { languageTypes } from '@modules/telegram/messages';
 
-export interface ITelegramInput {
+export interface ITelegramDBInput {
   username: string;
   language: languageTypes;
   userId: number;

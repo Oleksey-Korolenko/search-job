@@ -1,2 +1,2 @@
 export * from './interface';
-export * from './telegram.service';
+export * from './telegram-db.service';

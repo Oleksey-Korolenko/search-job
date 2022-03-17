@@ -1,5 +1,6 @@
 import ukMessage from './uk';
 import enMessage from './en';
+import { arrayValuesToType } from '@custom-types/array-values.type';
 
 const languagePack = {
   uk: ukMessage,
@@ -10,10 +11,6 @@ export const languageArray: Array<keyof typeof languagePack> = Object.keys(
   languagePack
 ).map(key => languagePack[key]);
 
-export type languageTypes = typeof languageArray extends ReadonlyArray<
-  infer languageTypes
->
-  ? languageTypes
-  : never;
+export type languageTypes = arrayValuesToType<typeof languageArray>;
 
 export default languagePack;

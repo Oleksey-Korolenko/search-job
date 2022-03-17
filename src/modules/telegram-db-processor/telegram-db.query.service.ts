@@ -1,8 +1,8 @@
 import { DBConnection } from '@db/db';
 import TelegramTable, { TelegramType } from '@db/tables/telegram';
 import { languageTypes } from '@modules/telegram/messages';
-import { and, DB, eq } from 'drizzle-orm';
-import { ITelegramInput } from './interface';
+import { DB, eq } from 'drizzle-orm';
+import { ITelegramDBInput } from './interface';
 
 export default class TelegramDBQueryService extends DBConnection {
   #telegramDB: TelegramTable;
@@ -13,7 +13,7 @@ export default class TelegramDBQueryService extends DBConnection {
   }
 
   public save = (
-    telegramInfo: ITelegramInput
+    telegramInfo: ITelegramDBInput
   ): Promise<TelegramType | undefined> =>
     this.#telegramDB
       .insert(telegramInfo)

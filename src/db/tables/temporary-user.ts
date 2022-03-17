@@ -1,3 +1,4 @@
+import { arrayValuesToType } from '@custom-types/array-values.type';
 import { AbstractTable, ExtractModel } from 'drizzle-orm';
 import TelegramTable from './telegram';
 import { EWorkExperienceInMonthsType, EEnglishLevelsType } from './workers';
@@ -5,10 +6,10 @@ import { EWorkExperienceInMonthsType, EEnglishLevelsType } from './workers';
 export interface IWorker {
   type: 'worker';
   categoryItemId?: number;
-  workExperience?: typeof EWorkExperienceInMonthsType;
+  workExperience?: arrayValuesToType<typeof EWorkExperienceInMonthsType.values>;
   expectedSalary?: number;
   position?: string;
-  englishLevel?: typeof EEnglishLevelsType;
+  englishLevel?: arrayValuesToType<typeof EEnglishLevelsType.values>;
   workExperienceDetails?: string;
   skillsToWorkers?: number[];
   employmentOptions?: number[];

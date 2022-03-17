@@ -1,22 +1,22 @@
 import ValidateError from '@custom-types/validate-error.type';
 import _ from 'lodash';
 import { ValidationDefault } from '@custom-types/validation-default.type';
-import { ITelegramInput } from './interface';
+import { ITelegramDBInput } from './interface';
 import { languageArray, languageTypes } from '@modules/telegram/messages';
 
-const telegramInputFields: Array<keyof ITelegramInput> = [
+const telegramDBInputFields: Array<keyof ITelegramDBInput> = [
   'username',
   'language',
   'userId'
 ];
 
-class TelegramValidate extends ValidationDefault {
-  save = (payload: ITelegramInput): ITelegramInput => {
+class TelegramDBValidate extends ValidationDefault {
+  save = (payload: ITelegramDBInput): ITelegramDBInput => {
     this.#username(payload.username);
     this.#language(payload.language);
-    this.#chatId(payload.userId);
+    this.#userId(payload.userId);
 
-    return this.pick<ITelegramInput>(payload, telegramInputFields);
+    return this.pick<ITelegramDBInput>(payload, telegramDBInputFields);
   };
 
   #language = (language: languageTypes) => {
@@ -31,12 +31,12 @@ class TelegramValidate extends ValidationDefault {
     }
   };
 
-  #chatId = (chatId: number) => {
-    if (chatId === undefined) {
+  #userId = (userId: number) => {
+    if (userId === undefined) {
       throw new ValidateError(`Payload atribute: [userId] doesn't exist!`);
     }
 
-    if (!_.isInteger(+chatId)) {
+    if (!_.isInteger(+userId)) {
       throw new ValidateError(
         `Payload atribute: [userId] type isn't equal to number!`
       );
@@ -57,7 +57,7 @@ class TelegramValidate extends ValidationDefault {
 }
 
 export default {
-  telegramValidate: new TelegramValidate(),
-  TelegramValidate,
-  telegramFields: telegramInputFields
+  telegramDBValidate: new TelegramDBValidate(),
+  TelegramDBValidate,
+  telegramDBFields: telegramDBInputFields
 };

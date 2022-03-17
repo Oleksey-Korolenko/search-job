@@ -1,1 +1,1 @@
-export * from './telegram-input.inteface';
+export * from './telegram-db-input.inteface';

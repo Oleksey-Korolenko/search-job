@@ -1,10 +1,9 @@
 import TelegramApiService from './telegram.api.service';
 import TelegramView from './telegram.view';
-import { languageTypes } from './messages';
-import TelegramDBProcessorService from '@modules/telegram-db-processor/telegram.service';
+import TelegramDBProcessorService from '@modules/telegram-db-processor/telegram-db.service';
 import { DBConnection } from '@db/db';
 import { DB } from 'drizzle-orm';
-import { ITelegramInput } from '@modules/telegram-db-processor';
+import { ITelegramDBInput } from '@modules/telegram-db-processor';
 import { TelegramType } from '@db/tables';
 
 export default class TelegramService extends DBConnection {
@@ -19,7 +18,7 @@ export default class TelegramService extends DBConnection {
     this.#telegramDBService = new TelegramDBProcessorService(this.db);
   }
 
-  public saveTelegramInfo = async (telegramInfo: ITelegramInput) => {
+  public saveTelegramInfo = async (telegramInfo: ITelegramDBInput) => {
     const existTelegramInfo = await this.#telegramDBService.getByUserId(
       telegramInfo.userId
     );
@@ -47,6 +46,12 @@ export default class TelegramService extends DBConnection {
 
     return existTelegramInfo;
   };
+
+  public selectCategory = async (
+    chatId: number | string,
+    userId: number,
+    messageId?: number
+  ) => {};
 
   public selectRole = async (
     chatId: number | string,
