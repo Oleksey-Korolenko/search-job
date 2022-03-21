@@ -1,4 +1,8 @@
-import { CategoryItemType, CategoryType } from '@db/tables';
+import {
+  CategoryItemType,
+  CategoryType,
+  EWorkExperienceInMonthsType
+} from '@db/tables';
 import { IArgsForPreparedText } from '.';
 import {
   IInlineKeyboardButton,
@@ -142,6 +146,118 @@ export default class TelegramView {
           }
         ]
       ].filter(Boolean) as IInlineKeyboardButton[][]
+    };
+  };
+
+  public selectExperience = (
+    language: languageTypes
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[language].EXPERIENSE.DEFAULT, {});
+
+    extra.reply_markup = this.#getExperienceButtonsKeyboardMarkup(language);
+
+    return { text, extra };
+  };
+
+  #getExperienceButtonsKeyboardMarkup = (
+    language: languageTypes
+  ): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.NOTHING,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[0]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.HALF_YEAR,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[1]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.ONE_YEAR,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[2]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.ONE_AND_HALF_YEAR,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[3]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.TWO_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[4]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.TWO_AND_HALF_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[5]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.THREE_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[6]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.FOUR_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[7]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.FIVE_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[8]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.SIX_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[9]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.SEVEN_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[10]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.EIGHT_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[11]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.NINE_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[12]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.TEN_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[13]}`
+          }
+        ],
+        [
+          {
+            text: messages[language].EXPERIENSE.BUTTON.MORE_THEN_TEN_YEARS,
+            callback_data: `experience:${EWorkExperienceInMonthsType.values[14]}`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
     };
   };
 

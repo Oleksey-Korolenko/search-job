@@ -11,14 +11,14 @@ import {
 } from '@db/tables';
 import { arrayValuesToType } from '@custom-types/array-values.type';
 
-const temporaryUserInputFields: Array<keyof ITemporaryUserInput> = [
+export const temporaryUserInputFields: Array<keyof ITemporaryUserInput> = [
   'isReadyToSave',
   'telegramUserId',
   'user',
   'userRole'
 ];
 
-class TemporaryUserValidate extends ValidationDefault {
+export class TemporaryUserValidate extends ValidationDefault {
   save = (payload: ITemporaryUserInput): ITemporaryUserInput => {
     this.#telegramUserId(payload.telegramUserId);
     this.#isReadyToSave(payload.isReadyToSave);
@@ -290,9 +290,3 @@ class TemporaryUserValidate extends ValidationDefault {
     }
   };
 }
-
-export default {
-  temporaryUserValidate: new TemporaryUserValidate(),
-  TemporaryUserValidate,
-  temporaryUserFields: temporaryUserInputFields
-};

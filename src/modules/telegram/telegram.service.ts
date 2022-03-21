@@ -10,6 +10,8 @@ import CategoryService from '@modules/category/category.service';
 import CategoryItemService from '@modules/category-item/category-item.service';
 import { Logger } from 'winston';
 import { LoggerService } from '@logger/logger.service';
+import { ITemporaryUserInput } from '@modules/temporary-user';
+import TemporaryUserService from '@modules/temporary-user/temporary-user.service';
 
 export default class TelegramService extends DBConnection {
   #telegramApiService: TelegramApiService;
@@ -17,6 +19,7 @@ export default class TelegramService extends DBConnection {
   #telegramDBService: TelegramDBProcessorService;
   #categoryService: CategoryService;
   #categoryItemService: CategoryItemService;
+  #temporaryUserService: TemporaryUserService;
   #logger: Logger;
 
   constructor(db: DB) {
@@ -26,6 +29,7 @@ export default class TelegramService extends DBConnection {
     this.#telegramDBService = new TelegramDBProcessorService(this.db);
     this.#categoryService = new CategoryService(this.db);
     this.#categoryItemService = new CategoryItemService(this.db);
+    this.#temporaryUserService = new TemporaryUserService(this.db);
     this.#logger = new LoggerService().getLogger();
   }
 
@@ -50,14 +54,40 @@ export default class TelegramService extends DBConnection {
     userId: string,
     role: arrayValuesToType<typeof EUserRole.values>
   ) => {
-    switch (role) {
-      case 'worker': {
-        await this.selectCategory(chatId, messageId, userId);
-        break;
+    try {
+      const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
+
+      if (existTelegramInfo === undefined) {
+        return;
       }
-      case 'employer': {
-        break;
+
+      switch (role) {
+        case 'worker': {
+          await this.selectCategory(chatId, messageId, userId);
+          await this.#saveTemporaryUser({
+            isReadyToSave: false,
+            userRole: 'worker',
+            telegramUserId: existTelegramInfo.id,
+            user: {
+              type: 'worker'
+            }
+          });
+          break;
+        }
+        case 'employer': {
+          break;
+        }
       }
+    } catch (e) {
+      this.#catchError(e);
+    }
+  };
+
+  #saveTemporaryUser = async (temporaryUser: ITemporaryUserInput) => {
+    try {
+      await this.#temporaryUserService.save(temporaryUser);
+    } catch (e) {
+      this.#catchError(e);
     }
   };
 
@@ -139,6 +169,45 @@ export default class TelegramService extends DBConnection {
     } catch (e) {
       this.#catchError(e);
     }
+  };
+
+  public updateCategoryItem = async (
+    userId: string,
+    categoryItemId: number
+  ) => {
+    const temporaryUser = await this.#temporaryUserService.getByUserIdAndRole(
+      userId,
+      'worker'
+    );
+
+    await this.#temporaryUserService.updateUser(temporaryUser.id, {
+      ...temporaryUser.user,
+      type: 'worker',
+      categoryItemId
+    });
+  };
+
+  public selectExperience = async (
+    chatId: number | string,
+    messageId: number,
+    userId: string
+  ) => {
+    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
+
+    if (existTelegramInfo === undefined) {
+      return;
+    }
+
+    const { text, extra } = this.#telegramView.selectExperience(
+      existTelegramInfo.language
+    );
+
+    await this.#telegramApiService.updateMessage(
+      chatId,
+      messageId,
+      text,
+      extra
+    );
   };
 
   public selectRole = async (

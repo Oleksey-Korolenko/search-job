@@ -88,6 +88,18 @@ export default async (router: typeof Router, db: DB) => {
         );
         break;
       }
+      case ETelegramButtonType.SELECT_CATEGORY_ITEM: {
+        await telegramService.updateCategoryItem(
+          `${checkedBody.callback_query.message.from.id}`,
+          +item
+        );
+        await telegramService.selectExperience(
+          checkedBody.callback_query.message.chat.id,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.message.from.id}`
+        );
+        break;
+      }
       default: {
         break;
       }
