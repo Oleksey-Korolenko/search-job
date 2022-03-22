@@ -77,7 +77,8 @@ export default class TelegramView {
 
   public selectCategory = (
     language: languageTypes,
-    categories: CategoryType[]
+    categories: CategoryType[],
+    temporaryUserId: number
   ): ITelegramTextFormatterResponse => {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
@@ -92,7 +93,8 @@ export default class TelegramView {
     extra.reply_markup = this.#getCategoryButtonsKeyboardMarkup(
       language,
       true,
-      preparedTranslate
+      preparedTranslate,
+      temporaryUserId
     );
 
     return { text, extra };
@@ -101,7 +103,8 @@ export default class TelegramView {
   public selectCategoryItem = (
     language: languageTypes,
     category: CategoryType,
-    categoryItems: CategoryItemType[]
+    categoryItems: CategoryItemType[],
+    temporaryUserId: number
   ): ITelegramTextFormatterResponse => {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
@@ -118,7 +121,8 @@ export default class TelegramView {
     extra.reply_markup = this.#getCategoryButtonsKeyboardMarkup(
       language,
       false,
-      preparedTranslate
+      preparedTranslate,
+      temporaryUserId
     );
 
     return { text, extra };
@@ -127,22 +131,23 @@ export default class TelegramView {
   #getCategoryButtonsKeyboardMarkup = (
     language: languageTypes,
     isCategory: boolean,
-    listTranslate: IPreparedTranslate[]
+    listTranslate: IPreparedTranslate[],
+    temporaryUserId: number
   ): IInlineKeyboardMarkup => {
     return {
       inline_keyboard: [
         ...listTranslate.map(it => [
           {
             text: it.translate,
-            callback_data: `${isCategory ? 'category' : 'category_item'}:${
-              it.id
-            }`
+            callback_data: `${
+              isCategory ? 'category' : 'category_item'
+            }-${temporaryUserId}:${it.id}`
           } as IInlineKeyboardButton
         ]),
         !isCategory && [
           {
-            text: messages[language].CATEGORY.BUTTON.BACK,
-            callback_data: 'back'
+            text: messages[language].DEFAULT_BUTTON.BACK,
+            callback_data: `back-${temporaryUserId}`
           }
         ]
       ].filter(Boolean) as IInlineKeyboardButton[][]
@@ -150,111 +155,152 @@ export default class TelegramView {
   };
 
   public selectExperience = (
-    language: languageTypes
+    language: languageTypes,
+    temporaryUserId: number
   ): ITelegramTextFormatterResponse => {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
 
     text += this.#preparedText(messages[language].EXPERIENSE.DEFAULT, {});
 
-    extra.reply_markup = this.#getExperienceButtonsKeyboardMarkup(language);
+    extra.reply_markup = this.#getExperienceButtonsKeyboardMarkup(
+      language,
+      temporaryUserId
+    );
 
     return { text, extra };
   };
 
   #getExperienceButtonsKeyboardMarkup = (
-    language: languageTypes
+    language: languageTypes,
+    temporaryUserId: number
   ): IInlineKeyboardMarkup => {
     return {
       inline_keyboard: [
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.NOTHING,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[0]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[0]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.HALF_YEAR,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[1]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[1]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.ONE_YEAR,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[2]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[2]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.ONE_AND_HALF_YEAR,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[3]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[3]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.TWO_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[4]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[4]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.TWO_AND_HALF_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[5]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[5]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.THREE_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[6]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[6]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.FOUR_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[7]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[7]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.FIVE_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[8]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[8]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.SIX_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[9]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[9]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.SEVEN_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[10]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[10]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.EIGHT_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[11]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[11]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.NINE_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[12]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[12]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.TEN_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[13]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[13]}`
           }
         ],
         [
           {
             text: messages[language].EXPERIENSE.BUTTON.MORE_THEN_TEN_YEARS,
-            callback_data: `experience:${EWorkExperienceInMonthsType.values[14]}`
+            callback_data: `experience-${temporaryUserId}:${EWorkExperienceInMonthsType.values[14]}`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
+    };
+  };
+
+  public selectSuccess = (
+    language: languageTypes,
+    item: string,
+    temporaryUserId?: number
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[language].SUCCESS, { item });
+
+    extra.reply_markup = this.#getEditButtonKeyboardMarkup(
+      language,
+      temporaryUserId
+    );
+
+    return { text, extra };
+  };
+
+  #getEditButtonKeyboardMarkup = (
+    k: languageTypes,
+    temporaryUserId?: number
+  ): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        [
+          {
+            text: messages[k].DEFAULT_BUTTON.EDIT,
+            callback_data: `edit:${
+              temporaryUserId === undefined ? '' : temporaryUserId
+            }`
           }
         ]
       ] as IInlineKeyboardButton[][]

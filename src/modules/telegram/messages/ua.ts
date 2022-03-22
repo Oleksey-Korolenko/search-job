@@ -13,10 +13,7 @@ const messagesInuarainian = {
   },
   CATEGORY: {
     DEFAULT: 'Будь ласка, оберіть одну з категорій',
-    ITEM: 'Будь ласка, оберіть один з пунктів для категорії <strong>{category}</strong>',
-    BUTTON: {
-      BACK: 'Назад ⬅️'
-    }
+    ITEM: 'Будь ласка, оберіть один з пунктів для категорії <strong>{category}</strong>'
   },
   EXPERIENSE: {
     DEFAULT: 'Будь ласка, оберіть якій у вас досвід',
@@ -37,7 +34,12 @@ const messagesInuarainian = {
       TEN_YEARS: '10 роки',
       MORE_THEN_TEN_YEARS: 'Більше 10 років'
     }
-  }
+  },
+  DEFAULT_BUTTON: {
+    EDIT: 'Редагувати ✏️',
+    BACK: 'Назад ⬅️'
+  },
+  SUCCESS: 'Був обран пункт <strong>{item}</strong>'
 };
 
 export default messagesInuarainian;

@@ -14,10 +14,7 @@ const messagesInEnglish = {
   },
   CATEGORY: {
     DEFAULT: 'Please select one of the categories',
-    ITEM: 'Please select one of the items for the <strong>{category}</strong> category',
-    BUTTON: {
-      BACK: 'Back ⬅️'
-    }
+    ITEM: 'Please select one of the items for the <strong>{category}</strong> category'
   },
   EXPERIENSE: {
     DEFAULT: 'Please, choose what experience you have',
@@ -38,7 +35,12 @@ const messagesInEnglish = {
       TEN_YEARS: '10 years of experience',
       MORE_THEN_TEN_YEARS: 'More then 10 years of experience'
     }
-  }
+  },
+  DEFAULT_BUTTON: {
+    EDIT: 'Edit ✏️',
+    BACK: 'Back ⬅️'
+  },
+  SUCCESS: 'The item <strong>{item}</strong> was selected'
 };
 
 export default messagesInEnglish;

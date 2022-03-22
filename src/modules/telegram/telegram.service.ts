@@ -4,7 +4,7 @@ import TelegramDBProcessorService from '@modules/telegram-db-processor/telegram-
 import { DBConnection } from '@db/db';
 import { DB } from 'drizzle-orm';
 import { ITelegramDBInput } from '@modules/telegram-db-processor';
-import { EUserRole, TelegramType } from '@db/tables';
+import { EUserRole, TelegramType, TemporaryUserType } from '@db/tables';
 import { arrayValuesToType } from '@custom-types/array-values.type';
 import CategoryService from '@modules/category/category.service';
 import CategoryItemService from '@modules/category-item/category-item.service';
@@ -12,6 +12,7 @@ import { Logger } from 'winston';
 import { LoggerService } from '@logger/logger.service';
 import { ITemporaryUserInput } from '@modules/temporary-user';
 import TemporaryUserService from '@modules/temporary-user/temporary-user.service';
+import { IInlineKeyboardButton } from './interface';
 
 export default class TelegramService extends DBConnection {
   #telegramApiService: TelegramApiService;
@@ -52,7 +53,9 @@ export default class TelegramService extends DBConnection {
     chatId: number | string,
     messageId: number,
     userId: string,
-    role: arrayValuesToType<typeof EUserRole.values>
+    role: arrayValuesToType<typeof EUserRole.values>,
+    data: string,
+    inlineKeyboard: IInlineKeyboardButton[][]
   ) => {
     try {
       const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
@@ -63,8 +66,7 @@ export default class TelegramService extends DBConnection {
 
       switch (role) {
         case 'worker': {
-          await this.selectCategory(chatId, messageId, userId);
-          await this.#saveTemporaryUser({
+          const temporaryUser = await this.#saveTemporaryUser({
             isReadyToSave: false,
             userRole: 'worker',
             telegramUserId: existTelegramInfo.id,
@@ -72,7 +74,16 @@ export default class TelegramService extends DBConnection {
               type: 'worker'
             }
           });
-          break;
+          await this.selectSuccess(
+            chatId,
+            userId,
+            messageId,
+            data,
+            inlineKeyboard,
+            temporaryUser.id
+          );
+          await this.selectCategory(chatId, userId, temporaryUser.id);
+          return temporaryUser.id;
         }
         case 'employer': {
           break;
@@ -83,11 +94,14 @@ export default class TelegramService extends DBConnection {
     }
   };
 
-  #saveTemporaryUser = async (temporaryUser: ITemporaryUserInput) => {
+  #saveTemporaryUser = async (
+    temporaryUser: ITemporaryUserInput
+  ): Promise<TemporaryUserType | undefined> => {
     try {
-      await this.#temporaryUserService.save(temporaryUser);
+      return await this.#temporaryUserService.save(temporaryUser);
     } catch (e) {
       this.#catchError(e);
+      return undefined;
     }
   };
 
@@ -105,10 +119,28 @@ export default class TelegramService extends DBConnection {
     return existTelegramInfo;
   };
 
+  #getTemporaryUserById = async (
+    temporaryUserId: number,
+    chatId: number | string
+  ): Promise<TemporaryUserType | undefined> => {
+    const existTemporaryUser = await this.#temporaryUserService.getById(
+      temporaryUserId
+    );
+
+    if (existTemporaryUser === undefined) {
+      // await this.selectLanguage(chatId);
+      // TODO сделать что-то для вывода ошибки
+      return undefined;
+    }
+
+    return existTemporaryUser;
+  };
+
   public selectCategory = async (
     chatId: number | string,
-    messageId: number,
-    userId: string
+    userId: string,
+    temporaryUserId: number,
+    messageId?: number
   ) => {
     try {
       const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
@@ -117,19 +149,33 @@ export default class TelegramService extends DBConnection {
         return;
       }
 
+      const existTemporaryUser = await this.#getTemporaryUserById(
+        temporaryUserId,
+        chatId
+      );
+
+      if (existTemporaryUser === undefined) {
+        return;
+      }
+
       const categories = await this.#categoryService.getAll();
 
       const { text, extra } = this.#telegramView.selectCategory(
         existTelegramInfo.language,
-        categories
+        categories,
+        temporaryUserId
       );
 
-      await this.#telegramApiService.updateMessage(
-        chatId,
-        messageId,
-        text,
-        extra
-      );
+      if (messageId === undefined) {
+        await this.#telegramApiService.sendMessage(chatId, text, extra);
+      } else {
+        await this.#telegramApiService.updateMessage(
+          chatId,
+          messageId,
+          text,
+          extra
+        );
+      }
     } catch (e) {
       this.#catchError(e);
     }
@@ -139,12 +185,22 @@ export default class TelegramService extends DBConnection {
     chatId: number | string,
     messageId: number,
     userId: string,
-    categoryId: number
+    categoryId: number,
+    temporaryUserId: number
   ) => {
     try {
       const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
 
       if (existTelegramInfo === undefined) {
+        return;
+      }
+
+      const existTemporaryUser = await this.#getTemporaryUserById(
+        temporaryUserId,
+        chatId
+      );
+
+      if (existTemporaryUser === undefined) {
         return;
       }
 
@@ -157,7 +213,8 @@ export default class TelegramService extends DBConnection {
       const { text, extra } = this.#telegramView.selectCategoryItem(
         existTelegramInfo.language,
         category,
-        categoryItems
+        categoryItems,
+        temporaryUserId
       );
 
       await this.#telegramApiService.updateMessage(
@@ -189,8 +246,8 @@ export default class TelegramService extends DBConnection {
 
   public selectExperience = async (
     chatId: number | string,
-    messageId: number,
-    userId: string
+    userId: string,
+    temporaryUserId: number
   ) => {
     const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
 
@@ -198,23 +255,24 @@ export default class TelegramService extends DBConnection {
       return;
     }
 
-    const { text, extra } = this.#telegramView.selectExperience(
-      existTelegramInfo.language
+    const existTemporaryUser = await this.#getTemporaryUserById(
+      temporaryUserId,
+      chatId
     );
 
-    await this.#telegramApiService.updateMessage(
-      chatId,
-      messageId,
-      text,
-      extra
+    if (existTemporaryUser === undefined) {
+      return;
+    }
+
+    const { text, extra } = this.#telegramView.selectExperience(
+      existTelegramInfo.language,
+      temporaryUserId
     );
+
+    await this.#telegramApiService.sendMessage(chatId, text, extra);
   };
 
-  public selectRole = async (
-    chatId: number | string,
-    messageId: number,
-    userId: string
-  ) => {
+  public selectRole = async (chatId: number | string, userId: string) => {
     const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
 
     if (existTelegramInfo === undefined) {
@@ -225,18 +283,53 @@ export default class TelegramService extends DBConnection {
       existTelegramInfo.language
     );
 
-    await this.#telegramApiService.updateMessage(
-      chatId,
-      messageId,
-      text,
-      extra
-    );
+    await this.#telegramApiService.sendMessage(chatId, text, extra);
   };
 
   public selectLanguage = async (chatId: number | string) => {
     const { text, extra } = this.#telegramView.selectLanguage();
 
     await this.#telegramApiService.sendMessage(chatId, text, extra);
+  };
+
+  public selectSuccess = async (
+    chatId: number | string,
+    userId: string,
+    messageId: number,
+    data: string,
+    inlineKeyboard: IInlineKeyboardButton[][],
+    temporaryUserId?: number
+  ) => {
+    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
+
+    if (existTelegramInfo === undefined) {
+      return;
+    }
+
+    let currentItemText: string | undefined;
+
+    inlineKeyboard.forEach(parent =>
+      parent.forEach(it => {
+        it.callback_data === data ? (currentItemText = it.text) : undefined;
+      })
+    );
+
+    if (currentItemText === undefined) {
+      //
+    } else {
+      const { text, extra } = await this.#telegramView.selectSuccess(
+        existTelegramInfo.language,
+        currentItemText,
+        temporaryUserId
+      );
+
+      await this.#telegramApiService.updateMessage(
+        chatId,
+        messageId,
+        text,
+        extra
+      );
+    }
   };
 
   #catchError = (err: Error) => {

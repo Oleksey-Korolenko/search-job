@@ -3,9 +3,11 @@ import {
   ITelegramMessageEntity,
   ITelegramMessageFrom
 } from '.';
+import { IInlineKeyboardMarkup } from './telegram-inline-keyboard-button.inteface';
 
 export interface ITelegramButtonMessage extends ITelegramMessage {
   entities: ITelegramMessageEntity[];
+  reply_markup: IInlineKeyboardMarkup;
 }
 
 export interface ITelegramButtonCallbackQuery {
