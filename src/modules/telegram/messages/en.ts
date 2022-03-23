@@ -36,9 +36,17 @@ const messagesInEnglish = {
       MORE_THEN_TEN_YEARS: 'More then 10 years of experience'
     }
   },
+  SALARY: {
+    DEFAULT:
+      'Please select what salary (final, with all taxes) you are claiming. Enter the number in dollars',
+    ERROR:
+      "Sorry, but we don't know that number. Do you want to try to enter a salary again?"
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
-    BACK: 'Back ⬅️'
+    BACK: 'Back ⬅️',
+    YES: 'Yes ✅',
+    NO: 'No ❌'
   },
   SUCCESS: 'The item <strong>{item}</strong> was selected'
 };

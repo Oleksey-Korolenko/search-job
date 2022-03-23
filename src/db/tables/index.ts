@@ -10,3 +10,4 @@ export * from './skills-to-workers';
 export * from './employers';
 export * from './telegram';
 export * from './temporary-user';
+export * from './telegram-messages';

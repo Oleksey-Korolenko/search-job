@@ -325,6 +325,47 @@
       },
       "indexes": {}
     },
+    "telegram_messages": {
+      "name": "telegram_messages",
+      "columns": {
+        "message_id": {
+          "name": "message_id",
+          "type": "character varying",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chat_id": {
+          "name": "chat_id",
+          "type": "character varying",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "character varying",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "temporary_user_id": {
+          "name": "temporary_user_id",
+          "type": "INT",
+          "primaryKey": false,
+          "notNull": true,
+          "references": {
+            "foreignKeyName": "telegram_messages_temporary_user_id_fkey",
+            "table": "temporary_user",
+            "column": "id"
+          }
+        },
+        "telegram_message_type": {
+          "name": "telegram_message_type",
+          "type": "telegram_message_type",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {}
+    },
     "telegram": {
       "name": "telegram",
       "columns": {
@@ -342,7 +383,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "INT",
+          "type": "character varying",
           "primaryKey": false,
           "notNull": true
         },
@@ -482,28 +523,19 @@
     "language_type": {
       "name": "language_type",
       "values": {
-        "[object Object]": {
-          "START": {
-            "DEFAULT": "Please select a language for further work",
-            "BUTTON": {
-              "TYPE_LANGUAGE": "English"
-            }
-          },
-          "SELECT_ROLE": {
-            "DEFAULT": "Are you looking for a job or offering?",
-            "BUTTON": {
-              "WORKER": "Looking for",
-              "EMPLOYER": "Offering"
-            }
-          },
-          "CATEGORY": {
-            "DEFAULT": "Please select one of the categories",
-            "ITEM": "Please select one of the items for the <strong>{category}</strong> category",
-            "BUTTON": {
-              "BACK": "Back"
-            }
-          }
-        }
+        "ua": "ua",
+        "en": "en"
+      }
+    },
+    "telegram_message_type": {
+      "name": "telegram_message_type",
+      "values": {
+        "phone": "phone",
+        "salary": "salary",
+        "name": "name",
+        "position": "position",
+        "company": "company",
+        "details": "details"
       }
     },
     "user_role_type": {

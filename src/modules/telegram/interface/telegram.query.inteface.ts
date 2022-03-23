@@ -20,9 +20,9 @@ export interface ITelegramResponseFile {
   file_path: string;
 }
 
-export interface ITelegramResponse {
+export interface ITelegramResponse<T> {
   ok: boolean;
-  result: boolean | ITelegramResponseFile;
+  result: T;
   description: string;
 }
 

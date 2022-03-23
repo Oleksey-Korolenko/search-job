@@ -43,7 +43,7 @@ export default class TelegramApiService {
   }
 
   public setWebhook = async (): Promise<void> => {
-    const response = await this.#request<{}>(
+    const response = await this.#request<{}, boolean>(
       {
         ...this.#baseAttributes,
         path: `/bot${this.#config.token}/setWebhook`
@@ -65,12 +65,12 @@ export default class TelegramApiService {
     }
   };
 
-  public sendMessage = async (
+  public sendMessage = async <ResultType>(
     chat_id: number | string,
     text: string,
     extra?: ITelegramTextFormatterExtra
-  ): Promise<ITelegramResponse> => {
-    return this.#request<ITelegramQueryBody>(
+  ): Promise<ITelegramResponse<ResultType>> => {
+    return this.#request<ITelegramQueryBody, ResultType>(
       {
         ...this.#baseAttributes,
         method: 'POST',
@@ -88,13 +88,13 @@ export default class TelegramApiService {
     );
   };
 
-  public updateMessage = async (
+  public updateMessage = async <ResultType>(
     chat_id: number | string,
     message_id: number,
     text: string,
     extra?: ITelegramTextFormatterExtra
-  ): Promise<ITelegramResponse> => {
-    return this.#request<ITelegramUpdateQueryBody>(
+  ): Promise<ITelegramResponse<ResultType>> => {
+    return this.#request<ITelegramUpdateQueryBody, ResultType>(
       {
         ...this.#baseAttributes,
         method: 'POST',
@@ -113,16 +113,16 @@ export default class TelegramApiService {
     );
   };
 
-  #request = async <BodyType>(
+  #request = async <BodyType, ResultType>(
     attributes: IQueryAttributes<ITelegramQueryHeaders>,
     params: IQueryParams,
     typeOperation: ETypeOperation,
     body?: BodyType,
     errorMessage?: string
-  ): Promise<ITelegramResponse> => {
+  ): Promise<ITelegramResponse<ResultType>> => {
     const response = await this.#queryService.sendRequest<
       {},
-      ITelegramResponse,
+      ITelegramResponse<ResultType>,
       BodyType
     >(attributes, params, typeOperation, body);
 

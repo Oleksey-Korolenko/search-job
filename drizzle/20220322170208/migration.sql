@@ -11,6 +11,12 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
+ CREATE TYPE telegram_message_type AS ENUM('phone', 'salary', 'name', 'position', 'company', 'details');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
  CREATE TYPE user_role_type AS ENUM('worker', 'employer');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -167,6 +173,14 @@ CREATE TABLE IF NOT EXISTS skills (
 	"category_item_id" INT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS telegram_messages (
+	"message_id" character varying NOT NULL,
+	"chat_id" character varying NOT NULL,
+	"user_id" character varying NOT NULL,
+	"temporary_user_id" INT NOT NULL,
+	"telegram_message_type" telegram_message_type NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS telegram (
 	"id" SERIAL PRIMARY KEY,
 	"username" character varying NOT NULL,
@@ -244,6 +258,12 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE skills ADD CONSTRAINT skills_category_item_id_fkey FOREIGN KEY ("category_item_id") REFERENCES category_item(id);
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+ALTER TABLE telegram_messages ADD CONSTRAINT telegram_messages_temporary_user_id_fkey FOREIGN KEY ("temporary_user_id") REFERENCES temporary_user(id);
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
