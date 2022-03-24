@@ -19,11 +19,18 @@ import { Logger } from 'winston';
 import { LoggerService } from '@logger/logger.service';
 import { ITemporaryUserInput } from '@modules/temporary-user';
 import TemporaryUserService from '@modules/temporary-user/temporary-user.service';
-import { IInlineKeyboardButton, ITelegramMessage } from './interface';
+import {
+  IInlineKeyboardButton,
+  INotPreparedTranslate,
+  ITelegramMessage
+} from './interface';
 import ETelegramButtonType from './enum/button-type.enum';
 import TelegramMessageService from '@modules/telegram-messages/telegram-messages.service';
 import { TelegramValidate } from './telegram.validator';
 import ETelegramConfirmButtonType from './enum/confirm-button-type.enum';
+import CityService from '@modules/city/city.service';
+import ETelegramCheckboxButtonType from './enum/checkbox-button-type.enum';
+import ETelegramEditButtonType from './enum/edit-button-type.enum';
 
 export default class TelegramService extends DBConnection {
   #telegramApiService: TelegramApiService;
@@ -31,10 +38,12 @@ export default class TelegramService extends DBConnection {
   #telegramValidator: TelegramValidate;
 
   #telegramDBService: TelegramDBProcessorService;
-  #categoryService: CategoryService;
-  #categoryItemService: CategoryItemService;
   #temporaryUserService: TemporaryUserService;
   #telegramMessageService: TelegramMessageService;
+
+  #categoryService: CategoryService;
+  #categoryItemService: CategoryItemService;
+  #cityService: CityService;
 
   #logger: Logger;
 
@@ -45,10 +54,12 @@ export default class TelegramService extends DBConnection {
     this.#telegramValidator = new TelegramValidate();
 
     this.#telegramDBService = new TelegramDBProcessorService(this.db);
-    this.#categoryService = new CategoryService(this.db);
-    this.#categoryItemService = new CategoryItemService(this.db);
     this.#temporaryUserService = new TemporaryUserService(this.db);
     this.#telegramMessageService = new TelegramMessageService(this.db);
+
+    this.#categoryService = new CategoryService(this.db);
+    this.#categoryItemService = new CategoryItemService(this.db);
+    this.#cityService = new CityService(this.db);
 
     this.#logger = new LoggerService().getLogger();
   }
@@ -102,7 +113,7 @@ export default class TelegramService extends DBConnection {
             userId,
             +messageId,
             text,
-            ETelegramButtonType.SELECT_SALARY,
+            ETelegramEditButtonType.SALARY,
             existMessage.temporaryUserId
           );
 
@@ -163,7 +174,7 @@ export default class TelegramService extends DBConnection {
           userId,
           +messageId,
           text,
-          ETelegramButtonType.SELECT_POSITION,
+          ETelegramEditButtonType.POSITION,
           existMessage.temporaryUserId
         );
 
@@ -236,6 +247,36 @@ export default class TelegramService extends DBConnection {
   };
 
   // check yes button end
+
+  // check checkbox button start
+
+  public checkCheckboxButton = async (
+    chatId: string | number,
+    messageId: number,
+    userId: string,
+    temporaryUserId: number,
+    typeMessage: ETelegramCheckboxButtonType,
+    typeOperation: 'add' | 'delete' | 'save',
+    item: number
+  ) => {
+    switch (typeMessage) {
+      case 'city': {
+        if (typeOperation === 'save') {
+          await this.saveCities(chatId, userId, messageId, temporaryUserId);
+        } else if (typeOperation === 'add' || typeOperation === 'delete') {
+          await this.checkboxCity(
+            chatId,
+            userId,
+            temporaryUserId,
+            item,
+            typeOperation
+          );
+        }
+      }
+    }
+  };
+
+  // check checkbox button end
 
   // TODO do something with no button action
 
@@ -614,6 +655,158 @@ export default class TelegramService extends DBConnection {
 
   // worker english level section end
 
+  // worker city section start
+
+  public selectCity = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
+
+    const temporaryUserInfo = existTemporaryUser.user as IWorker;
+
+    const notPreparedTranslate = await this.#getPreparedCheckboxItems(
+      ETelegramCheckboxButtonType.CITY,
+      temporaryUserInfo?.cities === undefined ? [] : temporaryUserInfo.cities
+    );
+
+    const { text, extra } = this.#telegramView.selectCity(
+      existTelegramInfo.language,
+      temporaryUserId,
+      notPreparedTranslate,
+      []
+    );
+
+    await this.#telegramApiService.sendMessage(chatId, text, extra);
+  };
+
+  public checkboxCity = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number,
+    cityId: number,
+    typeOperation: 'add' | 'delete'
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
+
+    const temporaryUserInfo = existTemporaryUser.user as IWorker;
+
+    let preparedCityIds: number[] = [];
+
+    switch (typeOperation) {
+      case 'add': {
+        preparedCityIds =
+          temporaryUserInfo?.cities === undefined
+            ? [cityId]
+            : [...temporaryUserInfo.cities, cityId];
+
+        break;
+      }
+      case 'delete': {
+        preparedCityIds = this.#deleteItemFromArr(
+          temporaryUserInfo?.cities === undefined
+            ? []
+            : temporaryUserInfo.cities,
+          cityId
+        );
+
+        break;
+      }
+    }
+
+    await this.updateTemporaryUser(temporaryUserId, {
+      type: 'worker',
+      cities: preparedCityIds
+    });
+
+    const existCities = await this.#cityService.getByIds(preparedCityIds);
+
+    const notPreparedTranslate = await this.#getPreparedCheckboxItems(
+      ETelegramCheckboxButtonType.CITY,
+      temporaryUserInfo?.cities === undefined ? [] : temporaryUserInfo.cities
+    );
+
+    const { text, extra } = this.#telegramView.selectCity(
+      existTelegramInfo.language,
+      temporaryUserId,
+      notPreparedTranslate,
+      existCities
+    );
+
+    await this.#telegramApiService.sendMessage(chatId, text, extra);
+  };
+
+  public saveCities = async (
+    chatId: number | string,
+    userId: string,
+    messageId: number,
+    temporaryUserId: number
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
+
+    const temporaryUserInfo = existTemporaryUser.user as IWorker;
+
+    const existCities = await this.#cityService.getByIds(
+      temporaryUserInfo?.cities === undefined ? [] : temporaryUserInfo.cities
+    );
+
+    const preparedTranslate = this.#telegramView.preparedTranslate(
+      existTelegramInfo.language,
+      existCities as INotPreparedTranslate[]
+    );
+
+    await this.#cityService.getByIds(
+      temporaryUserInfo?.cities === undefined ? [] : temporaryUserInfo.cities
+    );
+
+    const notPreparedTranslate = await this.#getPreparedCheckboxItems(
+      ETelegramCheckboxButtonType.CITY,
+      temporaryUserInfo?.cities === undefined ? [] : temporaryUserInfo.cities
+    );
+
+    await this.selectSuccess(
+      chatId,
+      userId,
+      messageId,
+      notPreparedTranslate.map(it => it.translate).join(', '),
+      ETelegramEditButtonType.CITY,
+      temporaryUserId
+    );
+  };
+
+  // worker city section end
+
   // user language section start
 
   public selectLanguage = async (chatId: number | string) => {
@@ -631,7 +824,7 @@ export default class TelegramService extends DBConnection {
     userId: string,
     messageId: number,
     currentItemText: string,
-    operationType: ETelegramButtonType,
+    operationType: ETelegramEditButtonType,
     temporaryUserId?: number
   ) => {
     const telegramInfo = await this.#telegramCheck(
@@ -682,7 +875,7 @@ export default class TelegramService extends DBConnection {
     messageId: number,
     data: string,
     inlineKeyboard: IInlineKeyboardButton[][],
-    operationType: ETelegramButtonType,
+    operationType: ETelegramEditButtonType,
     temporaryUserId?: number
   ) => {
     const currentItemText = this.findElemFromInlineKeyboard(
@@ -736,6 +929,37 @@ export default class TelegramService extends DBConnection {
       existTelegramInfo,
       existTemporaryUser
     };
+  };
+
+  #deleteItemFromArr = (existItems: number[], item: number): number[] => {
+    const preparedItems: number[] = [];
+
+    existItems.forEach(it => {
+      it === item ? '' : preparedItems.push(it);
+    });
+
+    return preparedItems;
+  };
+
+  #getPreparedCheckboxItems = async (
+    checkboxType: ETelegramCheckboxButtonType,
+    existItemIds: number[]
+  ): Promise<INotPreparedTranslate[]> => {
+    let items: INotPreparedTranslate[];
+
+    switch (checkboxType) {
+      case ETelegramCheckboxButtonType.CITY: {
+        items = (await this.#cityService.getAll()) as INotPreparedTranslate[];
+
+        break;
+      }
+    }
+
+    return items.map(it =>
+      existItemIds.includes(it.id)
+        ? { ...it, isExist: true }
+        : { ...it, isExist: false }
+    );
   };
 
   #catchError = (err: Error) => {

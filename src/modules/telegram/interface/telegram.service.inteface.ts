@@ -18,10 +18,12 @@ export interface ITelegramTextFormatterResponse {
 export interface IPreparedTranslate {
   id: number;
   translate: string;
+  isExist?: boolean;
 }
 
 export interface INotPreparedTranslate {
   id: number;
   name: string;
   translate: Translate;
+  isExist?: boolean;
 }

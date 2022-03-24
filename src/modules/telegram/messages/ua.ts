@@ -55,11 +55,18 @@ const messagesInuarainian = {
       C1: 'Advanced/Fluent'
     }
   },
+  CITIES: {
+    DEFAULT: 'Будь ласка, оберіть ряд міст у яких ви шукаєте роботу',
+    EXIST_CITIES: '\n\nВже обран ряд міст: <strong>{cities}</strong>'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',
     BACK: 'Назад ⬅️',
     YES: 'Так ✅',
-    NO: 'Ні ❌'
+    NO: 'Ні ❌',
+    ADD: '{item} ➕',
+    DELETE: '{item} 🗑',
+    SAVE: 'Зберегти ✅'
   },
   SUCCESS: 'Був обран пункт <strong>{item}</strong>'
 };

@@ -8,6 +8,9 @@ enum ETelegramButtonType {
   SELECT_SALARY = 'salary',
   SELECT_POSITION = 'position',
   SELECT_ENGLISH_LEVEL = 'english_level',
+  ADD = 'add',
+  DELETE = 'delete',
+  SAVE = 'save',
   YES = 'yes',
   NO = 'no'
 }

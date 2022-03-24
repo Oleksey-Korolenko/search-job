@@ -9,8 +9,10 @@ import { DB } from 'drizzle-orm';
 import { Request, Response, Router } from 'express';
 import { ITelegramCommandRessponse, ITelegramUpdateResponse } from '.';
 import ETelegramButtonType from './enum/button-type.enum';
+import ETelegramCheckboxButtonType from './enum/checkbox-button-type.enum';
 import ETelegramCommandType from './enum/command-type.enum';
 import ETelegramConfirmButtonType from './enum/confirm-button-type.enum';
+import ETelegramEditButtonType from './enum/edit-button-type.enum';
 import { ITelegramButtonResponse } from './interface';
 import { languageTypes } from './messages';
 import TelegramApiService from './telegram.api.service';
@@ -61,8 +63,8 @@ export default async (router: typeof Router, db: DB) => {
     const item = checkedBody.callback_query.data.split(':')[1];
 
     const operationType = operationTypeWithExtraParam.split('-')[0];
-    const temporaryUserIdOrExtraOperationType =
-      operationTypeWithExtraParam.split('-')[1];
+    const temporaryUserId = operationTypeWithExtraParam.split('-')[1];
+    const extraOperationType = operationTypeWithExtraParam.split('-')[2];
 
     switch (operationType) {
       case ETelegramButtonType.SELECT_LANGUAGE: {
@@ -93,7 +95,7 @@ export default async (router: typeof Router, db: DB) => {
           checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.message.from.id}`,
           +item,
-          +temporaryUserIdOrExtraOperationType
+          +temporaryUserId
         );
         break;
       }
@@ -106,62 +108,106 @@ export default async (router: typeof Router, db: DB) => {
         break;
       }
       case ETelegramButtonType.SELECT_CATEGORY_ITEM: {
-        await telegramService.updateTemporaryUser(
-          +temporaryUserIdOrExtraOperationType,
-          {
-            type: 'worker',
-            categoryItemId: +item
-          }
-        );
+        await telegramService.updateTemporaryUser(+temporaryUserId, {
+          type: 'worker',
+          categoryItemId: +item
+        });
         await telegramService.selectSuccessWithInlineKeyboard(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.message.from.id}`,
           checkedBody.callback_query.message.message_id,
           checkedBody.callback_query.data,
           checkedBody.callback_query.message.reply_markup.inline_keyboard,
-          operationType,
-          +temporaryUserIdOrExtraOperationType
+          ETelegramEditButtonType.CATEGORY,
+          +temporaryUserId
         );
         await telegramService.selectExperience(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.message.from.id}`,
-          +temporaryUserIdOrExtraOperationType
+          +temporaryUserId
         );
         break;
       }
       case ETelegramButtonType.SELECT_EXPERIENCE: {
-        await telegramService.updateTemporaryUser(
-          +temporaryUserIdOrExtraOperationType,
-          {
-            type: 'worker',
-            workExperience: item as arrayValuesToType<
-              typeof EWorkExperienceInMonthsType.values
-            >
-          }
-        );
+        await telegramService.updateTemporaryUser(+temporaryUserId, {
+          type: 'worker',
+          workExperience: item as arrayValuesToType<
+            typeof EWorkExperienceInMonthsType.values
+          >
+        });
         await telegramService.selectSuccessWithInlineKeyboard(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.message.from.id}`,
           checkedBody.callback_query.message.message_id,
           checkedBody.callback_query.data,
           checkedBody.callback_query.message.reply_markup.inline_keyboard,
-          operationType,
-          +temporaryUserIdOrExtraOperationType
+          ETelegramEditButtonType.EXPERIENCE,
+          +temporaryUserId
         );
         await telegramService.selectSalary(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.message.from.id}`,
-          +temporaryUserIdOrExtraOperationType
+          +temporaryUserId
         );
         break;
       }
       case ETelegramButtonType.SELECT_ENGLISH_LEVEL: {
-        await telegramService.updateTemporaryUser(
-          +temporaryUserIdOrExtraOperationType,
-          {
-            type: 'worker',
-            englishLevel: EEnglishLevelsType.values[+item]
-          }
+        await telegramService.updateTemporaryUser(+temporaryUserId, {
+          type: 'worker',
+          englishLevel: EEnglishLevelsType.values[+item]
+        });
+        await telegramService.selectCity(
+          checkedBody.callback_query.message.chat.id,
+          `${checkedBody.callback_query.message.from.id}`,
+          +temporaryUserId
+        );
+        break;
+      }
+      case ETelegramButtonType.SELECT_ENGLISH_LEVEL: {
+        await telegramService.updateTemporaryUser(+temporaryUserId, {
+          type: 'worker',
+          englishLevel: EEnglishLevelsType.values[+item]
+        });
+        await telegramService.selectCity(
+          checkedBody.callback_query.message.chat.id,
+          `${checkedBody.callback_query.message.from.id}`,
+          +temporaryUserId
+        );
+        break;
+      }
+      case ETelegramButtonType.ADD: {
+        await telegramService.checkCheckboxButton(
+          checkedBody.callback_query.message.chat.id,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.message.from.id}`,
+          +temporaryUserId,
+          ETelegramCheckboxButtonType.CITY,
+          'add',
+          +item
+        );
+        break;
+      }
+      case ETelegramButtonType.DELETE: {
+        await telegramService.checkCheckboxButton(
+          checkedBody.callback_query.message.chat.id,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.message.from.id}`,
+          +temporaryUserId,
+          ETelegramCheckboxButtonType.CITY,
+          'delete',
+          +item
+        );
+        break;
+      }
+      case ETelegramButtonType.SAVE: {
+        await telegramService.checkCheckboxButton(
+          checkedBody.callback_query.message.chat.id,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.message.from.id}`,
+          +temporaryUserId,
+          ETelegramCheckboxButtonType.CITY,
+          'save',
+          +item
         );
         break;
       }

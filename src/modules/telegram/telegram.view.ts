@@ -1,11 +1,14 @@
 import {
   CategoryItemType,
   CategoryType,
+  CityType,
   EWorkExperienceInMonthsType
 } from '@db/tables';
 import { IArgsForPreparedText } from '.';
 import ETelegramButtonType from './enum/button-type.enum';
+import ETelegramCheckboxButtonType from './enum/checkbox-button-type.enum';
 import ETelegramConfirmButtonType from './enum/confirm-button-type.enum';
+import ETelegramEditButtonType from './enum/edit-button-type.enum';
 import {
   IInlineKeyboardButton,
   IInlineKeyboardMarkup,
@@ -101,7 +104,7 @@ export default class TelegramView {
 
     text += this.#preparedText(messages[language].CATEGORY.DEFAULT, {});
 
-    const preparedTranslate = this.#preparedTranslate(
+    const preparedTranslate = this.preparedTranslate(
       language,
       categories as INotPreparedTranslate[]
     );
@@ -129,7 +132,7 @@ export default class TelegramView {
       category: category.name
     });
 
-    const preparedTranslate = this.#preparedTranslate(
+    const preparedTranslate = this.preparedTranslate(
       language,
       categoryItems as INotPreparedTranslate[]
     );
@@ -401,12 +404,53 @@ export default class TelegramView {
 
   // english level section end
 
+  // city section start
+
+  public selectCity = (
+    language: languageTypes,
+    temporaryUserId: number,
+    cities: INotPreparedTranslate[],
+    existCities: CityType[]
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[language].CITIES.DEFAULT, {});
+
+    if (existCities.length > 0) {
+      const preparedTextTranslate = this.preparedTranslate(
+        language,
+        cities as []
+      );
+
+      text += this.#preparedText(messages[language].CITIES.EXIST_CITIES, {
+        cities: `${preparedTextTranslate.map(it => it.translate).join(', ')}`
+      });
+    }
+
+    const preparedExtraTranslate = this.preparedTranslate(
+      language,
+      cities as []
+    );
+
+    extra.reply_markup = this.#getCheckboxButtonsKeyboardMarkup(
+      language,
+      temporaryUserId,
+      preparedExtraTranslate,
+      ETelegramCheckboxButtonType.CITY
+    );
+
+    return { text, extra };
+  };
+
+  // city section end
+
   // edit section start
 
   public selectSuccess = (
     language: languageTypes,
     item: string,
-    operationType: ETelegramButtonType,
+    operationType: ETelegramEditButtonType,
     temporaryUserId?: number
   ): ITelegramTextFormatterResponse => {
     let text = '';
@@ -425,7 +469,7 @@ export default class TelegramView {
 
   #getEditButtonKeyboardMarkup = (
     language: languageTypes,
-    operationType: ETelegramButtonType,
+    operationType: ETelegramEditButtonType,
     temporaryUserId?: number
   ): IInlineKeyboardMarkup => {
     return {
@@ -446,7 +490,7 @@ export default class TelegramView {
 
   // default section start
 
-  #preparedTranslate = (
+  preparedTranslate = (
     language: languageTypes,
     itemList: INotPreparedTranslate[]
   ): IPreparedTranslate[] => {
@@ -464,6 +508,45 @@ export default class TelegramView {
         }));
       }
     }
+  };
+
+  #getCheckboxButtonsKeyboardMarkup = (
+    language: languageTypes,
+    temporaryUserId: number,
+    preparedTranslate: IPreparedTranslate[],
+    checkboxType: ETelegramCheckboxButtonType
+  ): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        ...preparedTranslate.map(it =>
+          it.isExist
+            ? [
+                {
+                  text: this.#preparedText(
+                    messages[language].DEFAULT_BUTTON.DELETE,
+                    { item: it.translate }
+                  ),
+                  callback_data: `delete-${temporaryUserId}-${checkboxType}:${it.id}`
+                } as IInlineKeyboardButton
+              ]
+            : [
+                {
+                  text: this.#preparedText(
+                    messages[language].DEFAULT_BUTTON.ADD,
+                    { item: it.translate }
+                  ),
+                  callback_data: `add-${temporaryUserId}-${checkboxType}:${it.id}`
+                } as IInlineKeyboardButton
+              ]
+        ),
+        [
+          {
+            text: messages[language].DEFAULT_BUTTON.SAVE,
+            callback_data: `save-${temporaryUserId}-${checkboxType}`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
+    };
   };
 
   #getYesOrNoButtonKeyboardMarkup = (

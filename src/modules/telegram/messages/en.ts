@@ -56,11 +56,19 @@ const messagesInEnglish = {
       C1: 'Advanced/Fluent'
     }
   },
+  CITIES: {
+    DEFAULT: 'Please select a number of cities where you are looking for work',
+    EXIST_CITIES:
+      '\n\nA number of cities have already been selected: <strong>{cities}</strong>'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
     BACK: 'Back ⬅️',
     YES: 'Yes ✅',
-    NO: 'No ❌'
+    NO: 'No ❌',
+    ADD: '{item} ➕',
+    DELETE: '{item} 🗑',
+    SAVE: 'Save ✅'
   },
   SUCCESS: 'The item <strong>{item}</strong> was selected'
 };
