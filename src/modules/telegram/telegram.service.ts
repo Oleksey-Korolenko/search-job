@@ -75,27 +75,24 @@ export default class TelegramService extends DBConnection {
       return;
     }
 
-    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
-
-    if (existTelegramInfo === undefined) {
-      return;
-    }
-
-    const existTemporaryUser = await this.#getTemporaryUserById(
-      existMessage.temporaryUserId,
-      chatId
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      existMessage.temporaryUserId
     );
 
-    if (existTemporaryUser === undefined) {
+    if (telegramInfo === undefined) {
       return;
     }
+
+    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
 
     switch (existMessage.telegramMessageType) {
       case 'salary': {
         try {
           const salary = this.#telegramValidator.salary(command);
 
-          this.updateTemporaryUser(userId, {
+          this.updateTemporaryUser(existMessage.temporaryUserId, {
             type: 'worker',
             expectedSalary: salary
           });
@@ -156,7 +153,7 @@ export default class TelegramService extends DBConnection {
         }
       }
       case 'position': {
-        this.updateTemporaryUser(userId, {
+        this.updateTemporaryUser(existMessage.temporaryUserId, {
           type: existTemporaryUser.user.type,
           position: command
         });
@@ -202,20 +199,17 @@ export default class TelegramService extends DBConnection {
       return;
     }
 
-    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
-
-    if (existTelegramInfo === undefined) {
-      return;
-    }
-
-    const existTemporaryUser = await this.#getTemporaryUserById(
-      existMessage.temporaryUserId,
-      chatId
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      existMessage.temporaryUserId
     );
 
-    if (existTemporaryUser === undefined) {
+    if (telegramInfo === undefined) {
       return;
     }
+
+    const { existTelegramInfo } = telegramInfo;
 
     switch (typeOperation) {
       case 'salary': {
@@ -369,15 +363,12 @@ export default class TelegramService extends DBConnection {
   };
 
   public updateTemporaryUser = async (
-    userId: string,
+    temporaryUserId: number,
     user: IWorker | IEmployer
   ) => {
-    const temporaryUser = await this.#temporaryUserService.getByUserIdAndRole(
-      userId,
-      'worker'
+    const temporaryUser = await this.#temporaryUserService.getById(
+      temporaryUserId
     );
-
-    // TODO написать к ид самой записи
 
     await this.#temporaryUserService.updateUser(temporaryUser.id, {
       ...temporaryUser.user,
@@ -396,20 +387,17 @@ export default class TelegramService extends DBConnection {
     messageId?: number
   ) => {
     try {
-      const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
-
-      if (existTelegramInfo === undefined) {
-        return;
-      }
-
-      const existTemporaryUser = await this.#getTemporaryUserById(
-        temporaryUserId,
-        chatId
+      const telegramInfo = await this.#telegramCheck(
+        chatId,
+        userId,
+        temporaryUserId
       );
 
-      if (existTemporaryUser === undefined) {
+      if (telegramInfo === undefined) {
         return;
       }
+
+      const { existTelegramInfo } = telegramInfo;
 
       const categories = await this.#categoryService.getAll();
 
@@ -442,20 +430,17 @@ export default class TelegramService extends DBConnection {
     temporaryUserId: number
   ) => {
     try {
-      const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
-
-      if (existTelegramInfo === undefined) {
-        return;
-      }
-
-      const existTemporaryUser = await this.#getTemporaryUserById(
-        temporaryUserId,
-        chatId
+      const telegramInfo = await this.#telegramCheck(
+        chatId,
+        userId,
+        temporaryUserId
       );
 
-      if (existTemporaryUser === undefined) {
+      if (telegramInfo === undefined) {
         return;
       }
+
+      const { existTelegramInfo } = telegramInfo;
 
       const category = await this.#categoryService.getById(categoryId);
 
@@ -490,20 +475,17 @@ export default class TelegramService extends DBConnection {
     userId: string,
     temporaryUserId: number
   ) => {
-    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
-
-    if (existTelegramInfo === undefined) {
-      return;
-    }
-
-    const existTemporaryUser = await this.#getTemporaryUserById(
-      temporaryUserId,
-      chatId
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
     );
 
-    if (existTemporaryUser === undefined) {
+    if (telegramInfo === undefined) {
       return;
     }
+
+    const { existTelegramInfo } = telegramInfo;
 
     const { text, extra } = this.#telegramView.selectExperience(
       existTelegramInfo.language,
@@ -522,20 +504,17 @@ export default class TelegramService extends DBConnection {
     userId: string,
     temporaryUserId: number
   ) => {
-    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
-
-    if (existTelegramInfo === undefined) {
-      return;
-    }
-
-    const existTemporaryUser = await this.#getTemporaryUserById(
-      temporaryUserId,
-      chatId
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
     );
 
-    if (existTemporaryUser === undefined) {
+    if (telegramInfo === undefined) {
       return;
     }
+
+    const { existTelegramInfo } = telegramInfo;
 
     const { text, extra } = this.#telegramView.selectSalary(
       existTelegramInfo.language,
@@ -566,20 +545,17 @@ export default class TelegramService extends DBConnection {
     userId: string,
     temporaryUserId: number
   ) => {
-    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
-
-    if (existTelegramInfo === undefined) {
-      return;
-    }
-
-    const existTemporaryUser = await this.#getTemporaryUserById(
-      temporaryUserId,
-      chatId
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
     );
 
-    if (existTemporaryUser === undefined) {
+    if (telegramInfo === undefined) {
       return;
     }
+
+    const { existTelegramInfo } = telegramInfo;
 
     const { text, extra } = this.#telegramView.selectPosition(
       existTelegramInfo.language
@@ -622,11 +598,17 @@ export default class TelegramService extends DBConnection {
     operationType: ETelegramButtonType,
     temporaryUserId?: number
   ) => {
-    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
 
-    if (existTelegramInfo === undefined) {
+    if (telegramInfo === undefined) {
       return;
     }
+
+    const { existTelegramInfo } = telegramInfo;
 
     const { text, extra } = await this.#telegramView.selectSuccess(
       existTelegramInfo.language,
@@ -687,6 +669,38 @@ export default class TelegramService extends DBConnection {
   };
 
   // user edit info section end
+
+  #telegramCheck = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number
+  ): Promise<
+    | {
+        existTelegramInfo: TelegramType;
+        existTemporaryUser: TemporaryUserType;
+      }
+    | undefined
+  > => {
+    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
+
+    if (existTelegramInfo === undefined) {
+      return undefined;
+    }
+
+    const existTemporaryUser = await this.#getTemporaryUserById(
+      temporaryUserId,
+      chatId
+    );
+
+    if (existTemporaryUser === undefined) {
+      return undefined;
+    }
+
+    return {
+      existTelegramInfo,
+      existTemporaryUser
+    };
+  };
 
   #catchError = (err: Error) => {
     this.#logger.warn(err.message);

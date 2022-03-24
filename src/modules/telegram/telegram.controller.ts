@@ -103,7 +103,7 @@ export default async (router: typeof Router, db: DB) => {
       }
       case ETelegramButtonType.SELECT_CATEGORY_ITEM: {
         await telegramService.updateTemporaryUser(
-          `${checkedBody.callback_query.message.from.id}`,
+          +temporaryUserIdOrExtraOperationType,
           {
             type: 'worker',
             categoryItemId: +item
@@ -127,7 +127,7 @@ export default async (router: typeof Router, db: DB) => {
       }
       case ETelegramButtonType.SELECT_EXPERIENCE: {
         await telegramService.updateTemporaryUser(
-          `${checkedBody.callback_query.message.from.id}`,
+          +temporaryUserIdOrExtraOperationType,
           {
             type: 'worker',
             workExperience: item as arrayValuesToType<
