@@ -174,6 +174,12 @@ export default class TelegramService extends DBConnection {
           existMessage.telegramMessageType
         );
 
+        await this.selectEnglishLevel(
+          chatId,
+          userId,
+          existMessage.temporaryUserId
+        );
+
         break;
       }
     }
@@ -578,6 +584,35 @@ export default class TelegramService extends DBConnection {
   };
 
   // user position section end
+
+  // worker english level section start
+
+  public selectEnglishLevel = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo } = telegramInfo;
+
+    const { text, extra } = this.#telegramView.selectEnglishLevel(
+      existTelegramInfo.language,
+      temporaryUserId
+    );
+
+    await this.#telegramApiService.sendMessage(chatId, text, extra);
+  };
+
+  // worker english level section end
 
   // user language section start
 

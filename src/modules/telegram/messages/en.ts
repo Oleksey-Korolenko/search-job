@@ -45,6 +45,17 @@ const messagesInEnglish = {
   POSITION: {
     DEFAULT: 'Please select which position you are applying for'
   },
+  ENGLISH_LEVEL: {
+    DEFAULT: 'Please select what level of English you have',
+    BUTTON: {
+      NO_ENGLISH: 'No English',
+      A1: 'Begginner/Elementary',
+      A2: 'Pre-Intermediate',
+      B1: 'Intermediate',
+      B2: 'Upper-Intermediate',
+      C1: 'Advanced/Fluent'
+    }
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
     BACK: 'Back ⬅️',

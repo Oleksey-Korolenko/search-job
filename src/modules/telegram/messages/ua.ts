@@ -44,6 +44,17 @@ const messagesInuarainian = {
   POSITION: {
     DEFAULT: 'Будь ласка, вкажіть на яку позицію ви претендуєте'
   },
+  ENGLISH_LEVEL: {
+    DEFAULT: 'Будь ласка, оберіть який рівень англійської мови ви маєте',
+    BUTTON: {
+      NO_ENGLISH: 'No English',
+      A1: 'Begginner/Elementary',
+      A2: 'Pre-Intermediate',
+      B1: 'Intermediate',
+      B2: 'Upper-Intermediate',
+      C1: 'Advanced/Fluent'
+    }
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',
     BACK: 'Назад ⬅️',

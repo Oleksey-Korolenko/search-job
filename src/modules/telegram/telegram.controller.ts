@@ -1,5 +1,9 @@
 import { arrayValuesToType } from '@custom-types/array-values.type';
-import { EUserRole, EWorkExperienceInMonthsType } from '@db/tables';
+import {
+  EEnglishLevelsType,
+  EUserRole,
+  EWorkExperienceInMonthsType
+} from '@db/tables';
 import QueryService from '@query/query.service';
 import { DB } from 'drizzle-orm';
 import { Request, Response, Router } from 'express';
@@ -148,6 +152,16 @@ export default async (router: typeof Router, db: DB) => {
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.message.from.id}`,
           +temporaryUserIdOrExtraOperationType
+        );
+        break;
+      }
+      case ETelegramButtonType.SELECT_ENGLISH_LEVEL: {
+        await telegramService.updateTemporaryUser(
+          +temporaryUserIdOrExtraOperationType,
+          {
+            type: 'worker',
+            englishLevel: EEnglishLevelsType.values[+item]
+          }
         );
         break;
       }

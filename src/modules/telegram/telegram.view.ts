@@ -334,6 +334,73 @@ export default class TelegramView {
 
   // position section end
 
+  // english level section start
+
+  public selectEnglishLevel = (
+    language: languageTypes,
+    temporaryUserId: number
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[language].ENGLISH_LEVEL.DEFAULT, {});
+
+    extra.reply_markup = this.#getEnglishLevelButtonsKeyboardMarkup(
+      language,
+      temporaryUserId
+    );
+
+    return { text, extra };
+  };
+
+  #getEnglishLevelButtonsKeyboardMarkup = (
+    language: languageTypes,
+    temporaryUserId: number
+  ): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        [
+          {
+            text: messages[language].ENGLISH_LEVEL.BUTTON.NO_ENGLISH,
+            callback_data: `english_level-${temporaryUserId}:0`
+          }
+        ],
+        [
+          {
+            text: messages[language].ENGLISH_LEVEL.BUTTON.A1,
+            callback_data: `english_level-${temporaryUserId}:1`
+          }
+        ],
+        [
+          {
+            text: messages[language].ENGLISH_LEVEL.BUTTON.A2,
+            callback_data: `english_level-${temporaryUserId}:2`
+          }
+        ],
+        [
+          {
+            text: messages[language].ENGLISH_LEVEL.BUTTON.B1,
+            callback_data: `english_level-${temporaryUserId}:3`
+          }
+        ],
+        [
+          {
+            text: messages[language].ENGLISH_LEVEL.BUTTON.B2,
+            callback_data: `english_level-${temporaryUserId}:4`
+          }
+        ],
+        [
+          {
+            text: messages[language].ENGLISH_LEVEL.BUTTON.C1,
+            callback_data: `english_level-${temporaryUserId}:5`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
+    };
+  };
+
+  // english level section end
+
   // edit section start
 
   public selectSuccess = (

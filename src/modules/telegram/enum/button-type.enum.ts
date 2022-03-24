@@ -7,6 +7,7 @@ enum ETelegramButtonType {
   SELECT_EXPERIENCE = 'experience',
   SELECT_SALARY = 'salary',
   SELECT_POSITION = 'position',
+  SELECT_ENGLISH_LEVEL = 'english_level',
   YES = 'yes',
   NO = 'no'
 }
