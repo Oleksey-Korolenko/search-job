@@ -59,16 +59,16 @@ export default class TelegramService extends DBConnection {
     chatId: string,
     messageId: number,
     userId: string,
-    command: string
+    text: string
   ) => {
-    if (command[0] === '/') {
+    if (text[0] === '/') {
       // TODO something
+      return;
     }
 
     const existMessage = await this.#telegramMessageService.getByTgInfo(
       userId,
-      chatId,
-      command as arrayValuesToType<typeof ETelegramMessageType.values>
+      chatId
     );
 
     if (existMessage === undefined) {
@@ -90,7 +90,7 @@ export default class TelegramService extends DBConnection {
     switch (existMessage.telegramMessageType) {
       case 'salary': {
         try {
-          const salary = this.#telegramValidator.salary(command);
+          const salary = this.#telegramValidator.salary(text);
 
           this.updateTemporaryUser(existMessage.temporaryUserId, {
             type: 'worker',
@@ -101,7 +101,7 @@ export default class TelegramService extends DBConnection {
             chatId,
             userId,
             +messageId,
-            command,
+            text,
             ETelegramButtonType.SELECT_SALARY,
             existMessage.temporaryUserId
           );
@@ -116,7 +116,7 @@ export default class TelegramService extends DBConnection {
             userId,
             chatId,
             existMessage.messageId,
-            command as arrayValuesToType<typeof ETelegramMessageType.values>
+            existMessage.telegramMessageType
           );
 
           break;
@@ -127,7 +127,7 @@ export default class TelegramService extends DBConnection {
             userId,
             chatId,
             existMessage.messageId,
-            command as arrayValuesToType<typeof ETelegramMessageType.values>
+            existMessage.telegramMessageType
           );
 
           const { text, extra } = this.#telegramView.selectSalary(
@@ -155,14 +155,14 @@ export default class TelegramService extends DBConnection {
       case 'position': {
         this.updateTemporaryUser(existMessage.temporaryUserId, {
           type: existTemporaryUser.user.type,
-          position: command
+          position: text
         });
 
         await this.selectSuccess(
           chatId,
           userId,
           +messageId,
-          command,
+          text,
           ETelegramButtonType.SELECT_POSITION,
           existMessage.temporaryUserId
         );
@@ -171,7 +171,7 @@ export default class TelegramService extends DBConnection {
           userId,
           chatId,
           existMessage.messageId,
-          command as arrayValuesToType<typeof ETelegramMessageType.values>
+          existMessage.telegramMessageType
         );
 
         break;
@@ -189,11 +189,12 @@ export default class TelegramService extends DBConnection {
     userId: string,
     typeOperation: ETelegramConfirmButtonType
   ) => {
-    const existMessage = await this.#telegramMessageService.getByTgInfo(
-      userId,
-      chatId,
-      typeOperation as arrayValuesToType<typeof ETelegramMessageType.values>
-    );
+    const existMessage =
+      await this.#telegramMessageService.getByTgInfoWithOperationType(
+        userId,
+        chatId,
+        typeOperation as arrayValuesToType<typeof ETelegramMessageType.values>
+      );
 
     if (existMessage === undefined) {
       return;

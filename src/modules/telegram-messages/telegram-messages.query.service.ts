@@ -24,7 +24,20 @@ export default class TelegramMessageQueryService extends DBConnection {
       .all()
       .then(res => res[0] as TelegramMessagesType | undefined);
 
-  public getByTgInfo = (
+  public getByTgInfo = (userId: string, chatId: string) =>
+    this.#telegramMessage
+      .select()
+      .where(
+        and([
+          eq(this.#telegramMessage.userId, userId),
+          eq(this.#telegramMessage.chatId, chatId)
+        ])
+      )
+      .orderBy(table => table.messageId, Order.DESC)
+      .all()
+      .then(res => res[0] as TelegramMessagesType | undefined);
+
+  public getByTgInfoWithOperationType = (
     userId: string,
     chatId: string,
     operationType: arrayValuesToType<typeof ETelegramMessageType.values>

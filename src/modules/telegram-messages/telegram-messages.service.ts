@@ -26,10 +26,16 @@ export default class TelegramMessageService extends DBConnection {
 
   public getByTgInfo = (
     userId: string,
+    chatId: string
+  ): Promise<TelegramMessagesType | undefined> =>
+    this.#telegramMessageQueryService.getByTgInfo(userId, chatId);
+
+  public getByTgInfoWithOperationType = (
+    userId: string,
     chatId: string,
     operationType: arrayValuesToType<typeof ETelegramMessageType.values>
   ): Promise<TelegramMessagesType | undefined> =>
-    this.#telegramMessageQueryService.getByTgInfo(
+    this.#telegramMessageQueryService.getByTgInfoWithOperationType(
       userId,
       chatId,
       operationType
