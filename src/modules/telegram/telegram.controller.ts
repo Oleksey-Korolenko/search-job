@@ -181,7 +181,7 @@ export default async (router: typeof Router, db: DB) => {
           checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.message.from.id}`,
           +temporaryUserId,
-          ETelegramCheckboxButtonType.CITY,
+          extraOperationType as ETelegramCheckboxButtonType,
           'add',
           +item
         );
@@ -193,7 +193,7 @@ export default async (router: typeof Router, db: DB) => {
           checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.message.from.id}`,
           +temporaryUserId,
-          ETelegramCheckboxButtonType.CITY,
+          extraOperationType as ETelegramCheckboxButtonType,
           'delete',
           +item
         );
@@ -205,7 +205,7 @@ export default async (router: typeof Router, db: DB) => {
           checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.message.from.id}`,
           +temporaryUserId,
-          ETelegramCheckboxButtonType.CITY,
+          extraOperationType as ETelegramCheckboxButtonType,
           'save',
           +item
         );

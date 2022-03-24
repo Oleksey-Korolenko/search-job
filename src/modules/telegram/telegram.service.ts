@@ -273,6 +273,7 @@ export default class TelegramService extends DBConnection {
           );
         }
       }
+      // TODO something for default case
     }
   };
 
