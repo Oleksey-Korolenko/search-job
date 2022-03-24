@@ -42,6 +42,9 @@ const messagesInEnglish = {
     ERROR:
       "Sorry, but we don't know that number. Do you want to try to enter a salary again?"
   },
+  POSITION: {
+    DEFAULT: 'Please select which position you are applying for'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
     BACK: 'Back ⬅️',

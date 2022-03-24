@@ -319,6 +319,21 @@ export default class TelegramView {
 
   // salary section end
 
+  // position section start
+
+  public selectPosition = (
+    language: languageTypes
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[language].POSITION.DEFAULT, {});
+
+    return { text, extra };
+  };
+
+  // position section end
+
   // edit section start
 
   public selectSuccess = (

@@ -109,6 +109,19 @@ export default class TelegramService extends DBConnection {
             existMessage.temporaryUserId
           );
 
+          await this.selectPosition(
+            chatId,
+            userId,
+            existMessage.temporaryUserId
+          );
+
+          await this.#telegramMessageService.deleteByTgInfo(
+            userId,
+            chatId,
+            existMessage.messageId,
+            command as arrayValuesToType<typeof ETelegramMessageType.values>
+          );
+
           break;
         } catch (e) {
           this.#catchError(e);
@@ -141,6 +154,30 @@ export default class TelegramService extends DBConnection {
             telegramMessageType: 'salary'
           });
         }
+      }
+      case 'position': {
+        this.updateTemporaryUser(userId, {
+          type: existTemporaryUser.user.type,
+          position: command
+        });
+
+        await this.selectSuccess(
+          chatId,
+          userId,
+          +messageId,
+          command,
+          ETelegramButtonType.SELECT_POSITION,
+          existMessage.temporaryUserId
+        );
+
+        await this.#telegramMessageService.deleteByTgInfo(
+          userId,
+          chatId,
+          existMessage.messageId,
+          command as arrayValuesToType<typeof ETelegramMessageType.values>
+        );
+
+        break;
       }
     }
   };
@@ -521,6 +558,49 @@ export default class TelegramService extends DBConnection {
   };
 
   // worker salary section end
+
+  // user position section start
+
+  public selectPosition = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number
+  ) => {
+    const existTelegramInfo = await this.#getTelegramUser(userId, chatId);
+
+    if (existTelegramInfo === undefined) {
+      return;
+    }
+
+    const existTemporaryUser = await this.#getTemporaryUserById(
+      temporaryUserId,
+      chatId
+    );
+
+    if (existTemporaryUser === undefined) {
+      return;
+    }
+
+    const { text, extra } = this.#telegramView.selectPosition(
+      existTelegramInfo.language
+    );
+
+    const result = await this.#telegramApiService.sendMessage<ITelegramMessage>(
+      chatId,
+      text,
+      extra
+    );
+
+    await this.#telegramMessageService.save({
+      chatId: `${result.result.chat.id}`,
+      userId: `${result.result.from.id}`,
+      messageId: `${result.result.message_id}`,
+      temporaryUserId,
+      telegramMessageType: 'position'
+    });
+  };
+
+  // user position section end
 
   // user language section start
 
