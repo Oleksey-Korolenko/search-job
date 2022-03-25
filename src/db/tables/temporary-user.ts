@@ -15,7 +15,6 @@ export interface IWorker {
   skillsToWorkers?: number[];
   employmentOptions?: number[];
   cities?: number[];
-  categoryItems?: number[];
 }
 
 export interface IEmployer {

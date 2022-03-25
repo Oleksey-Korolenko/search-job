@@ -22,7 +22,8 @@ import TemporaryUserService from '@modules/temporary-user/temporary-user.service
 import {
   IInlineKeyboardButton,
   INotPreparedTranslate,
-  ITelegramMessage
+  ITelegramMessage,
+  IWorkerFinally
 } from './interface';
 import TelegramMessageService from '@modules/telegram-messages/telegram-messages.service';
 import { TelegramValidate } from './telegram.validator';
@@ -221,6 +222,13 @@ export default class TelegramService extends DBConnection {
           chatId,
           existMessage.messageId,
           existMessage.telegramMessageType
+        );
+
+        await this.selectFinnalyResult(
+          chatId,
+          userId,
+          existMessage.temporaryUserId,
+          'worker'
         );
 
         break;
@@ -1334,6 +1342,67 @@ export default class TelegramService extends DBConnection {
   };
 
   // user edit info section end
+
+  // user finally result section start
+
+  public selectFinnalyResult = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number,
+    userRole: 'worker' | 'employer'
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
+
+    if (userRole === 'worker') {
+      const worker = existTemporaryUser.user as IWorker;
+
+      const category = await this.#categoryItemService.getById(
+        worker.categoryItemId
+      );
+
+      const skills = await this.#skillsToCategoryService.getBySkillIds(
+        worker.skillsToWorkers
+      );
+
+      const cities = await this.#cityService.getByIds(worker.cities);
+
+      const employmentOptions = await this.#employmentOptionsService.getByIds(
+        worker.employmentOptions
+      );
+
+      const finallyWorker = {
+        categoryItem: category,
+        workExperience: worker.workExperience,
+        expectedSalary: worker.expectedSalary,
+        position: worker.position,
+        englishLevel: worker.englishLevel,
+        workExperienceDetails: worker.workExperienceDetails,
+        skillsToWorkers: skills,
+        employmentOptions,
+        cities
+      } as IWorkerFinally;
+
+      const { text, extra } = this.#telegramView.selectFinallyWorker(
+        existTelegramInfo.language,
+        finallyWorker,
+        temporaryUserId
+      );
+
+      await this.#telegramApiService.sendMessage(chatId, text, extra);
+    }
+  };
+
+  // user finally result section end
 
   #telegramCheck = async (
     chatId: number | string,

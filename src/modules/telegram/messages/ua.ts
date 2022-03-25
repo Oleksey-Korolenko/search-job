@@ -71,6 +71,18 @@ const messagesInuarainian = {
   DESCRIPTION_TO_EXPERIENCE: {
     DEFAULT: 'Будь ласка, опишіть ваш досвід більш розгорнуто'
   },
+  WORKER: {
+    TITLE: '<strong>{name}</strong>\n\n',
+    CATEGORY:
+      'По спеціальності <strong>{category}</strong>. Претендує на посаду <strong>{position}</strong>.\n\n',
+    EXPERIENCE: 'Досвідом: <strong>{experience}</strong>\n',
+    SALARY: 'Зарплатні побажання: <strong>{salary}</strong>\n',
+    ENGLISH: 'Рівень англійскої мови: <strong>{english}</strong>\n\n',
+    SKILLS: 'Головні навички:\n\n',
+    CITIES: '\nМіста у яких шукається робота:\n\n',
+    EMPLOYMENT_OPTIONS: '\nДоступні варіанти зайнятості:\n\n',
+    EXPERIENCE_DETAILS: '\nДетальна інформація:\n\n'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',
     BACK: 'Назад ⬅️',

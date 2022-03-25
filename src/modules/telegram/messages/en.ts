@@ -73,6 +73,18 @@ const messagesInEnglish = {
   DESCRIPTION_TO_EXPERIENCE: {
     DEFAULT: 'Please describe your experience in more detail'
   },
+  WORKER: {
+    TITLE: '<strong>{name}</strong>\n\n',
+    CATEGORY:
+      'Specialty <strong>{category}</strong>. Applies for <strong>{position}</strong>.\n\n',
+    EXPERIENCE: 'Experience: <strong>{experience}</strong>\n',
+    SALARY: 'Salary wishes: <strong>{salary}</strong>\n',
+    ENGLISH: 'English level: <strong>{english}</strong>\n\n',
+    SKILLS: 'Main skills:\n\n',
+    CITIES: '\nCities looking for work:\n\n',
+    EMPLOYMENT_OPTIONS: '\nAvailable employment options:\n\n',
+    EXPERIENCE_DETAILS: '\nDetails:\n\n'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
     BACK: 'Back ⬅️',
