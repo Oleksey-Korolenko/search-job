@@ -1,7 +1,7 @@
 import { Translate } from '@custom-types/translate.type';
 import { AbstractTable, ExtractModel } from 'drizzle-orm';
 
-export default class EmpoymentOptionsTable extends AbstractTable<EmpoymentOptionsTable> {
+export default class EmploymentOptionsTable extends AbstractTable<EmploymentOptionsTable> {
   public id = this.serial('id').primaryKey();
 
   public name = this.varchar('name').notNull();
@@ -13,4 +13,4 @@ export default class EmpoymentOptionsTable extends AbstractTable<EmpoymentOption
   }
 }
 
-export type EmpoymentOptionsType = ExtractModel<EmpoymentOptionsTable>;
+export type EmploymentOptionsType = ExtractModel<EmploymentOptionsTable>;
