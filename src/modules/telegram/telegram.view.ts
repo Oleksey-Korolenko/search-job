@@ -355,6 +355,8 @@ export default class TelegramView {
 
     const preparedCitiesTranslate = this.preparedTranslate(language, cities);
 
+    console.log(preparedCitiesTranslate);
+
     extra.reply_markup = this.#getCheckboxButtonsKeyboardMarkup(
       language,
       temporaryUserId,
@@ -646,8 +648,13 @@ export default class TelegramView {
         ))
     );
 
-    text += this.#preparedText(messages[language].WORKER.EXPERIENCE_DETAILS, {
-      details: worker.workExperienceDetails
+    text += this.#preparedText(
+      messages[language].WORKER.EXPERIENCE_DETAILS,
+      {}
+    );
+
+    text += this.#preparedText(messages[language].DEFAULT_MESSAGE.LIST_ITEM, {
+      item: worker.workExperienceDetails
     });
 
     extra.reply_markup = this.#getFinallyButtonKeyboardMarkup(
@@ -744,7 +751,7 @@ export default class TelegramView {
       preparedItemTranslate.forEach(
         it =>
           (text += this.#preparedText(
-            messages[language].DEFAULT_MESSAGE.SUCCESS,
+            messages[language].DEFAULT_MESSAGE.LIST_ITEM,
             {
               item: it.translate
             }
@@ -833,7 +840,7 @@ export default class TelegramView {
       }
       case '48': {
         return this.#preparedText(
-          messages[language].EXPERIENSE.BUTTON.THREE_YEARS,
+          messages[language].EXPERIENSE.BUTTON.FOUR_YEARS,
           {}
         );
       }
@@ -890,13 +897,15 @@ export default class TelegramView {
       case 'ua': {
         return itemList.map(it => ({
           id: it.id,
-          translate: it.name
+          translate: it.name,
+          isExist: it.isExist
         }));
       }
       default: {
         return itemList.map(it => ({
           id: it.id,
-          translate: it.translate[language]
+          translate: it.translate[language],
+          isExist: it.isExist
         }));
       }
     }

@@ -38,15 +38,15 @@ export default async (router: typeof Router, db: DB) => {
           break;
         }
         default: {
-          await telegramService.checkCommand(
-            `${checkedBody.message.chat.id}`,
-            checkedBody.message.message_id,
-            `${checkedBody.message.from.id}`,
-            checkedBody.message.text
-          );
           break;
         }
       }
+    } else {
+      await telegramService.checkCommand(
+        `${checkedBody.message.chat.id}`,
+        `${checkedBody.message.from.id}`,
+        checkedBody.message.text
+      );
     }
   };
 
@@ -69,21 +69,22 @@ export default async (router: typeof Router, db: DB) => {
     switch (operationType) {
       case ETelegramButtonType.SELECT_LANGUAGE: {
         await telegramService.saveTelegramInfo({
-          userId: `${checkedBody.callback_query.message.from.id}`,
+          userId: `${checkedBody.callback_query.from.id}`,
           language: item as languageTypes,
           username: checkedBody.callback_query.message.from.username
         });
         await telegramService.selectRole(
           checkedBody.callback_query.message.chat.id,
           checkedBody.callback_query.message.message_id,
-          `${checkedBody.callback_query.message.from.id}`
+          `${checkedBody.callback_query.from.id}`
         );
         break;
       }
       case ETelegramButtonType.SELECT_ROLE: {
         await telegramService.actionForRole(
           checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
+          checkedBody.callback_query.message.message_id,
           item as arrayValuesToType<typeof EUserRole.values>
         );
         break;
@@ -92,7 +93,7 @@ export default async (router: typeof Router, db: DB) => {
         await telegramService.selectCategoryItems(
           checkedBody.callback_query.message.chat.id,
           checkedBody.callback_query.message.message_id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           +item,
           +temporaryUserId
         );
@@ -101,9 +102,10 @@ export default async (router: typeof Router, db: DB) => {
       case ETelegramButtonType.BACK: {
         await telegramService.selectCategory(
           checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           checkedBody.callback_query.message.message_id
         );
+        // TODO break
         break;
       }
       case ETelegramButtonType.SELECT_CATEGORY_ITEM: {
@@ -113,7 +115,7 @@ export default async (router: typeof Router, db: DB) => {
         });
         await telegramService.selectSuccessWithInlineKeyboard(
           checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           checkedBody.callback_query.message.message_id,
           checkedBody.callback_query.data,
           checkedBody.callback_query.message.reply_markup.inline_keyboard,
@@ -122,7 +124,7 @@ export default async (router: typeof Router, db: DB) => {
         );
         await telegramService.selectExperience(
           checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           +temporaryUserId
         );
         break;
@@ -136,7 +138,7 @@ export default async (router: typeof Router, db: DB) => {
         });
         await telegramService.selectSuccessWithInlineKeyboard(
           checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           checkedBody.callback_query.message.message_id,
           checkedBody.callback_query.data,
           checkedBody.callback_query.message.reply_markup.inline_keyboard,
@@ -145,7 +147,7 @@ export default async (router: typeof Router, db: DB) => {
         );
         await telegramService.selectSalary(
           checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           +temporaryUserId
         );
         break;
@@ -157,7 +159,7 @@ export default async (router: typeof Router, db: DB) => {
         });
         await telegramService.selectCity(
           checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           +temporaryUserId
         );
         break;
@@ -169,7 +171,7 @@ export default async (router: typeof Router, db: DB) => {
         });
         await telegramService.selectCity(
           checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           +temporaryUserId
         );
         break;
@@ -178,7 +180,7 @@ export default async (router: typeof Router, db: DB) => {
         await telegramService.checkCheckboxButton(
           checkedBody.callback_query.message.chat.id,
           checkedBody.callback_query.message.message_id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           +temporaryUserId,
           extraOperationType as ETelegramCheckboxButtonType,
           'add',
@@ -190,7 +192,7 @@ export default async (router: typeof Router, db: DB) => {
         await telegramService.checkCheckboxButton(
           checkedBody.callback_query.message.chat.id,
           checkedBody.callback_query.message.message_id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           +temporaryUserId,
           extraOperationType as ETelegramCheckboxButtonType,
           'delete',
@@ -202,7 +204,7 @@ export default async (router: typeof Router, db: DB) => {
         await telegramService.checkCheckboxButton(
           checkedBody.callback_query.message.chat.id,
           checkedBody.callback_query.message.message_id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           +temporaryUserId,
           extraOperationType as ETelegramCheckboxButtonType,
           'save',
@@ -214,7 +216,7 @@ export default async (router: typeof Router, db: DB) => {
         await telegramService.checkYesButton(
           `${checkedBody.callback_query.message.chat.id}`,
           checkedBody.callback_query.message.message_id,
-          `${checkedBody.callback_query.message.from.id}`,
+          `${checkedBody.callback_query.from.id}`,
           item as ETelegramConfirmButtonType
         );
         break;
@@ -226,6 +228,8 @@ export default async (router: typeof Router, db: DB) => {
   };
 
   routes.post('/update', async (req: Request, res: Response) => {
+    console.log(req.body);
+
     if ({}.hasOwnProperty.call(req.body, 'message')) {
       const checkedBody = req.body as
         | ITelegramUpdateResponse

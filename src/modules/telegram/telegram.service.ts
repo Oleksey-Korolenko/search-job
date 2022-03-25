@@ -75,19 +75,19 @@ export default class TelegramService extends DBConnection {
 
   public checkCommand = async (
     chatId: string,
-    messageId: number,
     userId: string,
     text: string
   ) => {
-    if (text[0] === '/') {
-      // TODO something
-      return;
-    }
+    console.log(1);
 
     const existMessage = await this.#telegramMessageService.getByTgInfo(
       userId,
       chatId
     );
+
+    console.log(2);
+    console.log(userId, chatId);
+    console.log(existMessage);
 
     if (existMessage === undefined) {
       return;
@@ -99,9 +99,16 @@ export default class TelegramService extends DBConnection {
       existMessage.temporaryUserId
     );
 
+    console.log(3);
+
     if (telegramInfo === undefined) {
       return;
     }
+
+    console.log(
+      telegramInfo.existTelegramInfo,
+      telegramInfo.existTemporaryUser
+    );
 
     const { existTelegramInfo, existTemporaryUser } = telegramInfo;
 
@@ -118,7 +125,7 @@ export default class TelegramService extends DBConnection {
           await this.selectSuccess(
             chatId,
             userId,
-            +messageId,
+            +existMessage.messageId,
             text,
             ETelegramEditButtonType.SALARY,
             'item',
@@ -163,8 +170,8 @@ export default class TelegramService extends DBConnection {
             );
 
           await this.#telegramMessageService.save({
-            chatId: `${result.result.chat.id}`,
-            userId: `${result.result.from.id}`,
+            chatId: `${chatId}`,
+            userId: `${userId}`,
             messageId: `${result.result.message_id}`,
             temporaryUserId: existMessage.temporaryUserId,
             telegramMessageType: 'salary'
@@ -180,7 +187,7 @@ export default class TelegramService extends DBConnection {
         await this.selectSuccess(
           chatId,
           userId,
-          +messageId,
+          +existMessage.messageId,
           text,
           ETelegramEditButtonType.POSITION,
           'item',
@@ -221,7 +228,7 @@ export default class TelegramService extends DBConnection {
         await this.selectSuccess(
           chatId,
           userId,
-          +messageId,
+          +existMessage.messageId,
           text,
           ETelegramEditButtonType.EXPERIENCE_DETAILS,
           'item',
@@ -246,14 +253,14 @@ export default class TelegramService extends DBConnection {
       }
       case 'name': {
         this.updateTemporaryUser(existMessage.temporaryUserId, {
-          type: 'employer',
+          type: existTemporaryUser.user.type,
           name: text
         });
 
         await this.selectSuccess(
           chatId,
           userId,
-          +messageId,
+          +existMessage.messageId,
           text,
           ETelegramEditButtonType.NAME,
           'item',
@@ -271,8 +278,7 @@ export default class TelegramService extends DBConnection {
           await this.selectCategory(
             chatId,
             userId,
-            existMessage.temporaryUserId,
-            messageId
+            existMessage.temporaryUserId
           );
         }
 
@@ -295,7 +301,7 @@ export default class TelegramService extends DBConnection {
         await this.selectSuccess(
           chatId,
           userId,
-          +messageId,
+          +existMessage.messageId,
           text,
           ETelegramEditButtonType.COMPANY,
           'item',
@@ -325,7 +331,7 @@ export default class TelegramService extends DBConnection {
           await this.selectSuccess(
             chatId,
             userId,
-            +messageId,
+            +existMessage.messageId,
             text,
             ETelegramEditButtonType.PHONE,
             'item',
@@ -371,8 +377,8 @@ export default class TelegramService extends DBConnection {
             );
 
           await this.#telegramMessageService.save({
-            chatId: `${result.result.chat.id}`,
-            userId: `${result.result.from.id}`,
+            chatId: `${chatId}`,
+            userId: `${userId}`,
             messageId: `${result.result.message_id}`,
             temporaryUserId: existMessage.temporaryUserId,
             telegramMessageType: 'phone'
@@ -542,6 +548,7 @@ export default class TelegramService extends DBConnection {
   public actionForRole = async (
     chatId: number | string,
     userId: string,
+    messageId: number,
     role: arrayValuesToType<typeof EUserRole.values>
   ) => {
     try {
@@ -561,7 +568,12 @@ export default class TelegramService extends DBConnection {
               type: 'worker'
             }
           });
-          await this.selectFullName(chatId, userId, temporaryUser.id);
+          await this.selectFullName(
+            chatId,
+            userId,
+            messageId,
+            temporaryUser.id
+          );
           return temporaryUser.id;
         }
         case 'employer': {
@@ -573,7 +585,12 @@ export default class TelegramService extends DBConnection {
               type: 'employer'
             }
           });
-          await this.selectFullName(chatId, userId, temporaryUser.id);
+          await this.selectFullName(
+            chatId,
+            userId,
+            messageId,
+            temporaryUser.id
+          );
           return temporaryUser.id;
         }
       }
@@ -640,12 +657,12 @@ export default class TelegramService extends DBConnection {
   public updateTemporaryUser = async (
     temporaryUserId: number,
     user: IWorker | IEmployer
-  ) => {
+  ): Promise<TemporaryUserType | undefined> => {
     const temporaryUser = await this.#temporaryUserService.getById(
       temporaryUserId
     );
 
-    await this.#temporaryUserService.updateUser(temporaryUser.id, {
+    return await this.#temporaryUserService.updateUser(temporaryUser.id, {
       ...temporaryUser.user,
       ...user
     });
@@ -803,8 +820,8 @@ export default class TelegramService extends DBConnection {
     );
 
     await this.#telegramMessageService.save({
-      chatId: `${result.result.chat.id}`,
-      userId: `${result.result.from.id}`,
+      chatId: `${chatId}`,
+      userId: `${userId}`,
       messageId: `${result.result.message_id}`,
       temporaryUserId,
       telegramMessageType: 'salary'
@@ -843,8 +860,8 @@ export default class TelegramService extends DBConnection {
     );
 
     await this.#telegramMessageService.save({
-      chatId: `${result.result.chat.id}`,
-      userId: `${result.result.from.id}`,
+      chatId: `${chatId}`,
+      userId: `${userId}`,
       messageId: `${result.result.message_id}`,
       temporaryUserId,
       telegramMessageType: 'position'
@@ -963,17 +980,26 @@ export default class TelegramService extends DBConnection {
       }
     }
 
-    await this.updateTemporaryUser(temporaryUserId, {
-      type: 'worker',
-      cities: preparedCityIds
-    });
+    const updatedTemporaryUser = await this.updateTemporaryUser(
+      temporaryUserId,
+      {
+        type: 'worker',
+        cities: preparedCityIds
+      }
+    );
+
+    const updatedTemporaryUserInfo = updatedTemporaryUser.user as IWorker;
 
     const existCities = await this.#cityService.getByIds(preparedCityIds);
 
     const notPreparedTranslate = await this.#getPreparedCheckboxItems(
       ETelegramCheckboxButtonType.CITY,
-      temporaryUserInfo?.cities === undefined ? [] : temporaryUserInfo.cities
+      updatedTemporaryUserInfo?.cities === undefined
+        ? []
+        : updatedTemporaryUserInfo.cities
     );
+
+    console.log(notPreparedTranslate);
 
     const { text, extra } = this.#telegramView.selectCity(
       existTelegramInfo.language,
@@ -1010,16 +1036,15 @@ export default class TelegramService extends DBConnection {
 
     const temporaryUserInfo = existTemporaryUser.user as IWorker;
 
-    const notPreparedTranslate = await this.#getPreparedCheckboxItems(
-      ETelegramCheckboxButtonType.CITY,
-      temporaryUserInfo?.cities === undefined ? [] : temporaryUserInfo.cities
+    const existCities = await this.#cityService.getByIds(
+      temporaryUserInfo.cities
     );
 
     await this.selectSuccess(
       chatId,
       userId,
       messageId,
-      notPreparedTranslate,
+      existCities as INotPreparedTranslate[],
       ETelegramEditButtonType.CITY,
       'list',
       temporaryUserId
@@ -1121,10 +1146,15 @@ export default class TelegramService extends DBConnection {
       }
     }
 
-    await this.updateTemporaryUser(temporaryUserId, {
-      type: 'worker',
-      skillsToWorkers: preparedSkillIds
-    });
+    const updatedTemporaryUser = await this.updateTemporaryUser(
+      temporaryUserId,
+      {
+        type: 'worker',
+        skillsToWorkers: preparedSkillIds
+      }
+    );
+
+    const updatedTemporaryUserInfo = updatedTemporaryUser.user as IWorker;
 
     const existSkills = await this.#skillsToCategoryService.getBySkillIds(
       preparedSkillIds
@@ -1132,12 +1162,12 @@ export default class TelegramService extends DBConnection {
 
     const notPreparedTranslate = await this.#getPreparedCheckboxItems(
       ETelegramCheckboxButtonType.SKILL,
-      temporaryUserInfo?.skillsToWorkers === undefined
+      updatedTemporaryUserInfo?.skillsToWorkers === undefined
         ? []
-        : temporaryUserInfo.skillsToWorkers,
-      temporaryUserInfo?.categoryItemId === undefined
+        : updatedTemporaryUserInfo.skillsToWorkers,
+      updatedTemporaryUserInfo?.categoryItemId === undefined
         ? -1
-        : temporaryUserInfo.categoryItemId
+        : updatedTemporaryUserInfo.categoryItemId
     );
 
     const categoryItem = await this.#categoryItemService.getById(
@@ -1180,21 +1210,15 @@ export default class TelegramService extends DBConnection {
 
     const temporaryUserInfo = existTemporaryUser.user as IWorker;
 
-    const notPreparedTranslate = await this.#getPreparedCheckboxItems(
-      ETelegramCheckboxButtonType.SKILL,
-      temporaryUserInfo?.skillsToWorkers === undefined
-        ? []
-        : temporaryUserInfo.skillsToWorkers,
-      temporaryUserInfo?.categoryItemId === undefined
-        ? -1
-        : temporaryUserInfo.categoryItemId
+    const existSkills = await this.#skillsToCategoryService.getBySkillIds(
+      temporaryUserInfo.skillsToWorkers
     );
 
     await this.selectSuccess(
       chatId,
       userId,
       messageId,
-      notPreparedTranslate,
+      existSkills as INotPreparedTranslate[],
       ETelegramEditButtonType.SKILL,
       'list',
       temporaryUserId
@@ -1270,17 +1294,17 @@ export default class TelegramService extends DBConnection {
     switch (typeOperation) {
       case 'add': {
         preparedEmploymentOptionIds =
-          temporaryUserInfo?.skillsToWorkers === undefined
+          temporaryUserInfo?.employmentOptions === undefined
             ? [employmentOptionsId]
-            : [...temporaryUserInfo.skillsToWorkers, employmentOptionsId];
+            : [...temporaryUserInfo.employmentOptions, employmentOptionsId];
 
         break;
       }
       case 'delete': {
         preparedEmploymentOptionIds = this.#deleteItemFromArr(
-          temporaryUserInfo?.skillsToWorkers === undefined
+          temporaryUserInfo?.employmentOptions === undefined
             ? []
-            : temporaryUserInfo.skillsToWorkers,
+            : temporaryUserInfo.employmentOptions,
           employmentOptionsId
         );
 
@@ -1288,10 +1312,15 @@ export default class TelegramService extends DBConnection {
       }
     }
 
-    await this.updateTemporaryUser(temporaryUserId, {
-      type: 'worker',
-      skillsToWorkers: preparedEmploymentOptionIds
-    });
+    const updatedTemporaryUser = await this.updateTemporaryUser(
+      temporaryUserId,
+      {
+        type: 'worker',
+        employmentOptions: preparedEmploymentOptionIds
+      }
+    );
+
+    const updatedTemporaryUserInfo = updatedTemporaryUser.user as IWorker;
 
     const existEmploymentOptions =
       await this.#employmentOptionsService.getByIds(
@@ -1300,9 +1329,9 @@ export default class TelegramService extends DBConnection {
 
     const notPreparedTranslate = await this.#getPreparedCheckboxItems(
       ETelegramCheckboxButtonType.EMPLOYMENT_OPTIONS,
-      temporaryUserInfo?.employmentOptions === undefined
+      updatedTemporaryUserInfo?.employmentOptions === undefined
         ? []
-        : temporaryUserInfo.employmentOptions
+        : updatedTemporaryUserInfo.employmentOptions
     );
 
     const { text, extra } = this.#telegramView.selectEmploymentOptions(
@@ -1340,22 +1369,22 @@ export default class TelegramService extends DBConnection {
 
     const temporaryUserInfo = existTemporaryUser.user as IWorker;
 
-    const notPreparedTranslate = await this.#getPreparedCheckboxItems(
-      ETelegramCheckboxButtonType.EMPLOYMENT_OPTIONS,
-      temporaryUserInfo?.employmentOptions === undefined
-        ? []
-        : temporaryUserInfo.employmentOptions
-    );
+    const existEmploymentOptions =
+      await this.#employmentOptionsService.getByIds(
+        temporaryUserInfo.employmentOptions
+      );
 
     await this.selectSuccess(
       chatId,
       userId,
       messageId,
-      notPreparedTranslate,
+      existEmploymentOptions as INotPreparedTranslate[],
       ETelegramEditButtonType.EMPLOYMENT_OPTIONS,
       'list',
       temporaryUserId
     );
+
+    await this.selectExperienceDetails(chatId, userId, temporaryUserId);
   };
 
   // worker employment options section end
@@ -1390,8 +1419,8 @@ export default class TelegramService extends DBConnection {
     );
 
     await this.#telegramMessageService.save({
-      chatId: `${result.result.chat.id}`,
-      userId: `${result.result.from.id}`,
+      chatId: `${chatId}`,
+      userId: `${userId}`,
       messageId: `${result.result.message_id}`,
       temporaryUserId,
       telegramMessageType: 'details'
@@ -1405,6 +1434,7 @@ export default class TelegramService extends DBConnection {
   public selectFullName = async (
     chatId: number | string,
     userId: string,
+    messageId: number,
     temporaryUserId: number
   ) => {
     const telegramInfo = await this.#telegramCheck(
@@ -1423,15 +1453,17 @@ export default class TelegramService extends DBConnection {
       existTelegramInfo.language
     );
 
-    const result = await this.#telegramApiService.sendMessage<ITelegramMessage>(
-      chatId,
-      text,
-      extra
-    );
+    const result =
+      await this.#telegramApiService.updateMessage<ITelegramMessage>(
+        chatId,
+        messageId,
+        text,
+        extra
+      );
 
     await this.#telegramMessageService.save({
-      chatId: `${result.result.chat.id}`,
-      userId: `${result.result.from.id}`,
+      chatId: `${chatId}`,
+      userId: `${userId}`,
       messageId: `${result.result.message_id}`,
       temporaryUserId,
       telegramMessageType: 'name'
@@ -1470,8 +1502,8 @@ export default class TelegramService extends DBConnection {
     );
 
     await this.#telegramMessageService.save({
-      chatId: `${result.result.chat.id}`,
-      userId: `${result.result.from.id}`,
+      chatId: `${chatId}`,
+      userId: `${userId}`,
       messageId: `${result.result.message_id}`,
       temporaryUserId,
       telegramMessageType: 'company'
@@ -1511,8 +1543,8 @@ export default class TelegramService extends DBConnection {
     );
 
     await this.#telegramMessageService.save({
-      chatId: `${result.result.chat.id}`,
-      userId: `${result.result.from.id}`,
+      chatId: `${chatId}`,
+      userId: `${userId}`,
       messageId: `${result.result.message_id}`,
       temporaryUserId,
       telegramMessageType: 'phone'
@@ -1654,6 +1686,7 @@ export default class TelegramService extends DBConnection {
       );
 
       const finallyWorker = {
+        name: worker.name,
         categoryItem: category,
         workExperience: worker.workExperience,
         expectedSalary: worker.expectedSalary,
