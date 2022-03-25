@@ -556,6 +556,24 @@ export default class TelegramView {
 
   // employment options section end
 
+  // experience details section start
+
+  public selectExperienceDetails = (
+    language: languageTypes
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(
+      messages[language].DESCRIPTION_TO_EXPERIENCE.DEFAULT,
+      {}
+    );
+
+    return { text, extra };
+  };
+
+  // experience details section end
+
   // edit section start
 
   public selectSuccess = (

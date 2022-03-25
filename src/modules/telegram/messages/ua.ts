@@ -68,6 +68,9 @@ const messagesInuarainian = {
     DEFAULT: 'Будь ласка, виберіть один чи декілька варіантів зайнятості',
     EXIST_SKILLS: '\n\nВже обран ряд варіантів:\n\n'
   },
+  DESCRIPTION_TO_EXPERIENCE: {
+    DEFAULT: 'Будь ласка, опишіть ваш досвід більш розгорнуто'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',
     BACK: 'Назад ⬅️',

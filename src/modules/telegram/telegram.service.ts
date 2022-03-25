@@ -200,6 +200,31 @@ export default class TelegramService extends DBConnection {
 
         break;
       }
+      case 'details': {
+        this.updateTemporaryUser(existMessage.temporaryUserId, {
+          type: existTemporaryUser.user.type,
+          position: text
+        });
+
+        await this.selectSuccess(
+          chatId,
+          userId,
+          +messageId,
+          text,
+          ETelegramEditButtonType.EXPERIENCE_DETAILS,
+          'item',
+          existMessage.temporaryUserId
+        );
+
+        await this.#telegramMessageService.deleteByTgInfo(
+          userId,
+          chatId,
+          existMessage.messageId,
+          existMessage.telegramMessageType
+        );
+
+        break;
+      }
     }
   };
 
@@ -1174,6 +1199,46 @@ export default class TelegramService extends DBConnection {
   };
 
   // worker employment options section end
+
+  // worker experience details section start
+
+  public selectExperienceDetails = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo } = telegramInfo;
+
+    const { text, extra } = this.#telegramView.selectExperienceDetails(
+      existTelegramInfo.language
+    );
+
+    const result = await this.#telegramApiService.sendMessage<ITelegramMessage>(
+      chatId,
+      text,
+      extra
+    );
+
+    await this.#telegramMessageService.save({
+      chatId: `${result.result.chat.id}`,
+      userId: `${result.result.from.id}`,
+      messageId: `${result.result.message_id}`,
+      temporaryUserId,
+      telegramMessageType: 'details'
+    });
+  };
+
+  // worker experience details section end
 
   // user language section start
 

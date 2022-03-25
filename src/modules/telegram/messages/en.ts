@@ -70,6 +70,9 @@ const messagesInEnglish = {
     EXIST_SKILLS:
       '\n\nA employment options what have already been selected:\n\n'
   },
+  DESCRIPTION_TO_EXPERIENCE: {
+    DEFAULT: 'Please describe your experience in more detail'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
     BACK: 'Back ⬅️',
