@@ -9,7 +9,8 @@ enum ETelegramEditButtonType {
   EMPLOYMENT_OPTIONS = 'employment_options',
   EXPERIENCE_DETAILS = 'experience_details',
   NAME = 'name',
-  COMPANY = 'company'
+  COMPANY = 'company',
+  PHONE = 'phone'
 }
 
 export default ETelegramEditButtonType;

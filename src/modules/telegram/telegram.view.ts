@@ -525,6 +525,32 @@ export default class TelegramView {
 
   // company section end
 
+  // phone section start
+
+  public selectPhone = (
+    language: languageTypes,
+    isError: boolean,
+    operationType?: ETelegramConfirmButtonType
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    if (isError) {
+      text += this.#preparedText(messages[language].PHONE.ERROR, {});
+
+      extra.reply_markup = this.#getYesOrNoButtonKeyboardMarkup(
+        language,
+        operationType
+      );
+    } else {
+      text += this.#preparedText(messages[language].PHONE.DEFAULT, {});
+    }
+
+    return { text, extra };
+  };
+
+  // phone section end
+
   // final worker section start
 
   public selectFinallyWorker = (

@@ -293,7 +293,74 @@ export default class TelegramService extends DBConnection {
           existMessage.telegramMessageType
         );
 
+        await this.selectPhone(chatId, userId, existMessage.temporaryUserId);
+
         break;
+      }
+      case 'phone': {
+        try {
+          const phone = this.#telegramValidator.phone(text);
+
+          this.updateTemporaryUser(existMessage.temporaryUserId, {
+            type: 'employer',
+            phone
+          });
+
+          await this.selectSuccess(
+            chatId,
+            userId,
+            +messageId,
+            text,
+            ETelegramEditButtonType.PHONE,
+            'item',
+            existMessage.temporaryUserId
+          );
+
+          /*await this.selectPosition(
+            chatId,
+            userId,
+            existMessage.temporaryUserId
+          );*/
+
+          await this.#telegramMessageService.deleteByTgInfo(
+            userId,
+            chatId,
+            existMessage.messageId,
+            existMessage.telegramMessageType
+          );
+
+          break;
+        } catch (e) {
+          this.#catchError(e);
+
+          await this.#telegramMessageService.deleteByTgInfo(
+            userId,
+            chatId,
+            existMessage.messageId,
+            existMessage.telegramMessageType
+          );
+
+          const { text, extra } = this.#telegramView.selectPhone(
+            existTelegramInfo.language,
+            true,
+            ETelegramConfirmButtonType.PHONE
+          );
+
+          const result =
+            await this.#telegramApiService.sendMessage<ITelegramMessage>(
+              chatId,
+              text,
+              extra
+            );
+
+          await this.#telegramMessageService.save({
+            chatId: `${result.result.chat.id}`,
+            userId: `${result.result.from.id}`,
+            messageId: `${result.result.message_id}`,
+            temporaryUserId: existMessage.temporaryUserId,
+            telegramMessageType: 'phone'
+          });
+        }
       }
     }
   };
@@ -1401,6 +1468,47 @@ export default class TelegramService extends DBConnection {
   };
 
   // employer company section end
+
+  // employer phone section start
+
+  public selectPhone = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo } = telegramInfo;
+
+    const { text, extra } = this.#telegramView.selectPhone(
+      existTelegramInfo.language,
+      false
+    );
+
+    const result = await this.#telegramApiService.sendMessage<ITelegramMessage>(
+      chatId,
+      text,
+      extra
+    );
+
+    await this.#telegramMessageService.save({
+      chatId: `${result.result.chat.id}`,
+      userId: `${result.result.from.id}`,
+      messageId: `${result.result.message_id}`,
+      temporaryUserId,
+      telegramMessageType: 'phone'
+    });
+  };
+
+  // employer phone section end
 
   // user language section start
 

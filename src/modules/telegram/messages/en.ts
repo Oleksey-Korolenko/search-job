@@ -79,6 +79,12 @@ const messagesInEnglish = {
   COMPANY: {
     DEFAULT: 'Please enter your company'
   },
+  PHONE: {
+    DEFAULT:
+      'Please enter your phone number (including country code, for example: 380)',
+    ERROR:
+      "Sorry, we can't save this phone number. Do you want to try to enter the phone number again?"
+  },
   WORKER: {
     TITLE: '<strong>{name}</strong>\n\n',
     CATEGORY:

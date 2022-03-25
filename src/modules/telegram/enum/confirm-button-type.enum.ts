@@ -1,5 +1,6 @@
 enum ETelegramConfirmButtonType {
-  SALARY = 'salary'
+  SALARY = 'salary',
+  PHONE = 'phone'
 }
 
 export default ETelegramConfirmButtonType;

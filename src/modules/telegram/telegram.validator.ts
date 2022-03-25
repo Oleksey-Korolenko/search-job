@@ -16,4 +16,12 @@ export class TelegramValidate extends ValidationDefault {
 
     return +salary;
   };
+
+  phone = (phone: string): string => {
+    if (phone === undefined) {
+      throw new ValidateError(`Payload atribute: [phone] doesn't exist!`);
+    }
+
+    return phone;
+  };
 }
