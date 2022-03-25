@@ -74,6 +74,9 @@ const messagesInuarainian = {
   NAME: {
     DEFAULT: 'Будь ласка, вкажіть ваше ПІБ'
   },
+  COMPANY: {
+    DEFAULT: 'Будь ласка, вкажіть вашу компанию'
+  },
   WORKER: {
     TITLE: '<strong>{name}</strong>\n\n',
     CATEGORY:

@@ -76,6 +76,9 @@ const messagesInEnglish = {
   NAME: {
     DEFAULT: 'Please enter your full name'
   },
+  COMPANY: {
+    DEFAULT: 'Please enter your company'
+  },
   WORKER: {
     TITLE: '<strong>{name}</strong>\n\n',
     CATEGORY:

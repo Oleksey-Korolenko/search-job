@@ -193,11 +193,21 @@ export default class TelegramService extends DBConnection {
           existMessage.telegramMessageType
         );
 
-        await this.selectEnglishLevel(
-          chatId,
-          userId,
-          existMessage.temporaryUserId
-        );
+        if (existTemporaryUser.userRole === 'worker') {
+          await this.selectEnglishLevel(
+            chatId,
+            userId,
+            existMessage.temporaryUserId
+          );
+        }
+
+        if (existTemporaryUser.userRole === 'employer') {
+          await this.selectCompany(
+            chatId,
+            userId,
+            existMessage.temporaryUserId
+          );
+        }
 
         break;
       }
@@ -245,6 +255,33 @@ export default class TelegramService extends DBConnection {
           +messageId,
           text,
           ETelegramEditButtonType.NAME,
+          'item',
+          existMessage.temporaryUserId
+        );
+
+        await this.#telegramMessageService.deleteByTgInfo(
+          userId,
+          chatId,
+          existMessage.messageId,
+          existMessage.telegramMessageType
+        );
+
+        await this.selectPosition(chatId, userId, existMessage.temporaryUserId);
+
+        break;
+      }
+      case 'company': {
+        this.updateTemporaryUser(existMessage.temporaryUserId, {
+          type: 'employer',
+          company: text
+        });
+
+        await this.selectSuccess(
+          chatId,
+          userId,
+          +messageId,
+          text,
+          ETelegramEditButtonType.COMPANY,
           'item',
           existMessage.temporaryUserId
         );
@@ -1324,6 +1361,46 @@ export default class TelegramService extends DBConnection {
   };
 
   // user full name section end
+
+  // employer company section start
+
+  public selectCompany = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo } = telegramInfo;
+
+    const { text, extra } = this.#telegramView.selectCompany(
+      existTelegramInfo.language
+    );
+
+    const result = await this.#telegramApiService.sendMessage<ITelegramMessage>(
+      chatId,
+      text,
+      extra
+    );
+
+    await this.#telegramMessageService.save({
+      chatId: `${result.result.chat.id}`,
+      userId: `${result.result.from.id}`,
+      messageId: `${result.result.message_id}`,
+      temporaryUserId,
+      telegramMessageType: 'company'
+    });
+  };
+
+  // employer company section end
 
   // user language section start
 

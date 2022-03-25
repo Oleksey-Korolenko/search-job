@@ -510,6 +510,21 @@ export default class TelegramView {
 
   // full name section end
 
+  // company section start
+
+  public selectCompany = (
+    language: languageTypes
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[language].COMPANY.DEFAULT, {});
+
+    return { text, extra };
+  };
+
+  // company section end
+
   // final worker section start
 
   public selectFinallyWorker = (
