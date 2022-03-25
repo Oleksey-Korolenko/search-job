@@ -1,5 +1,6 @@
 enum ETelegramCheckboxButtonType {
-  CITY = 'city'
+  CITY = 'city',
+  SKILL = 'skill'
 }
 
 export default ETelegramCheckboxButtonType;

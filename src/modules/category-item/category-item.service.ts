@@ -16,4 +16,7 @@ export default class CategoryItemService extends DBConnection {
 
   public getByCategoryId = (categoryId: number): Promise<CategoryItemType[]> =>
     this.#categoryItemQueryService.getByCategoryId(categoryId);
+
+  public getById = (id: number): Promise<CategoryItemType> =>
+    this.#categoryItemQueryService.getById(id);
 }

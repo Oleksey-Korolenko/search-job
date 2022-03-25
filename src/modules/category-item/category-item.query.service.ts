@@ -18,4 +18,11 @@ export default class CategoryItemQueryService extends DBConnection {
       .select()
       .where(eq(this.#categoryItem.categoryId, categoryId))
       .all();
+
+  public getById = (id: number): Promise<CategoryItemType> =>
+    this.#categoryItem
+      .select()
+      .where(eq(this.#categoryItem.id, id))
+      .all()
+      .then(res => res[0]);
 }

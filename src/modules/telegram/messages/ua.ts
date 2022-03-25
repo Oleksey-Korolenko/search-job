@@ -57,7 +57,12 @@ const messagesInuarainian = {
   },
   CITIES: {
     DEFAULT: 'Будь ласка, оберіть ряд міст у яких ви шукаєте роботу',
-    EXIST_CITIES: '\n\nВже обран ряд міст: <strong>{cities}</strong>'
+    EXIST_CITIES: '\n\nВже обран ряд міст:\n\n'
+  },
+  SKILLS: {
+    DEFAULT:
+      'Будь ласка, виберіть ряд навичок, які ви маєте у спеціальності <strong>{category_item}</strong>',
+    EXIST_SKILLS: '\n\nВже обран ряд навичок:\n\n'
   },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',
@@ -68,7 +73,12 @@ const messagesInuarainian = {
     DELETE: '{item} 🗑',
     SAVE: 'Зберегти ✅'
   },
-  SUCCESS: 'Був обран пункт <strong>{item}</strong>'
+  DEFAULT_MESSAGE: {
+    INDENT: '\n',
+    LIST_ITEM: '<strong>{item}</strong>\n',
+    SUCCESS: 'Був обран пункт <strong>{item}</strong>',
+    SUCCESS_LIST: 'Були обрани пункти:\n\n'
+  }
 };
 
 export default messagesInuarainian;

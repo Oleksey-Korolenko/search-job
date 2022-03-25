@@ -1,11 +1,9 @@
 import {
   CategoryItemType,
   CategoryType,
-  CityType,
   EWorkExperienceInMonthsType
 } from '@db/tables';
 import { IArgsForPreparedText } from '.';
-import ETelegramButtonType from './enum/button-type.enum';
 import ETelegramCheckboxButtonType from './enum/checkbox-button-type.enum';
 import ETelegramConfirmButtonType from './enum/confirm-button-type.enum';
 import ETelegramEditButtonType from './enum/edit-button-type.enum';
@@ -410,7 +408,7 @@ export default class TelegramView {
     language: languageTypes,
     temporaryUserId: number,
     cities: INotPreparedTranslate[],
-    existCities: CityType[]
+    existCities: INotPreparedTranslate[]
   ): ITelegramTextFormatterResponse => {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
@@ -418,25 +416,30 @@ export default class TelegramView {
     text += this.#preparedText(messages[language].CITIES.DEFAULT, {});
 
     if (existCities.length > 0) {
-      const preparedTextTranslate = this.preparedTranslate(
+      const preparedExistCitiesTranslate = this.preparedTranslate(
         language,
-        cities as []
+        existCities
       );
 
-      text += this.#preparedText(messages[language].CITIES.EXIST_CITIES, {
-        cities: `${preparedTextTranslate.map(it => it.translate).join(', ')}`
-      });
+      text += this.#preparedText(messages[language].CITIES.EXIST_CITIES, {});
+
+      preparedExistCitiesTranslate.forEach(
+        it =>
+          (text += this.#preparedText(
+            messages[language].DEFAULT_MESSAGE.LIST_ITEM,
+            {
+              item: it.translate
+            }
+          ))
+      );
     }
 
-    const preparedExtraTranslate = this.preparedTranslate(
-      language,
-      cities as []
-    );
+    const preparedCitiesTranslate = this.preparedTranslate(language, cities);
 
     extra.reply_markup = this.#getCheckboxButtonsKeyboardMarkup(
       language,
       temporaryUserId,
-      preparedExtraTranslate,
+      preparedCitiesTranslate,
       ETelegramCheckboxButtonType.CITY
     );
 
@@ -445,18 +448,96 @@ export default class TelegramView {
 
   // city section end
 
+  // skills section start
+
+  public selectSkills = (
+    language: languageTypes,
+    temporaryUserId: number,
+    skills: INotPreparedTranslate[],
+    existSkills: INotPreparedTranslate[],
+    categoryItem: INotPreparedTranslate
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    const preparedCaegoryItemTranslate = this.preparedTranslate(language, [
+      categoryItem
+    ]);
+
+    text += this.#preparedText(messages[language].SKILLS.DEFAULT, {
+      category_item: preparedCaegoryItemTranslate[0].translate
+    });
+
+    if (existSkills.length > 0) {
+      const preparedExistSkillsTranslate = this.preparedTranslate(
+        language,
+        existSkills
+      );
+
+      text += this.#preparedText(messages[language].SKILLS.EXIST_SKILLS, {});
+
+      preparedExistSkillsTranslate.forEach(
+        it =>
+          (text += this.#preparedText(
+            messages[language].DEFAULT_MESSAGE.LIST_ITEM,
+            {
+              item: it.translate
+            }
+          ))
+      );
+    }
+
+    const preparedSkillsTranslate = this.preparedTranslate(language, skills);
+
+    extra.reply_markup = this.#getCheckboxButtonsKeyboardMarkup(
+      language,
+      temporaryUserId,
+      preparedSkillsTranslate,
+      ETelegramCheckboxButtonType.SKILL
+    );
+
+    return { text, extra };
+  };
+
+  // skills section end
+
   // edit section start
 
   public selectSuccess = (
     language: languageTypes,
-    item: string,
+    item: string | INotPreparedTranslate[],
     operationType: ETelegramEditButtonType,
+    typeMessage: 'item' | 'list',
     temporaryUserId?: number
   ): ITelegramTextFormatterResponse => {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
 
-    text += this.#preparedText(messages[language].SUCCESS, { item });
+    if (typeMessage === 'item') {
+      text += this.#preparedText(messages[language].DEFAULT_MESSAGE.SUCCESS, {
+        item: item as string
+      });
+    } else {
+      const preparedItemTranslate = this.preparedTranslate(
+        language,
+        item as INotPreparedTranslate[]
+      );
+
+      text += this.#preparedText(
+        messages[language].DEFAULT_MESSAGE.SUCCESS_LIST,
+        {}
+      );
+
+      preparedItemTranslate.forEach(
+        it =>
+          (text += this.#preparedText(
+            messages[language].DEFAULT_MESSAGE.SUCCESS,
+            {
+              item: it.translate
+            }
+          ))
+      );
+    }
 
     extra.reply_markup = this.#getEditButtonKeyboardMarkup(
       language,

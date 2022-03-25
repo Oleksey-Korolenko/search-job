@@ -4,7 +4,8 @@ enum ETelegramEditButtonType {
   SALARY = 'salary',
   POSITION = 'position',
   ENGLISH_LEVEL = 'english_level',
-  CITY = 'city'
+  CITY = 'city',
+  SKILL = 'skill'
 }
 
 export default ETelegramEditButtonType;

@@ -58,8 +58,12 @@ const messagesInEnglish = {
   },
   CITIES: {
     DEFAULT: 'Please select a number of cities where you are looking for work',
-    EXIST_CITIES:
-      '\n\nA number of cities have already been selected: <strong>{cities}</strong>'
+    EXIST_CITIES: '\n\nA cities what have already been selected:\n\n'
+  },
+  SKILLS: {
+    DEFAULT:
+      'Please select a skills that you have in the profession of <strong>{category_item}</strong>',
+    EXIST_SKILLS: '\n\nA skills what have already been selected:\n\n'
   },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
@@ -70,7 +74,12 @@ const messagesInEnglish = {
     DELETE: '{item} 🗑',
     SAVE: 'Save ✅'
   },
-  SUCCESS: 'The item <strong>{item}</strong> was selected'
+  DEFAULT_MESSAGE: {
+    INDENT: '\n',
+    LIST_ITEM: '<strong>{item}</strong>\n',
+    SUCCESS: 'The item <strong>{item}</strong> was selected',
+    SUCCESS_LIST: 'A items what have already been selected:\n\n'
+  }
 };
 
 export default messagesInEnglish;
