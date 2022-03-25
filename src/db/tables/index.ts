@@ -11,3 +11,4 @@ export * from './employers';
 export * from './telegram';
 export * from './temporary-user';
 export * from './telegram-messages';
+export * from './skills-to-category';

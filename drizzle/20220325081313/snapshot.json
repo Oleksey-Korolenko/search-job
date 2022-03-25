@@ -249,6 +249,47 @@
       },
       "indexes": {}
     },
+    "skills_to_category": {
+      "name": "skills_to_category",
+      "columns": {
+        "category_item_id": {
+          "name": "category_item_id",
+          "type": "INT",
+          "primaryKey": false,
+          "notNull": true,
+          "references": {
+            "foreignKeyName": "skills_to_category_category_item_id_fkey",
+            "table": "category_item",
+            "column": "id"
+          }
+        },
+        "skill_id": {
+          "name": "skill_id",
+          "type": "INT",
+          "primaryKey": false,
+          "notNull": true,
+          "references": {
+            "foreignKeyName": "skills_to_category_skill_id_fkey",
+            "table": "skills",
+            "column": "id"
+          }
+        }
+      },
+      "indexes": {
+        "skills_to_category_category_item_id_skill_id_index": {
+          "name": "skills_to_category_category_item_id_skill_id_index",
+          "columns": {
+            "category_item_id": {
+              "name": "category_item_id"
+            },
+            "skill_id": {
+              "name": "skill_id"
+            }
+          },
+          "isUnique": true
+        }
+      }
+    },
     "skills_to_workers": {
       "name": "skills_to_workers",
       "columns": {
@@ -310,17 +351,6 @@
           "type": "JSONB",
           "primaryKey": false,
           "notNull": true
-        },
-        "category_item_id": {
-          "name": "category_item_id",
-          "type": "INT",
-          "primaryKey": false,
-          "notNull": true,
-          "references": {
-            "foreignKeyName": "skills_category_item_id_fkey",
-            "table": "category_item",
-            "column": "id"
-          }
         }
       },
       "indexes": {}
