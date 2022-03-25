@@ -440,7 +440,8 @@ export default class TelegramView {
       language,
       temporaryUserId,
       preparedCitiesTranslate,
-      ETelegramCheckboxButtonType.CITY
+      ETelegramCheckboxButtonType.CITY,
+      existCities.length === 0 ? false : true
     );
 
     return { text, extra };
@@ -493,7 +494,8 @@ export default class TelegramView {
       language,
       temporaryUserId,
       preparedSkillsTranslate,
-      ETelegramCheckboxButtonType.SKILL
+      ETelegramCheckboxButtonType.SKILL,
+      existSkills.length === 0 ? false : true
     );
 
     return { text, extra };
@@ -548,7 +550,8 @@ export default class TelegramView {
       language,
       temporaryUserId,
       preparedEmploymentOptionsTranslate,
-      ETelegramCheckboxButtonType.EMPLOYMENT_OPTIONS
+      ETelegramCheckboxButtonType.EMPLOYMENT_OPTIONS,
+      existEmploymentOptions.length === 0 ? false : true
     );
 
     return { text, extra };
@@ -668,7 +671,8 @@ export default class TelegramView {
     language: languageTypes,
     temporaryUserId: number,
     preparedTranslate: IPreparedTranslate[],
-    checkboxType: ETelegramCheckboxButtonType
+    checkboxType: ETelegramCheckboxButtonType,
+    isSaveButton: boolean
   ): IInlineKeyboardMarkup => {
     return {
       inline_keyboard: [
@@ -693,13 +697,13 @@ export default class TelegramView {
                 } as IInlineKeyboardButton
               ]
         ),
-        [
+        isSaveButton && [
           {
             text: messages[language].DEFAULT_BUTTON.SAVE,
             callback_data: `save-${temporaryUserId}-${checkboxType}`
           }
         ]
-      ] as IInlineKeyboardButton[][]
+      ].filter(Boolean) as IInlineKeyboardButton[][]
     };
   };
 
