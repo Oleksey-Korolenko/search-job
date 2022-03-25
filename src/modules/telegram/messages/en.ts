@@ -65,6 +65,11 @@ const messagesInEnglish = {
       'Please select a skills that you have in the profession of <strong>{category_item}</strong>',
     EXIST_SKILLS: '\n\nA skills what have already been selected:\n\n'
   },
+  EMPLOYMENT_OPTIONS: {
+    DEFAULT: 'Please select one or more employment options',
+    EXIST_SKILLS:
+      '\n\nA employment options what have already been selected:\n\n'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
     BACK: 'Back ⬅️',

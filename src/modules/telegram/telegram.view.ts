@@ -501,6 +501,61 @@ export default class TelegramView {
 
   // skills section end
 
+  // employment options section start
+
+  public selectEmploymentOptions = (
+    language: languageTypes,
+    temporaryUserId: number,
+    employmentOptions: INotPreparedTranslate[],
+    existEmploymentOptions: INotPreparedTranslate[]
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(
+      messages[language].EMPLOYMENT_OPTIONS.DEFAULT,
+      {}
+    );
+
+    if (existEmploymentOptions.length > 0) {
+      const preparedExistEmploymentOptionsTranslate = this.preparedTranslate(
+        language,
+        existEmploymentOptions
+      );
+
+      text += this.#preparedText(
+        messages[language].EMPLOYMENT_OPTIONS.EXIST_SKILLS,
+        {}
+      );
+
+      preparedExistEmploymentOptionsTranslate.forEach(
+        it =>
+          (text += this.#preparedText(
+            messages[language].DEFAULT_MESSAGE.LIST_ITEM,
+            {
+              item: it.translate
+            }
+          ))
+      );
+    }
+
+    const preparedEmploymentOptionsTranslate = this.preparedTranslate(
+      language,
+      employmentOptions
+    );
+
+    extra.reply_markup = this.#getCheckboxButtonsKeyboardMarkup(
+      language,
+      temporaryUserId,
+      preparedEmploymentOptionsTranslate,
+      ETelegramCheckboxButtonType.EMPLOYMENT_OPTIONS
+    );
+
+    return { text, extra };
+  };
+
+  // employment options section end
+
   // edit section start
 
   public selectSuccess = (

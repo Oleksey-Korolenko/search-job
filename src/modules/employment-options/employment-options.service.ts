@@ -16,4 +16,7 @@ export default class EmploymentOptionsService extends DBConnection {
 
   public getById = (id: number): Promise<EmploymentOptionsType> =>
     this.#employmentOptionsQueryService.getById(id);
+
+  public getByIds = async (ids: number[]): Promise<EmploymentOptionsType[]> =>
+    this.#employmentOptionsQueryService.getByIds(ids);
 }

@@ -3,6 +3,7 @@ import EmploymentOptionsTable, {
   EmploymentOptionsType
 } from '@db/tables/employment-options';
 import { DB, eq } from 'drizzle-orm';
+import { inArray } from 'drizzle-orm/builders/requestBuilders/where/static';
 
 export default class EmploymentOptionsQueryService extends DBConnection {
   #employmentOptions: EmploymentOptionsTable;
@@ -21,4 +22,10 @@ export default class EmploymentOptionsQueryService extends DBConnection {
       .where(eq(this.#employmentOptions.id, id))
       .all()
       .then(res => res[0]);
+
+  public getByIds = async (ids: number[]): Promise<EmploymentOptionsType[]> =>
+    this.#employmentOptions
+      .select()
+      .where(inArray(this.#employmentOptions.id, ids))
+      .all();
 }

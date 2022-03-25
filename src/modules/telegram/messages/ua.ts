@@ -64,6 +64,10 @@ const messagesInuarainian = {
       'Будь ласка, виберіть ряд навичок, які ви маєте у спеціальності <strong>{category_item}</strong>',
     EXIST_SKILLS: '\n\nВже обран ряд навичок:\n\n'
   },
+  EMPLOYMENT_OPTIONS: {
+    DEFAULT: 'Будь ласка, виберіть один чи декілька варіантів зайнятості',
+    EXIST_SKILLS: '\n\nВже обран ряд варіантів:\n\n'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',
     BACK: 'Назад ⬅️',
