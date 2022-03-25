@@ -267,7 +267,22 @@ export default class TelegramService extends DBConnection {
           existMessage.telegramMessageType
         );
 
-        await this.selectPosition(chatId, userId, existMessage.temporaryUserId);
+        if (existTemporaryUser.userRole === 'worker') {
+          await this.selectCategory(
+            chatId,
+            userId,
+            existMessage.temporaryUserId,
+            messageId
+          );
+        }
+
+        if (existTemporaryUser.userRole === 'employer') {
+          await this.selectPosition(
+            chatId,
+            userId,
+            existMessage.temporaryUserId
+          );
+        }
 
         break;
       }
@@ -526,7 +541,6 @@ export default class TelegramService extends DBConnection {
 
   public actionForRole = async (
     chatId: number | string,
-    messageId: number,
     userId: string,
     role: arrayValuesToType<typeof EUserRole.values>
   ) => {
@@ -547,12 +561,7 @@ export default class TelegramService extends DBConnection {
               type: 'worker'
             }
           });
-          await this.selectCategory(
-            chatId,
-            userId,
-            temporaryUser.id,
-            messageId
-          );
+          await this.selectFullName(chatId, userId, temporaryUser.id);
           return temporaryUser.id;
         }
         case 'employer': {

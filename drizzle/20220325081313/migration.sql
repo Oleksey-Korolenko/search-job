@@ -237,6 +237,7 @@ CREATE TABLE IF NOT EXISTS temporary_user (
 
 CREATE TABLE IF NOT EXISTS workers (
 	"id" SERIAL PRIMARY KEY,
+	"name" character varying NOT NULL,
 	"category_item_id" INT NOT NULL,
 	"work_experience" work_experience_in_months_type,
 	"expected_salary" INT NOT NULL,

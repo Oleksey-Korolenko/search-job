@@ -6,6 +6,7 @@ import { EWorkExperienceInMonthsType, EEnglishLevelsType } from './workers';
 
 export interface IWorker {
   type: 'worker';
+  name?: string;
   categoryItemId?: number;
   workExperience?: arrayValuesToType<typeof EWorkExperienceInMonthsType.values>;
   expectedSalary?: number;

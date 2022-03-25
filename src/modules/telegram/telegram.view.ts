@@ -562,6 +562,10 @@ export default class TelegramView {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
 
+    text += this.#preparedText(messages[language].WORKER.TITLE, {
+      name: worker.name
+    });
+
     const preparedCategoryTranslate = this.preparedTranslate(language, [
       worker.categoryItem
     ] as INotPreparedTranslate[]);

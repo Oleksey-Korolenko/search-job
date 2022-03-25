@@ -9,6 +9,7 @@ import {
 } from '@db/tables';
 
 export interface IWorkerFinally {
+  name: string;
   categoryItem: CategoryItemType;
   workExperience: arrayValuesToType<typeof EWorkExperienceInMonthsType.values>;
   expectedSalary: number;

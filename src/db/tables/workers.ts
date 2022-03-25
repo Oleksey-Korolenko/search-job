@@ -39,6 +39,8 @@ export const EEnglishLevelsType = createEnum({
 export default class WorkerTable extends AbstractTable<WorkerTable> {
   public id = this.serial('id').primaryKey();
 
+  public name = this.varchar('name').notNull();
+
   public categoryItemId = this.int('category_item_id')
     .foreignKey(CategoryItemTable, table => table.id)
     .notNull();

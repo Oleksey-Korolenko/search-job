@@ -83,7 +83,6 @@ export default async (router: typeof Router, db: DB) => {
       case ETelegramButtonType.SELECT_ROLE: {
         await telegramService.actionForRole(
           checkedBody.callback_query.message.chat.id,
-          checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.message.from.id}`,
           item as arrayValuesToType<typeof EUserRole.values>
         );

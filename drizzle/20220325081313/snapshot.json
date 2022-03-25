@@ -482,6 +482,12 @@
           "primaryKey": true,
           "notNull": false
         },
+        "name": {
+          "name": "name",
+          "type": "character varying",
+          "primaryKey": false,
+          "notNull": true
+        },
         "category_item_id": {
           "name": "category_item_id",
           "type": "INT",
