@@ -95,6 +95,12 @@ const messagesInuarainian = {
     EMPLOYMENT_OPTIONS: '\nДоступні варіанти зайнятості:\n\n',
     EXPERIENCE_DETAILS: '\nДетальна інформація:\n\n'
   },
+  EMPLOYER: {
+    TITLE: '<strong>{name}</strong>\n\n',
+    COMPANY:
+      'Компанія <strong>{company}</strong>. Посада <strong>{position}</strong>.\n\n',
+    PHONE: 'Номер телефону: <strong>{phone}</strong>\n'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',
     BACK: 'Назад ⬅️',

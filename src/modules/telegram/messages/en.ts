@@ -97,6 +97,12 @@ const messagesInEnglish = {
     EMPLOYMENT_OPTIONS: '\nAvailable employment options:\n\n',
     EXPERIENCE_DETAILS: '\nDetails:\n\n'
   },
+  EMPLOYER: {
+    TITLE: '<strong>{name}</strong>\n\n',
+    COMPANY:
+      'Company <strong>{company}</strong>. Position <strong>{position}</strong>.\n\n',
+    PHONE: 'Phone number: <strong>{phone}</strong>\n'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
     BACK: 'Back ⬅️',

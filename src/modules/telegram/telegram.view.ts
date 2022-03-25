@@ -9,6 +9,7 @@ import ETelegramCheckboxButtonType from './enum/checkbox-button-type.enum';
 import ETelegramConfirmButtonType from './enum/confirm-button-type.enum';
 import ETelegramEditButtonType from './enum/edit-button-type.enum';
 import {
+  IEmployerFinally,
   IInlineKeyboardButton,
   IInlineKeyboardMarkup,
   INotPreparedTranslate,
@@ -551,7 +552,7 @@ export default class TelegramView {
 
   // phone section end
 
-  // final worker section start
+  // final user section start
 
   public selectFinallyWorker = (
     language: languageTypes,
@@ -654,6 +655,36 @@ export default class TelegramView {
     return { text, extra };
   };
 
+  public selectFinallyEmployer = (
+    language: languageTypes,
+    employer: IEmployerFinally,
+    temporaryUserId: number
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[language].EMPLOYER.TITLE, {
+      name: employer.name
+    });
+
+    text += this.#preparedText(messages[language].EMPLOYER.COMPANY, {
+      company: employer.company,
+      position: employer.position
+    });
+
+    text += this.#preparedText(messages[language].EMPLOYER.PHONE, {
+      phone: employer.phone
+    });
+
+    extra.reply_markup = this.#getFinallyButtonKeyboardMarkup(
+      language,
+      'employer',
+      temporaryUserId
+    );
+
+    return { text, extra };
+  };
+
   #getFinallyButtonKeyboardMarkup = (
     language: languageTypes,
     userType: 'worker' | 'employer',
@@ -677,7 +708,7 @@ export default class TelegramView {
     };
   };
 
-  // final worker section end
+  // final user section end
 
   // edit section start
 

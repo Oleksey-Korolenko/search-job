@@ -20,6 +20,7 @@ import { LoggerService } from '@logger/logger.service';
 import { ITemporaryUserInput } from '@modules/temporary-user';
 import TemporaryUserService from '@modules/temporary-user/temporary-user.service';
 import {
+  IEmployerFinally,
   IInlineKeyboardButton,
   INotPreparedTranslate,
   ITelegramMessage,
@@ -316,11 +317,12 @@ export default class TelegramService extends DBConnection {
             existMessage.temporaryUserId
           );
 
-          /*await this.selectPosition(
+          await this.selectFinnalyResult(
             chatId,
             userId,
-            existMessage.temporaryUserId
-          );*/
+            existMessage.temporaryUserId,
+            'employer'
+          );
 
           await this.#telegramMessageService.deleteByTgInfo(
             userId,
@@ -1657,6 +1659,25 @@ export default class TelegramService extends DBConnection {
       const { text, extra } = this.#telegramView.selectFinallyWorker(
         existTelegramInfo.language,
         finallyWorker,
+        temporaryUserId
+      );
+
+      await this.#telegramApiService.sendMessage(chatId, text, extra);
+    }
+
+    if (userRole === 'employer') {
+      const employer = existTemporaryUser.user as IEmployer;
+
+      const finallyEmployer = {
+        name: employer.name,
+        company: employer.company,
+        position: employer.position,
+        phone: employer.phone
+      } as IEmployerFinally;
+
+      const { text, extra } = this.#telegramView.selectFinallyEmployer(
+        existTelegramInfo.language,
+        finallyEmployer,
         temporaryUserId
       );
 
