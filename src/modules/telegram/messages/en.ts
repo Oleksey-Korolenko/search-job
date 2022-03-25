@@ -73,6 +73,9 @@ const messagesInEnglish = {
   DESCRIPTION_TO_EXPERIENCE: {
     DEFAULT: 'Please describe your experience in more detail'
   },
+  NAME: {
+    DEFAULT: 'Please enter your full name'
+  },
   WORKER: {
     TITLE: '<strong>{name}</strong>\n\n',
     CATEGORY:

@@ -7,7 +7,8 @@ enum ETelegramEditButtonType {
   CITY = 'city',
   SKILL = 'skill',
   EMPLOYMENT_OPTIONS = 'employment_options',
-  EXPERIENCE_DETAILS = 'experience_details'
+  EXPERIENCE_DETAILS = 'experience_details',
+  NAME = 'name'
 }
 
 export default ETelegramEditButtonType;

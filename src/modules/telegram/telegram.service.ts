@@ -203,8 +203,8 @@ export default class TelegramService extends DBConnection {
       }
       case 'details': {
         this.updateTemporaryUser(existMessage.temporaryUserId, {
-          type: existTemporaryUser.user.type,
-          position: text
+          type: 'worker',
+          workExperienceDetails: text
         });
 
         await this.selectSuccess(
@@ -229,6 +229,31 @@ export default class TelegramService extends DBConnection {
           userId,
           existMessage.temporaryUserId,
           'worker'
+        );
+
+        break;
+      }
+      case 'name': {
+        this.updateTemporaryUser(existMessage.temporaryUserId, {
+          type: 'employer',
+          name: text
+        });
+
+        await this.selectSuccess(
+          chatId,
+          userId,
+          +messageId,
+          text,
+          ETelegramEditButtonType.NAME,
+          'item',
+          existMessage.temporaryUserId
+        );
+
+        await this.#telegramMessageService.deleteByTgInfo(
+          userId,
+          chatId,
+          existMessage.messageId,
+          existMessage.telegramMessageType
         );
 
         break;
@@ -313,6 +338,7 @@ export default class TelegramService extends DBConnection {
             typeOperation
           );
         }
+        break;
       }
       case ETelegramCheckboxButtonType.SKILL: {
         if (typeOperation === 'save') {
@@ -327,6 +353,7 @@ export default class TelegramService extends DBConnection {
             typeOperation
           );
         }
+        break;
       }
       case ETelegramCheckboxButtonType.EMPLOYMENT_OPTIONS: {
         if (typeOperation === 'save') {
@@ -346,6 +373,7 @@ export default class TelegramService extends DBConnection {
             typeOperation
           );
         }
+        break;
       }
       // TODO something for default case
     }
@@ -422,7 +450,16 @@ export default class TelegramService extends DBConnection {
           return temporaryUser.id;
         }
         case 'employer': {
-          break;
+          const temporaryUser = await this.#saveTemporaryUser({
+            isReadyToSave: false,
+            userRole: 'employer',
+            telegramUserId: existTelegramInfo.id,
+            user: {
+              type: 'employer'
+            }
+          });
+          await this.selectFullName(chatId, userId, temporaryUser.id);
+          return temporaryUser.id;
         }
       }
     } catch (e) {
@@ -1247,6 +1284,46 @@ export default class TelegramService extends DBConnection {
   };
 
   // worker experience details section end
+
+  // user full name section start
+
+  public selectFullName = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number
+  ) => {
+    const telegramInfo = await this.#telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo } = telegramInfo;
+
+    const { text, extra } = this.#telegramView.selectFullName(
+      existTelegramInfo.language
+    );
+
+    const result = await this.#telegramApiService.sendMessage<ITelegramMessage>(
+      chatId,
+      text,
+      extra
+    );
+
+    await this.#telegramMessageService.save({
+      chatId: `${result.result.chat.id}`,
+      userId: `${result.result.from.id}`,
+      messageId: `${result.result.message_id}`,
+      temporaryUserId,
+      telegramMessageType: 'name'
+    });
+  };
+
+  // user full name section end
 
   // user language section start
 

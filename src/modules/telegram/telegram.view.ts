@@ -495,6 +495,21 @@ export default class TelegramView {
 
   // experience details section end
 
+  // full name section start
+
+  public selectFullName = (
+    language: languageTypes
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    text += this.#preparedText(messages[language].NAME.DEFAULT, {});
+
+    return { text, extra };
+  };
+
+  // full name section end
+
   // final worker section start
 
   public selectFinallyWorker = (
@@ -598,6 +613,101 @@ export default class TelegramView {
     return { text, extra };
   };
 
+  #getFinallyButtonKeyboardMarkup = (
+    language: languageTypes,
+    userType: 'worker' | 'employer',
+    temporaryUserId: number
+  ): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        [
+          {
+            text: messages[language].DEFAULT_BUTTON.EDIT,
+            callback_data: `edit_finaly-${temporaryUserId}:${userType}`
+          }
+        ],
+        [
+          {
+            text: messages[language].DEFAULT_BUTTON.SAVE,
+            callback_data: `save_finaly-${temporaryUserId}:${userType}`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
+    };
+  };
+
+  // final worker section end
+
+  // edit section start
+
+  public selectSuccess = (
+    language: languageTypes,
+    item: string | INotPreparedTranslate[],
+    operationType: ETelegramEditButtonType,
+    typeMessage: 'item' | 'list',
+    temporaryUserId?: number
+  ): ITelegramTextFormatterResponse => {
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
+    if (typeMessage === 'item') {
+      text += this.#preparedText(messages[language].DEFAULT_MESSAGE.SUCCESS, {
+        item: item as string
+      });
+    } else {
+      const preparedItemTranslate = this.preparedTranslate(
+        language,
+        item as INotPreparedTranslate[]
+      );
+
+      text += this.#preparedText(
+        messages[language].DEFAULT_MESSAGE.SUCCESS_LIST,
+        {}
+      );
+
+      preparedItemTranslate.forEach(
+        it =>
+          (text += this.#preparedText(
+            messages[language].DEFAULT_MESSAGE.SUCCESS,
+            {
+              item: it.translate
+            }
+          ))
+      );
+    }
+
+    extra.reply_markup = this.#getEditButtonKeyboardMarkup(
+      language,
+      operationType,
+      temporaryUserId
+    );
+
+    return { text, extra };
+  };
+
+  #getEditButtonKeyboardMarkup = (
+    language: languageTypes,
+    operationType: ETelegramEditButtonType,
+    temporaryUserId?: number
+  ): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        [
+          {
+            text: messages[language].DEFAULT_BUTTON.EDIT,
+            callback_data: `edit${
+              temporaryUserId === undefined ? '' : '-' + temporaryUserId
+            }:${operationType}`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
+    };
+  };
+
+  // edit section end
+
+  // default section start
+
   #experienceTranslate = (
     language: languageTypes,
     experience: arrayValuesToType<typeof EWorkExperienceInMonthsType.values>
@@ -695,101 +805,6 @@ export default class TelegramView {
       }
     }
   };
-
-  #getFinallyButtonKeyboardMarkup = (
-    language: languageTypes,
-    userType: 'worker' | 'employer',
-    temporaryUserId: number
-  ): IInlineKeyboardMarkup => {
-    return {
-      inline_keyboard: [
-        [
-          {
-            text: messages[language].DEFAULT_BUTTON.EDIT,
-            callback_data: `edit_finaly-${temporaryUserId}:${userType}`
-          }
-        ],
-        [
-          {
-            text: messages[language].DEFAULT_BUTTON.SAVE,
-            callback_data: `save_finaly-${temporaryUserId}:${userType}`
-          }
-        ]
-      ] as IInlineKeyboardButton[][]
-    };
-  };
-
-  // final worker section end
-
-  // edit section start
-
-  public selectSuccess = (
-    language: languageTypes,
-    item: string | INotPreparedTranslate[],
-    operationType: ETelegramEditButtonType,
-    typeMessage: 'item' | 'list',
-    temporaryUserId?: number
-  ): ITelegramTextFormatterResponse => {
-    let text = '';
-    let extra: ITelegramTextFormatterExtra = {};
-
-    if (typeMessage === 'item') {
-      text += this.#preparedText(messages[language].DEFAULT_MESSAGE.SUCCESS, {
-        item: item as string
-      });
-    } else {
-      const preparedItemTranslate = this.preparedTranslate(
-        language,
-        item as INotPreparedTranslate[]
-      );
-
-      text += this.#preparedText(
-        messages[language].DEFAULT_MESSAGE.SUCCESS_LIST,
-        {}
-      );
-
-      preparedItemTranslate.forEach(
-        it =>
-          (text += this.#preparedText(
-            messages[language].DEFAULT_MESSAGE.SUCCESS,
-            {
-              item: it.translate
-            }
-          ))
-      );
-    }
-
-    extra.reply_markup = this.#getEditButtonKeyboardMarkup(
-      language,
-      operationType,
-      temporaryUserId
-    );
-
-    return { text, extra };
-  };
-
-  #getEditButtonKeyboardMarkup = (
-    language: languageTypes,
-    operationType: ETelegramEditButtonType,
-    temporaryUserId?: number
-  ): IInlineKeyboardMarkup => {
-    return {
-      inline_keyboard: [
-        [
-          {
-            text: messages[language].DEFAULT_BUTTON.EDIT,
-            callback_data: `edit${
-              temporaryUserId === undefined ? '' : '-' + temporaryUserId
-            }:${operationType}`
-          }
-        ]
-      ] as IInlineKeyboardButton[][]
-    };
-  };
-
-  // edit section end
-
-  // default section start
 
   preparedTranslate = (
     language: languageTypes,

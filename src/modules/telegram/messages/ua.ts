@@ -71,6 +71,9 @@ const messagesInuarainian = {
   DESCRIPTION_TO_EXPERIENCE: {
     DEFAULT: 'Будь ласка, опишіть ваш досвід більш розгорнуто'
   },
+  NAME: {
+    DEFAULT: 'Будь ласка, вкажіть ваше ПІБ'
+  },
   WORKER: {
     TITLE: '<strong>{name}</strong>\n\n',
     CATEGORY:
