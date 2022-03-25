@@ -96,7 +96,6 @@ export class TemporaryUserValidate extends ValidationDefault {
     this.#skillsToWorkers(worker.skillsToWorkers);
     this.#employmentOptions(worker.employmentOptions);
     this.#cities(worker.cities);
-    this.#categoryItems(worker.categoryItems);
   };
 
   #categoruItemId = (categoruItemId?: number) => {
@@ -200,19 +199,6 @@ export class TemporaryUserValidate extends ValidationDefault {
       if (!_.isInteger(it))
         throw new ValidateError(
           `Payload atribute: [cities.item] type isn't equal to number!`
-        );
-    });
-  };
-
-  #categoryItems = (categoryItems?: number[]) => {
-    if (categoryItems === undefined) {
-      return;
-    }
-
-    categoryItems.forEach(it => {
-      if (!_.isInteger(it))
-        throw new ValidateError(
-          `Payload atribute: [categoryItems.item] type isn't equal to number!`
         );
     });
   };
