@@ -114,7 +114,7 @@ VALUES
 	('Івано-Франківськ', '{"en": "Ivano-Frankivsk"}'),
 	('Київ', '{"en": "Kyiv"}'),
 	('Кропивницький', '{"en": "Kropyvnytskyi"}'),
-	('Луганськ', '{"en": "LuhanskSales"}'),
+	('Луганськ', '{"en": "Luhansk"}'),
 	('Львів', '{"en": "Lviv"}'),
 	('Миколаїв', '{"en": "Mykolaiv"}'),
 	('Одеса', '{"en": "Odessa"}'),
