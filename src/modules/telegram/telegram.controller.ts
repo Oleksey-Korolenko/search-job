@@ -103,6 +103,7 @@ export default async (router: typeof Router, db: DB) => {
         await telegramService.selectCategory(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.from.id}`,
+          +temporaryUserId,
           checkedBody.callback_query.message.message_id
         );
         // TODO break
