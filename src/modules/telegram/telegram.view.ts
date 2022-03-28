@@ -326,8 +326,7 @@ export default class TelegramView {
   public selectSkills = (
     language: languageTypes,
     temporaryUserId: number,
-    skills: INotPreparedTranslate[],
-    existSkills: INotPreparedTranslate[],
+    existSkills: string[],
     categoryItem: INotPreparedTranslate
   ): ITelegramTextFormatterResponse => {
     let text = '';
@@ -341,36 +340,69 @@ export default class TelegramView {
       category_item: preparedCaegoryItemTranslate[0].translate
     });
 
+    text += this.#preparedText(messages[language].SKILLS.INSTRUCTION, {});
+
     if (existSkills.length > 0) {
-      const preparedExistSkillsTranslate = this.preparedTranslate(
-        language,
-        existSkills
-      );
+      text += this.#preparedText(messages[language].SKILLS.EXIST_ITEMS, {});
 
-      text += this.#preparedText(messages[language].SKILLS.EXIST_SKILLS, {});
-
-      preparedExistSkillsTranslate.forEach(
+      existSkills.forEach(
         it =>
           (text += this.#preparedText(
             messages[language].DEFAULT_MESSAGE.LIST_ITEM,
             {
-              item: it.translate
+              item: it
             }
           ))
       );
+
+      text += this.#preparedText(messages[language].SKILLS.SAVE, {
+        btn: messages[language].DEFAULT_BUTTON.SAVE
+      });
+
+      extra.reply_markup = this.#getSkillsButtonKeyboardMarkup(
+        language,
+        temporaryUserId
+      );
     }
 
-    const preparedSkillsTranslate = this.preparedTranslate(language, skills);
+    return { text, extra };
+  };
 
-    extra.reply_markup = this.#getCheckboxButtonsKeyboardMarkup(
-      language,
-      temporaryUserId,
-      preparedSkillsTranslate,
-      ETelegramCheckboxButtonType.SKILL,
-      existSkills.length === 0 ? false : true
+  public showEnterSkills = (
+    language: languageTypes,
+    existSkills: string[]
+  ): string => {
+    let text = '';
+
+    text += this.#preparedText(messages[language].SKILLS.EXIST_ITEMS, {});
+
+    existSkills.forEach(
+      it =>
+        (text += this.#preparedText(
+          messages[language].DEFAULT_MESSAGE.LIST_ITEM,
+          {
+            item: it
+          }
+        ))
     );
 
-    return { text, extra };
+    return text;
+  };
+
+  #getSkillsButtonKeyboardMarkup = (
+    language: languageTypes,
+    temporaryUserId: number
+  ): IInlineKeyboardMarkup => {
+    return {
+      inline_keyboard: [
+        [
+          {
+            text: messages[language].DEFAULT_BUTTON.SAVE,
+            callback_data: `save-${temporaryUserId}`
+          }
+        ]
+      ] as IInlineKeyboardButton[][]
+    };
   };
 
   // skills section end
@@ -398,7 +430,7 @@ export default class TelegramView {
       );
 
       text += this.#preparedText(
-        messages[language].EMPLOYMENT_OPTIONS.EXIST_SKILLS,
+        messages[language].EMPLOYMENT_OPTIONS.EXIST_ITEMS,
         {}
       );
 
@@ -545,19 +577,14 @@ export default class TelegramView {
       english: worker.englishLevel
     });
 
-    const preparedSkillsTranslate = this.preparedTranslate(
-      language,
-      worker.skillsToWorkers as INotPreparedTranslate[]
-    );
-
     text += this.#preparedText(messages[language].WORKER.SKILLS, {});
 
-    preparedSkillsTranslate.forEach(
+    worker.skills.forEach(
       it =>
         (text += this.#preparedText(
           messages[language].DEFAULT_MESSAGE.LIST_ITEM,
           {
-            item: it.translate
+            item: it
           }
         ))
     );

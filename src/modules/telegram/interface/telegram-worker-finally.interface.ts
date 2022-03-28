@@ -3,8 +3,7 @@ import {
   CategoryItemType,
   EEnglishLevelsType,
   EmploymentOptionsType,
-  EWorkExperienceInMonthsType,
-  SkillType
+  EWorkExperienceInMonthsType
 } from '@db/tables';
 
 export interface IWorkerFinally {
@@ -15,6 +14,6 @@ export interface IWorkerFinally {
   position: string;
   englishLevel: arrayValuesToType<typeof EEnglishLevelsType.values>;
   workExperienceDetails: string;
-  skillsToWorkers: SkillType[];
+  skills: string[];
   employmentOptions: EmploymentOptionsType[];
 }

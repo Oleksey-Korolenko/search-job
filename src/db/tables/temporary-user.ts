@@ -13,7 +13,7 @@ export interface IWorker {
   position?: string;
   englishLevel?: arrayValuesToType<typeof EEnglishLevelsType.values>;
   workExperienceDetails?: string;
-  skillsToWorkers?: number[];
+  skills?: string[];
   employmentOptions?: number[];
 }
 

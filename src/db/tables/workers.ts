@@ -59,6 +59,8 @@ export default class WorkerTable extends AbstractTable<WorkerTable> {
     'english_levels'
   ).notNull();
 
+  public skills = this.jsonb<string[]>('skills');
+
   public workExperienceDetails = this.varchar('work_experience_details');
 
   public telegramUserId = this.int('telegram_user_id')

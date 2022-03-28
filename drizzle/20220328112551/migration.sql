@@ -11,7 +11,7 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
- CREATE TYPE telegram_message_type AS ENUM('phone', 'salary', 'name', 'position', 'company', 'details');
+ CREATE TYPE telegram_message_type AS ENUM('phone', 'salary', 'name', 'position', 'company', 'details', 'skills');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -90,45 +90,6 @@ VALUES
 	('Lead Generation', '{"en": "Lead Generation"}', 3),
 	('(Інші)', '{"en": "(Other)"}', 3);
 
-CREATE TABLE IF NOT EXISTS cities_to_users (
-	"worker_id" INT NOT NULL,
-	"city_id" INT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS city (
-	"id" SERIAL PRIMARY KEY,
-	"name" character varying NOT NULL,
-	"translate" JSONB NOT NULL
-);
-
-INSERT INTO city
-	(name, translate)
-VALUES 
-	('Вінниця', '{"en": "Vinnytsia"}'),
-	('Луцьк', '{"en": "Lutsk"}'),
-	('Дніпро', '{"en": "Dnipro"}'),
-	('Донецьк', '{"en": "Donetsk"}'),
-	('Житомир', '{"en": "Zhytomyr"}'),
-	('Ужгород', '{"en": "Uzhhorod"}'),
-	('Запоріжжя', '{"en": "Zaporizhzhia"}'),
-	('Івано-Франківськ', '{"en": "Ivano-Frankivsk"}'),
-	('Київ', '{"en": "Kyiv"}'),
-	('Кропивницький', '{"en": "Kropyvnytskyi"}'),
-	('Луганськ', '{"en": "Luhansk"}'),
-	('Львів', '{"en": "Lviv"}'),
-	('Миколаїв', '{"en": "Mykolaiv"}'),
-	('Одеса', '{"en": "Odessa"}'),
-	('Полтава', '{"en": "Poltava"}'),
-	('Рівне', '{"en": "Rivne"}'),
-	('Суми', '{"en": "Sumy"}'),
-	('Тернопіль', '{"en": "Ternopil"}'),
-	('Харків', '{"en": "Kharkiv"}'),
-	('Херсон', '{"en": "Kherson"}'),
-	('Хмельницький', '{"en": "Khmelnytskyi"}'),
-	('Черкаси', '{"en": "Cherkasy"}'),
-	('Чернівці', '{"en": "Chernivtsi"}'),
-	('Чернігів', '{"en": "Chernihiv"}');
-
 CREATE TABLE IF NOT EXISTS employers (
 	"id" SERIAL PRIMARY KEY,
 	"name" character varying NOT NULL,
@@ -160,56 +121,6 @@ VALUES
 	('Фріланс (разові проекти)', '{"en": "Freelance (one-off projects)"}'),
 	('Переїзд в інше місто', '{"en": "Moving to another city"}'),
 	('Relocate до США чи Європи', '{"en": "Relocate to the US or Europe"}');
-
-CREATE TABLE IF NOT EXISTS skills_to_category (
-	"category_item_id" INT NOT NULL,
-	"skill_id" INT NOT NULL
-);
-
-INSERT INTO skills_to_category
-	(category_item_id, skill_id)
-VALUES 
-	(8, 1),
-	(8, 2),
-	(8, 3),
-	(8, 4),
-	(8, 5),
-	(8, 6),
-	(8, 7),
-	(8, 8),
-	(8, 9),
-	(8, 10),
-	(8, 11),
-	(8, 12),
-	(8, 13);
-
-CREATE TABLE IF NOT EXISTS skills_to_workers (
-	"worker_id" INT NOT NULL,
-	"skill_id" INT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS skills (
-	"id" SERIAL PRIMARY KEY,
-	"name" character varying NOT NULL,
-	"translate" JSONB NOT NULL
-);
-
-INSERT INTO skills
-	(name, translate)
-VALUES 
-	('Javascript', '{"en": "Javascript"}'),
-	('Git', '{"en": "Git"}'),
-	('React', '{"en": "React"}'),
-	('TypeScript', '{"en": "TypeScript"}'),
-	('Redux', '{"en": "Redux"}'),
-	('HTML5', '{"en": "HTML5"}'),
-	('REST API', '{"en": "REST API"}'),
-	('CSS', '{"en": "CSS"}'),
-	('HTML', '{"en": "HTML"}'),
-	('ES6+', '{"en": "ES6+"}'),
-	('SASS', '{"en": "SASS"}'),
-	('Webpack', '{"en": "Webpack"}'),
-	('Node.js', '{"en": "Node.js"}');
 
 CREATE TABLE IF NOT EXISTS telegram_messages (
 	"message_id" character varying NOT NULL,
@@ -243,24 +154,13 @@ CREATE TABLE IF NOT EXISTS workers (
 	"expected_salary" INT NOT NULL,
 	"position" character varying NOT NULL,
 	"english_levels" english_levels_type NOT NULL,
+	"skills" JSONB,
 	"work_experience_details" character varying,
 	"telegram_user_id" INT NOT NULL
 );
 
 DO $$ BEGIN
 ALTER TABLE category_item ADD CONSTRAINT category_item_category_id_fkey FOREIGN KEY ("category_id") REFERENCES category(id);
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
-ALTER TABLE cities_to_users ADD CONSTRAINT cities_to_users_worker_id_fkey FOREIGN KEY ("worker_id") REFERENCES workers(id);
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
-ALTER TABLE cities_to_users ADD CONSTRAINT cities_to_users_city_id_fkey FOREIGN KEY ("city_id") REFERENCES city(id);
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -279,30 +179,6 @@ END $$;
 
 DO $$ BEGIN
 ALTER TABLE employment_options_to_workers ADD CONSTRAINT employment_options_to_workers_employment_options_id_fkey FOREIGN KEY ("employment_options_id") REFERENCES employment_options(id);
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
-ALTER TABLE skills_to_category ADD CONSTRAINT skills_to_category_category_item_id_fkey FOREIGN KEY ("category_item_id") REFERENCES category_item(id);
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
-ALTER TABLE skills_to_category ADD CONSTRAINT skills_to_category_skill_id_fkey FOREIGN KEY ("skill_id") REFERENCES skills(id);
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
-ALTER TABLE skills_to_workers ADD CONSTRAINT skills_to_workers_worker_id_fkey FOREIGN KEY ("worker_id") REFERENCES workers(id);
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
-
-DO $$ BEGIN
-ALTER TABLE skills_to_workers ADD CONSTRAINT skills_to_workers_skill_id_fkey FOREIGN KEY ("skill_id") REFERENCES skills(id);
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -331,7 +207,4 @@ EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 
-CREATE UNIQUE INDEX IF NOT EXISTS cities_to_users_worker_id_city_id_index ON cities_to_users (worker_id, city_id);
 CREATE UNIQUE INDEX IF NOT EXISTS employment_options_to_workers_employer_id_employment_options_id_index ON employment_options_to_workers (employer_id, employment_options_id);
-CREATE UNIQUE INDEX IF NOT EXISTS skills_to_category_category_item_id_skill_id_index ON skills_to_category (category_item_id, skill_id);
-CREATE UNIQUE INDEX IF NOT EXISTS skills_to_workers_worker_id_skill_id_index ON skills_to_workers (worker_id, skill_id);

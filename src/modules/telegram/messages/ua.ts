@@ -57,12 +57,15 @@ const messagesInuarainian = {
   },
   SKILLS: {
     DEFAULT:
-      'Будь ласка, виберіть ряд навичок, які ви маєте у спеціальності <strong>{category_item}</strong>',
-    EXIST_SKILLS: '\n\nВже обран ряд навичок:\n\n'
+      'Будь ласка, введіть ряд навичок/технологій, якими ви обладаєте у спеціальності <strong>{category_item}</strong>',
+    INSTRUCTION:
+      '\n\nНавички ви можете вводити по одній (наприклад: Git), чи розділяючи їх комою (наприклад: Git, Visual Studio Code, HTML)',
+    EXIST_ITEMS: '\n\nВже збережені ряд навичок:\n\n',
+    SAVE: '\n\nЯкщо всі навички віще представленні правильно, та ви закінчили вводити нові, натисніть кнопку "<strong>{btn}</strong>"'
   },
   EMPLOYMENT_OPTIONS: {
     DEFAULT: 'Будь ласка, виберіть один чи декілька варіантів зайнятості',
-    EXIST_SKILLS: '\n\nВже обран ряд варіантів:\n\n'
+    EXIST_ITEMS: '\n\nВже обран ряд варіантів:\n\n'
   },
   DESCRIPTION_TO_EXPERIENCE: {
     DEFAULT: 'Будь ласка, опишіть ваш досвід більш розгорнуто'

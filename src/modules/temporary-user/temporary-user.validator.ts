@@ -93,9 +93,8 @@ export class TemporaryUserValidate extends ValidationDefault {
     this.#expectedSalary(worker.expectedSalary);
     this.#englishLevel(worker.englishLevel);
     this.#workExperienceDetails(worker.workExperienceDetails);
-    this.#skillsToWorkers(worker.skillsToWorkers);
+    this.#skills(worker.skills);
     this.#employmentOptions(worker.employmentOptions);
-    this.#cities(worker.cities);
   };
 
   #categoruItemId = (categoruItemId?: number) => {
@@ -164,15 +163,15 @@ export class TemporaryUserValidate extends ValidationDefault {
     }
   };
 
-  #skillsToWorkers = (skillsToWorkers?: number[]) => {
-    if (skillsToWorkers === undefined) {
+  #skills = (skills?: string[]) => {
+    if (skills === undefined) {
       return;
     }
 
-    skillsToWorkers.forEach(it => {
-      if (!_.isInteger(it))
+    skills.forEach(it => {
+      if (!_.isString(it))
         throw new ValidateError(
-          `Payload atribute: [skillsToWorkers.item] type isn't equal to number!`
+          `Payload atribute: [skills.item] type isn't equal to string!`
         );
     });
   };
@@ -186,19 +185,6 @@ export class TemporaryUserValidate extends ValidationDefault {
       if (!_.isInteger(it))
         throw new ValidateError(
           `Payload atribute: [employmentOptions.item] type isn't equal to number!`
-        );
-    });
-  };
-
-  #cities = (cities?: number[]) => {
-    if (cities === undefined) {
-      return;
-    }
-
-    cities.forEach(it => {
-      if (!_.isInteger(it))
-        throw new ValidateError(
-          `Payload atribute: [cities.item] type isn't equal to number!`
         );
     });
   };

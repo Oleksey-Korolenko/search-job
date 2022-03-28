@@ -4,7 +4,15 @@ import TemporaryUserTable from './temporary-user';
 
 export const ETelegramMessageType = createEnum({
   alias: 'telegram_message_type',
-  values: ['phone', 'salary', 'name', 'position', 'company', 'details']
+  values: [
+    'phone',
+    'salary',
+    'name',
+    'position',
+    'company',
+    'details',
+    'skills'
+  ]
 });
 
 export default class TelegramMessagesTable extends AbstractTable<TelegramMessagesTable> {

@@ -58,13 +58,15 @@ const messagesInEnglish = {
   },
   SKILLS: {
     DEFAULT:
-      'Please select a skills that you have in the profession of <strong>{category_item}</strong>',
-    EXIST_SKILLS: '\n\nA skills what have already been selected:\n\n'
+      'Please enter a skills/technologies that you have in the specialty <strong>{category_item}</strong>',
+    INSTRUCTION:
+      '\n\nYou can enter skills one by one (for example: Git), or separate them with a comma (for example: Git, Visual Studio Code, HTML)',
+    EXIST_ITEMS: '\n\nAlready preserved a skills:\n\n',
+    SAVE: '\n\nIf all skills are already presented correctly, and you have finished entering new ones, click "<strong>{btn}</strong>"'
   },
   EMPLOYMENT_OPTIONS: {
     DEFAULT: 'Please select one or more employment options',
-    EXIST_SKILLS:
-      '\n\nA employment options what have already been selected:\n\n'
+    EXIST_ITEMS: '\n\nA employment options what have already been selected:\n\n'
   },
   DESCRIPTION_TO_EXPERIENCE: {
     DEFAULT: 'Please describe your experience in more detail'
