@@ -321,55 +321,6 @@ export default class TelegramView {
 
   // english level section end
 
-  // city section start
-
-  public selectCity = (
-    language: languageTypes,
-    temporaryUserId: number,
-    cities: INotPreparedTranslate[],
-    existCities: INotPreparedTranslate[]
-  ): ITelegramTextFormatterResponse => {
-    let text = '';
-    let extra: ITelegramTextFormatterExtra = {};
-
-    text += this.#preparedText(messages[language].CITIES.DEFAULT, {});
-
-    if (existCities.length > 0) {
-      const preparedExistCitiesTranslate = this.preparedTranslate(
-        language,
-        existCities
-      );
-
-      text += this.#preparedText(messages[language].CITIES.EXIST_CITIES, {});
-
-      preparedExistCitiesTranslate.forEach(
-        it =>
-          (text += this.#preparedText(
-            messages[language].DEFAULT_MESSAGE.LIST_ITEM,
-            {
-              item: it.translate
-            }
-          ))
-      );
-    }
-
-    const preparedCitiesTranslate = this.preparedTranslate(language, cities);
-
-    console.log(preparedCitiesTranslate);
-
-    extra.reply_markup = this.#getCheckboxButtonsKeyboardMarkup(
-      language,
-      temporaryUserId,
-      preparedCitiesTranslate,
-      ETelegramCheckboxButtonType.CITY,
-      existCities.length === 0 ? false : true
-    );
-
-    return { text, extra };
-  };
-
-  // city section end
-
   // skills section start
 
   public selectSkills = (
@@ -602,23 +553,6 @@ export default class TelegramView {
     text += this.#preparedText(messages[language].WORKER.SKILLS, {});
 
     preparedSkillsTranslate.forEach(
-      it =>
-        (text += this.#preparedText(
-          messages[language].DEFAULT_MESSAGE.LIST_ITEM,
-          {
-            item: it.translate
-          }
-        ))
-    );
-
-    const preparedCitiesTranslate = this.preparedTranslate(
-      language,
-      worker.cities as INotPreparedTranslate[]
-    );
-
-    text += this.#preparedText(messages[language].WORKER.CITIES, {});
-
-    preparedCitiesTranslate.forEach(
       it =>
         (text += this.#preparedText(
           messages[language].DEFAULT_MESSAGE.LIST_ITEM,

@@ -55,10 +55,6 @@ const messagesInuarainian = {
       C1: 'Advanced/Fluent'
     }
   },
-  CITIES: {
-    DEFAULT: 'Будь ласка, оберіть ряд міст у яких ви шукаєте роботу',
-    EXIST_CITIES: '\n\nВже обран ряд міст:\n\n'
-  },
   SKILLS: {
     DEFAULT:
       'Будь ласка, виберіть ряд навичок, які ви маєте у спеціальності <strong>{category_item}</strong>',

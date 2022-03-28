@@ -29,7 +29,6 @@ import {
 import TelegramMessageService from '@modules/telegram-messages/telegram-messages.service';
 import { TelegramValidate } from './telegram.validator';
 import ETelegramConfirmButtonType from './enum/confirm-button-type.enum';
-import CityService from '@modules/city/city.service';
 import ETelegramCheckboxButtonType from './enum/checkbox-button-type.enum';
 import ETelegramEditButtonType from './enum/edit-button-type.enum';
 import SkillsToCategoryService from '@modules/skills-to-category/skills-to-category.service';
@@ -46,7 +45,6 @@ export default class TelegramService extends DBConnection {
 
   #categoryService: CategoryService;
   #categoryItemService: CategoryItemService;
-  #cityService: CityService;
   #skillsToCategoryService: SkillsToCategoryService;
   #employmentOptionsService: EmploymentOptionsService;
 
@@ -64,7 +62,6 @@ export default class TelegramService extends DBConnection {
 
     this.#categoryService = new CategoryService(this.db);
     this.#categoryItemService = new CategoryItemService(this.db);
-    this.#cityService = new CityService(this.db);
     this.#skillsToCategoryService = new SkillsToCategoryService(this.db);
     this.#employmentOptionsService = new EmploymentOptionsService(this.db);
 
@@ -452,21 +449,6 @@ export default class TelegramService extends DBConnection {
     item: number
   ) => {
     switch (typeMessage) {
-      case ETelegramCheckboxButtonType.CITY: {
-        if (typeOperation === 'save') {
-          await this.saveCities(chatId, userId, messageId, temporaryUserId);
-        } else if (typeOperation === 'add' || typeOperation === 'delete') {
-          await this.checkboxCity(
-            chatId,
-            userId,
-            messageId,
-            temporaryUserId,
-            item,
-            typeOperation
-          );
-        }
-        break;
-      }
       case ETelegramCheckboxButtonType.SKILL: {
         if (typeOperation === 'save') {
           await this.saveSkills(chatId, userId, messageId, temporaryUserId);
@@ -898,162 +880,6 @@ export default class TelegramService extends DBConnection {
   };
 
   // worker english level section end
-
-  // worker city section start
-
-  public selectCity = async (
-    chatId: number | string,
-    userId: string,
-    temporaryUserId: number
-  ) => {
-    const telegramInfo = await this.#telegramCheck(
-      chatId,
-      userId,
-      temporaryUserId
-    );
-
-    if (telegramInfo === undefined) {
-      return;
-    }
-
-    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
-
-    const temporaryUserInfo = existTemporaryUser.user as IWorker;
-
-    const notPreparedTranslate = await this.#getPreparedCheckboxItems(
-      ETelegramCheckboxButtonType.CITY,
-      temporaryUserInfo?.cities === undefined ? [] : temporaryUserInfo.cities
-    );
-
-    const { text, extra } = this.#telegramView.selectCity(
-      existTelegramInfo.language,
-      temporaryUserId,
-      notPreparedTranslate,
-      []
-    );
-
-    await this.#telegramApiService.sendMessage(chatId, text, extra);
-  };
-
-  public checkboxCity = async (
-    chatId: number | string,
-    userId: string,
-    messageId: number,
-    temporaryUserId: number,
-    cityId: number,
-    typeOperation: 'add' | 'delete'
-  ) => {
-    const telegramInfo = await this.#telegramCheck(
-      chatId,
-      userId,
-      temporaryUserId
-    );
-
-    if (telegramInfo === undefined) {
-      return;
-    }
-
-    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
-
-    const temporaryUserInfo = existTemporaryUser.user as IWorker;
-
-    let preparedCityIds: number[] = [];
-
-    switch (typeOperation) {
-      case 'add': {
-        preparedCityIds =
-          temporaryUserInfo?.cities === undefined
-            ? [cityId]
-            : [...temporaryUserInfo.cities, cityId];
-
-        break;
-      }
-      case 'delete': {
-        preparedCityIds = this.#deleteItemFromArr(
-          temporaryUserInfo?.cities === undefined
-            ? []
-            : temporaryUserInfo.cities,
-          cityId
-        );
-
-        break;
-      }
-    }
-
-    const updatedTemporaryUser = await this.updateTemporaryUser(
-      temporaryUserId,
-      {
-        type: 'worker',
-        cities: preparedCityIds
-      }
-    );
-
-    const updatedTemporaryUserInfo = updatedTemporaryUser.user as IWorker;
-
-    const existCities = await this.#cityService.getByIds(preparedCityIds);
-
-    const notPreparedTranslate = await this.#getPreparedCheckboxItems(
-      ETelegramCheckboxButtonType.CITY,
-      updatedTemporaryUserInfo?.cities === undefined
-        ? []
-        : updatedTemporaryUserInfo.cities
-    );
-
-    console.log(notPreparedTranslate);
-
-    const { text, extra } = this.#telegramView.selectCity(
-      existTelegramInfo.language,
-      temporaryUserId,
-      notPreparedTranslate,
-      existCities as INotPreparedTranslate[]
-    );
-
-    await this.#telegramApiService.updateMessage(
-      chatId,
-      messageId,
-      text,
-      extra
-    );
-  };
-
-  public saveCities = async (
-    chatId: number | string,
-    userId: string,
-    messageId: number,
-    temporaryUserId: number
-  ) => {
-    const telegramInfo = await this.#telegramCheck(
-      chatId,
-      userId,
-      temporaryUserId
-    );
-
-    if (telegramInfo === undefined) {
-      return;
-    }
-
-    const { existTemporaryUser } = telegramInfo;
-
-    const temporaryUserInfo = existTemporaryUser.user as IWorker;
-
-    const existCities = await this.#cityService.getByIds(
-      temporaryUserInfo.cities
-    );
-
-    await this.selectSuccess(
-      chatId,
-      userId,
-      messageId,
-      existCities as INotPreparedTranslate[],
-      ETelegramEditButtonType.CITY,
-      'list',
-      temporaryUserId
-    );
-
-    await this.selectSkill(chatId, userId, temporaryUserId);
-  };
-
-  // worker city section end
 
   // worker skills section start
 
@@ -1679,8 +1505,6 @@ export default class TelegramService extends DBConnection {
         worker.skillsToWorkers
       );
 
-      const cities = await this.#cityService.getByIds(worker.cities);
-
       const employmentOptions = await this.#employmentOptionsService.getByIds(
         worker.employmentOptions
       );
@@ -1694,8 +1518,7 @@ export default class TelegramService extends DBConnection {
         englishLevel: worker.englishLevel,
         workExperienceDetails: worker.workExperienceDetails,
         skillsToWorkers: skills,
-        employmentOptions,
-        cities
+        employmentOptions
       } as IWorkerFinally;
 
       const { text, extra } = this.#telegramView.selectFinallyWorker(
@@ -1779,11 +1602,6 @@ export default class TelegramService extends DBConnection {
     let items: INotPreparedTranslate[];
 
     switch (checkboxType) {
-      case ETelegramCheckboxButtonType.CITY: {
-        items = (await this.#cityService.getAll()) as INotPreparedTranslate[];
-
-        break;
-      }
       case ETelegramCheckboxButtonType.SKILL: {
         items = (await this.#skillsToCategoryService.getByCategoryId(
           extraItem

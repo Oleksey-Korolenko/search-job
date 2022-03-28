@@ -1,7 +1,6 @@
 import { arrayValuesToType } from '@custom-types/array-values.type';
 import {
   CategoryItemType,
-  CityType,
   EEnglishLevelsType,
   EmploymentOptionsType,
   EWorkExperienceInMonthsType,
@@ -18,5 +17,4 @@ export interface IWorkerFinally {
   workExperienceDetails: string;
   skillsToWorkers: SkillType[];
   employmentOptions: EmploymentOptionsType[];
-  cities: CityType[];
 }

@@ -56,10 +56,6 @@ const messagesInEnglish = {
       C1: 'Advanced/Fluent'
     }
   },
-  CITIES: {
-    DEFAULT: 'Please select a number of cities where you are looking for work',
-    EXIST_CITIES: '\n\nA cities what have already been selected:\n\n'
-  },
   SKILLS: {
     DEFAULT:
       'Please select a skills that you have in the profession of <strong>{category_item}</strong>',

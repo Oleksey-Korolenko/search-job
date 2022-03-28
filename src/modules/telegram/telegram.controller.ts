@@ -158,19 +158,7 @@ export default async (router: typeof Router, db: DB) => {
           type: 'worker',
           englishLevel: EEnglishLevelsType.values[+item]
         });
-        await telegramService.selectCity(
-          checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.from.id}`,
-          +temporaryUserId
-        );
-        break;
-      }
-      case ETelegramButtonType.SELECT_ENGLISH_LEVEL: {
-        await telegramService.updateTemporaryUser(+temporaryUserId, {
-          type: 'worker',
-          englishLevel: EEnglishLevelsType.values[+item]
-        });
-        await telegramService.selectCity(
+        await telegramService.selectSkill(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.from.id}`,
           +temporaryUserId
