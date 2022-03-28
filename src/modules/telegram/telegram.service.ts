@@ -1,5 +1,5 @@
 import TelegramApiService from './telegram.api.service';
-import TelegramView from './telegram.view';
+import { TelegramView } from './views';
 import TelegramDBProcessorService from '@modules/telegram-db-processor/telegram-db.service';
 import { DBConnection } from '@db/db';
 import { DB } from 'drizzle-orm';
@@ -321,8 +321,13 @@ export default class TelegramService extends DBConnection {
 
         this.updateTemporaryUser(existMessage.temporaryUserId, {
           type: 'worker',
-          skills: [...worker.skills, ...preparedSkills]
+          skills: [
+            ...(worker?.skills === undefined ? [] : worker.skills),
+            ...preparedSkills
+          ]
         });
+
+        // TODO remove twice skills
 
         await this.selectEnterSkills(
           chatId,
@@ -1456,7 +1461,7 @@ export default class TelegramService extends DBConnection {
         employmentOptions
       } as IWorkerFinally;
 
-      const { text, extra } = this.#telegramView.selectFinallyWorker(
+      const { text, extra } = this.#telegramView.selectWorkerSummary(
         existTelegramInfo.language,
         finallyWorker,
         temporaryUserId
@@ -1475,7 +1480,7 @@ export default class TelegramService extends DBConnection {
         phone: employer.phone
       } as IEmployerFinally;
 
-      const { text, extra } = this.#telegramView.selectFinallyEmployer(
+      const { text, extra } = this.#telegramView.selectEmployerSummary(
         existTelegramInfo.language,
         finallyEmployer,
         temporaryUserId
