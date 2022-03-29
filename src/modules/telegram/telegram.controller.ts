@@ -16,7 +16,7 @@ import ETelegramEditButtonType from './enum/edit-button-type.enum';
 import { ITelegramButtonResponse } from './interface';
 import { languageTypes } from './messages';
 import TelegramApiService from './telegram.api.service';
-import TelegramService from './telegram.service';
+import { TelegramService } from './services/telegram.service';
 
 export default async (router: typeof Router, db: DB) => {
   const routes = router();
@@ -42,7 +42,7 @@ export default async (router: typeof Router, db: DB) => {
         }
       }
     } else {
-      await telegramService.checkCommand(
+      await telegramService.checkEnteredText(
         `${checkedBody.message.chat.id}`,
         `${checkedBody.message.from.id}`,
         checkedBody.message.text

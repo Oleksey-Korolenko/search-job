@@ -1,4 +1,5 @@
 import { Translate } from '@custom-types/translate.type';
+import { TelegramType, TemporaryUserType } from '@db/tables';
 import { IInlineKeyboardMarkup } from '.';
 
 export interface IArgsForPreparedText {
@@ -26,4 +27,9 @@ export interface INotPreparedTranslate {
   name: string;
   translate: Translate;
   isExist?: boolean;
+}
+
+export interface ITelegramInfo {
+  existTelegramInfo: TelegramType;
+  existTemporaryUser: TemporaryUserType;
 }
