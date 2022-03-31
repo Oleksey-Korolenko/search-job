@@ -1,4 +1,5 @@
 import { CategoryItemType, CategoryType } from '@db/tables';
+import ETelegramBackButtonType from '../enum/back-button-type.enum';
 import {
   IInlineKeyboardButton,
   IInlineKeyboardMarkup,
@@ -83,7 +84,7 @@ export default class TelegramCategoryView extends TelegramCommonView {
         !isCategory && [
           {
             text: this.messages[language].DEFAULT_BUTTON.BACK,
-            callback_data: `back-${temporaryUserId}`
+            callback_data: `back-${temporaryUserId}:${ETelegramBackButtonType.CATEGORY}`
           }
         ]
       ].filter(Boolean) as IInlineKeyboardButton[][]

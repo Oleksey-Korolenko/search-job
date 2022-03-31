@@ -3,6 +3,7 @@ import { EUserRole, IEmployer, IWorker } from '@db/tables';
 import { IEmployerInput } from '@modules/employer';
 import { IWorkerInput } from '@modules/worker';
 import { DB } from 'drizzle-orm';
+import e from 'express';
 import ETelegramCheckboxButtonType from '../enum/checkbox-button-type.enum';
 import ETelegramEditButtonType from '../enum/edit-button-type.enum';
 import {
@@ -10,6 +11,7 @@ import {
   IInlineKeyboardButton,
   INotPreparedTranslate,
   ITelegramMessage,
+  ITelegramTextFormatterExtra,
   IWorkerFinally
 } from '../interface';
 import { languageTypes } from '../messages';
@@ -45,7 +47,7 @@ export default class TelegramMessageService extends TelegramCommonService {
       switch (role) {
         case 'worker': {
           const temporaryUser = await this.saveTemporaryUser({
-            isReadyToSave: false,
+            isFinal: -1,
             userRole: 'worker',
             telegramUserId: existTelegramInfo.id,
             user: {
@@ -63,7 +65,7 @@ export default class TelegramMessageService extends TelegramCommonService {
         }
         case 'employer': {
           const temporaryUser = await this.saveTemporaryUser({
-            isReadyToSave: false,
+            isFinal: -1,
             userRole: 'employer',
             telegramUserId: existTelegramInfo.id,
             user: {
@@ -428,7 +430,11 @@ export default class TelegramMessageService extends TelegramCommonService {
     if (!existTemporaryUser.isEdit) {
       await this.selectEmploymentOptions(chatId, userId, temporaryUserId);
     } else {
-      await this.updateTemporaryUserEditMode(temporaryUserId, false);
+      await this.updateTemporaryUserEditOptions(temporaryUserId, false, -1);
+    }
+
+    if (existTemporaryUser.isFinal === 0) {
+      await this.selectSummary(chatId, userId, existTemporaryUser.id, false);
     }
   };
 
@@ -583,9 +589,13 @@ export default class TelegramMessageService extends TelegramCommonService {
     );
 
     if (existTemporaryUser.isEdit) {
-      await this.updateTemporaryUserEditMode(temporaryUserId, false);
+      await this.updateTemporaryUserEditOptions(temporaryUserId, false, -1);
     } else {
       await this.selectExperienceDetails(chatId, userId, temporaryUserId);
+    }
+
+    if (existTemporaryUser.isFinal === 0) {
+      await this.selectSummary(chatId, userId, existTemporaryUser.id, false);
     }
   };
 
@@ -835,7 +845,8 @@ export default class TelegramMessageService extends TelegramCommonService {
     chatId: number | string,
     userId: string,
     temporaryUserId: number,
-    userRole: arrayValuesToType<typeof EUserRole.values>
+    isEdit: boolean,
+    messageId?: number
   ) => {
     const telegramInfo = await this.telegramCheck(
       chatId,
@@ -847,9 +858,12 @@ export default class TelegramMessageService extends TelegramCommonService {
       return;
     }
 
+    let text = '';
+    let extra: ITelegramTextFormatterExtra = {};
+
     const { existTelegramInfo, existTemporaryUser } = telegramInfo;
 
-    if (userRole === 'worker') {
+    if (existTemporaryUser.userRole === 'worker') {
       const worker = existTemporaryUser.user as IWorker;
 
       const category = await this.categoryItemService.getById(
@@ -872,16 +886,18 @@ export default class TelegramMessageService extends TelegramCommonService {
         employmentOptions
       } as IWorkerFinally;
 
-      const { text, extra } = this.telegramView.selectWorkerSummary(
+      const tgMessage = this.telegramView.selectWorkerSummary(
         existTelegramInfo.language,
         finallyWorker,
-        temporaryUserId
+        temporaryUserId,
+        isEdit
       );
 
-      await this.telegramApiService.sendMessage(chatId, text, extra);
+      text = tgMessage.text;
+      extra = tgMessage.extra;
     }
 
-    if (userRole === 'employer') {
+    if (existTemporaryUser.userRole === 'employer') {
       const employer = existTemporaryUser.user as IEmployer;
 
       const finallyEmployer = {
@@ -891,13 +907,26 @@ export default class TelegramMessageService extends TelegramCommonService {
         phone: employer.phone
       } as IEmployerFinally;
 
-      const { text, extra } = this.telegramView.selectEmployerSummary(
+      const tgMessage = this.telegramView.selectEmployerSummary(
         existTelegramInfo.language,
         finallyEmployer,
-        temporaryUserId
+        temporaryUserId,
+        isEdit
       );
 
+      text = tgMessage.text;
+      extra = tgMessage.extra;
+    }
+
+    if (messageId === undefined) {
       await this.telegramApiService.sendMessage(chatId, text, extra);
+    } else {
+      await this.telegramApiService.updateMessage(
+        chatId,
+        messageId,
+        text,
+        extra
+      );
     }
   };
 
@@ -919,6 +948,8 @@ export default class TelegramMessageService extends TelegramCommonService {
     }
 
     const { existTelegramInfo, existTemporaryUser } = telegramInfo;
+
+    let text = '';
 
     if (userRole === 'worker') {
       const worker = existTemporaryUser.user as IWorker;
@@ -942,12 +973,10 @@ export default class TelegramMessageService extends TelegramCommonService {
         worker.employmentOptions
       );
 
-      const text = this.telegramView.saveSummary(
+      text = this.telegramView.saveSummary(
         existTelegramInfo.language,
         'worker'
       );
-
-      await this.telegramApiService.updateMessage(chatId, messageId, text);
     }
 
     if (userRole === 'employer') {
@@ -962,13 +991,19 @@ export default class TelegramMessageService extends TelegramCommonService {
 
       await this.employerService.save(preparedEmployer);
 
-      const text = this.telegramView.saveSummary(
+      text = this.telegramView.saveSummary(
         existTelegramInfo.language,
         'employer'
       );
-
-      await this.telegramApiService.updateMessage(chatId, messageId, text);
     }
+
+    await this.telegramApiService.sendMessage(chatId, text);
+
+    await this.telegramApiService.updateMessageReplyMarkup(
+      chatId,
+      messageId,
+      {}
+    );
 
     await this.temporaryUserService.deleteTemporaryUser(existTemporaryUser.id);
   };

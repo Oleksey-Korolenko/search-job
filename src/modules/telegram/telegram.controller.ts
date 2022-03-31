@@ -17,6 +17,7 @@ import { ITelegramButtonResponse } from './interface';
 import { languageTypes } from './messages';
 import TelegramApiService from './telegram.api.service';
 import { TelegramService } from './services/telegram.service';
+import ETelegramBackButtonType from './enum/back-button-type.enum';
 
 export default async (router: typeof Router, db: DB) => {
   const routes = router();
@@ -100,13 +101,13 @@ export default async (router: typeof Router, db: DB) => {
         break;
       }
       case ETelegramButtonType.BACK: {
-        await telegramService.selectCategory(
+        await telegramService.checkBackButton(
           checkedBody.callback_query.message.chat.id,
+          checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.from.id}`,
           +temporaryUserId,
-          checkedBody.callback_query.message.message_id
+          item as ETelegramBackButtonType
         );
-        // TODO break
         break;
       }
       case ETelegramButtonType.SELECT_CATEGORY_ITEM: {
@@ -129,15 +130,25 @@ export default async (router: typeof Router, db: DB) => {
         );
 
         if (temporaryUser.isEdit) {
-          await telegramService.updateTemporaryUserEditModeMain(
+          await telegramService.updateTemporaryUserEditOptionsMain(
             +temporaryUserId,
-            false
+            false,
+            -1
           );
         } else {
           await telegramService.selectExperience(
             checkedBody.callback_query.message.chat.id,
             `${checkedBody.callback_query.from.id}`,
             +temporaryUserId
+          );
+        }
+
+        if (temporaryUser.isFinal === 0) {
+          await telegramService.selectSummary(
+            checkedBody.callback_query.message.chat.id,
+            `${checkedBody.callback_query.from.id}`,
+            +temporaryUserId,
+            false
           );
         }
 
@@ -165,15 +176,25 @@ export default async (router: typeof Router, db: DB) => {
         );
 
         if (temporaryUser.isEdit) {
-          await telegramService.updateTemporaryUserEditModeMain(
+          await telegramService.updateTemporaryUserEditOptionsMain(
             +temporaryUserId,
-            false
+            false,
+            -1
           );
         } else {
           await telegramService.selectSalary(
             checkedBody.callback_query.message.chat.id,
             `${checkedBody.callback_query.from.id}`,
             +temporaryUserId
+          );
+        }
+
+        if (temporaryUser.isFinal === 0) {
+          await telegramService.selectSummary(
+            checkedBody.callback_query.message.chat.id,
+            `${checkedBody.callback_query.from.id}`,
+            +temporaryUserId,
+            false
           );
         }
 
@@ -189,15 +210,25 @@ export default async (router: typeof Router, db: DB) => {
         );
 
         if (temporaryUser.isEdit) {
-          await telegramService.updateTemporaryUserEditModeMain(
+          await telegramService.updateTemporaryUserEditOptionsMain(
             +temporaryUserId,
-            false
+            false,
+            -1
           );
         } else {
           await telegramService.selectSkill(
             checkedBody.callback_query.message.chat.id,
             `${checkedBody.callback_query.from.id}`,
             +temporaryUserId
+          );
+        }
+
+        if (temporaryUser.isFinal === 0) {
+          await telegramService.selectSummary(
+            checkedBody.callback_query.message.chat.id,
+            `${checkedBody.callback_query.from.id}`,
+            +temporaryUserId,
+            false
           );
         }
 
@@ -220,6 +251,21 @@ export default async (router: typeof Router, db: DB) => {
           checkedBody.callback_query.message.message_id,
           +temporaryUserId,
           item as arrayValuesToType<typeof EUserRole.values>
+        );
+        break;
+      }
+      case ETelegramButtonType.EDIT_FINALLY: {
+        await telegramService.updateTemporaryUserEditOptionsMain(
+          +temporaryUserId,
+          true,
+          0
+        );
+        await telegramService.selectSummary(
+          checkedBody.callback_query.message.chat.id,
+          `${checkedBody.callback_query.from.id}`,
+          +temporaryUserId,
+          true,
+          checkedBody.callback_query.message.message_id
         );
         break;
       }

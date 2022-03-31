@@ -90,17 +90,33 @@ const messagesInuarainian = {
     SALARY: 'Зарплатні побажання: <strong>{salary}</strong>\n',
     ENGLISH: 'Рівень англійскої мови: <strong>{english}</strong>\n\n',
     SKILLS: 'Головні навички:\n\n',
-    CITIES: '\nМіста у яких шукається робота:\n\n',
     EMPLOYMENT_OPTIONS: '\nДоступні варіанти зайнятості:\n\n',
     EXPERIENCE_DETAILS: '\nДетальна інформація:\n\n',
-    SAVE: 'Ваш обліковий запис робітника успішно збережено'
+    SAVE: 'Ваш обліковий запис робітника успішно збережено',
+    BUTTON: {
+      NAME: 'ПІБ',
+      CATEGORY: 'Категорія',
+      POSITION: 'Позиція',
+      EXPERIENCE: 'Досвід',
+      SALARY: 'Заробітна плата',
+      ENGLISH: 'Рівень англійскої',
+      SKILLS: 'Навички',
+      EMPLOYMENT_OPTIONS: 'Варіанти зайнятості',
+      EXPERIENCE_DETAILS: 'Детальна інформація'
+    }
   },
   EMPLOYER: {
     TITLE: '<strong>{name}</strong>\n\n',
     COMPANY:
       'Компанія <strong>{company}</strong>. Посада <strong>{position}</strong>.\n\n',
     PHONE: 'Номер телефону: <strong>{phone}</strong>\n',
-    SAVE: 'Ваш обліковий запис роботодавця успішно збережено'
+    SAVE: 'Ваш обліковий запис роботодавця успішно збережено',
+    BUTTON: {
+      NAME: 'ПІБ',
+      COMPANY: 'Компанія',
+      POSITION: 'Позиція',
+      PHONE: 'Номер телефону'
+    }
   },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',

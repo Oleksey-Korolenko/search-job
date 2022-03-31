@@ -12,7 +12,7 @@ import {
 import { arrayValuesToType } from '@custom-types/array-values.type';
 
 export const temporaryUserInputFields: Array<keyof ITemporaryUserInput> = [
-  'isReadyToSave',
+  'isFinal',
   'telegramUserId',
   'user',
   'userRole',
@@ -22,7 +22,7 @@ export const temporaryUserInputFields: Array<keyof ITemporaryUserInput> = [
 export class TemporaryUserValidate extends ValidationDefault {
   save = (payload: ITemporaryUserInput): ITemporaryUserInput => {
     this.#telegramUserId(payload.telegramUserId);
-    this.#isReadyToSave(payload.isReadyToSave);
+    this.#isFinal(payload.isFinal);
     this.#isEdit(payload.isEdit);
     this.#userRole(payload.user.type);
     this.#userRole(payload.userRole);
@@ -46,16 +46,14 @@ export class TemporaryUserValidate extends ValidationDefault {
     }
   };
 
-  #isReadyToSave = (isReadyToSave: boolean) => {
-    if (isReadyToSave === undefined) {
-      throw new ValidateError(
-        `Payload atribute: [isReadyToSave] doesn't exist!`
-      );
+  #isFinal = (isFinal: number) => {
+    if (isFinal === undefined) {
+      throw new ValidateError(`Payload atribute: [isFinal] doesn't exist!`);
     }
 
-    if (!_.isBoolean(isReadyToSave)) {
+    if (!_.isInteger(isFinal)) {
       throw new ValidateError(
-        `Payload atribute: [isReadyToSave] type isn't equal to boolean!`
+        `Payload atribute: [isFinal] type isn't equal to number!`
       );
     }
   };

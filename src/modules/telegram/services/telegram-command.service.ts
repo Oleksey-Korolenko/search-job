@@ -1,6 +1,7 @@
 import { arrayValuesToType } from '@custom-types/array-values.type';
-import { ETelegramMessageType, IWorker } from '@db/tables';
+import { ETelegramMessageType, IEmployer, IWorker } from '@db/tables';
 import { DB } from 'drizzle-orm';
+import ETelegramBackButtonType from '../enum/back-button-type.enum';
 import ETelegramCheckboxButtonType from '../enum/checkbox-button-type.enum';
 import ETelegramConfirmButtonType from '../enum/confirm-button-type.enum';
 import ETelegramEditButtonType from '../enum/edit-button-type.enum';
@@ -79,9 +80,19 @@ export default class TelegramCommandService extends TelegramCommonService {
             );
           }
 
-          await this.updateTemporaryUserEditMode(
+          if (existTemporaryUser.isFinal === 0) {
+            await this.#telegramMessagesService.selectSummary(
+              chatId,
+              userId,
+              existTemporaryUser.id,
+              false
+            );
+          }
+
+          await this.updateTemporaryUserEditOptions(
             existMessage.temporaryUserId,
-            false
+            false,
+            -1
           );
 
           break;
@@ -148,9 +159,19 @@ export default class TelegramCommandService extends TelegramCommonService {
           );
         }
 
-        await this.updateTemporaryUserEditMode(
+        if (existTemporaryUser.isFinal === 0) {
+          await this.#telegramMessagesService.selectSummary(
+            chatId,
+            userId,
+            existTemporaryUser.id,
+            false
+          );
+        }
+
+        await this.updateTemporaryUserEditOptions(
           existMessage.temporaryUserId,
-          false
+          false,
+          -1
         );
 
         break;
@@ -176,13 +197,23 @@ export default class TelegramCommandService extends TelegramCommonService {
             chatId,
             userId,
             existMessage.temporaryUserId,
-            'worker'
+            false
           );
         }
 
-        await this.updateTemporaryUserEditMode(
+        if (existTemporaryUser.isFinal === 0) {
+          await this.#telegramMessagesService.selectSummary(
+            chatId,
+            userId,
+            existTemporaryUser.id,
+            false
+          );
+        }
+
+        await this.updateTemporaryUserEditOptions(
           existMessage.temporaryUserId,
-          false
+          false,
+          -1
         );
 
         break;
@@ -225,9 +256,19 @@ export default class TelegramCommandService extends TelegramCommonService {
           );
         }
 
-        await this.updateTemporaryUserEditMode(
+        if (existTemporaryUser.isFinal === 0) {
+          await this.#telegramMessagesService.selectSummary(
+            chatId,
+            userId,
+            existTemporaryUser.id,
+            false
+          );
+        }
+
+        await this.updateTemporaryUserEditOptions(
           existMessage.temporaryUserId,
-          false
+          false,
+          -1
         );
 
         break;
@@ -256,9 +297,19 @@ export default class TelegramCommandService extends TelegramCommonService {
           );
         }
 
-        await this.updateTemporaryUserEditMode(
+        if (existTemporaryUser.isFinal === 0) {
+          await this.#telegramMessagesService.selectSummary(
+            chatId,
+            userId,
+            existTemporaryUser.id,
+            false
+          );
+        }
+
+        await this.updateTemporaryUserEditOptions(
           existMessage.temporaryUserId,
-          false
+          false,
+          -1
         );
 
         break;
@@ -317,13 +368,23 @@ export default class TelegramCommandService extends TelegramCommonService {
               chatId,
               userId,
               existMessage.temporaryUserId,
-              'employer'
+              false
             );
           }
 
-          await this.updateTemporaryUserEditMode(
+          if (existTemporaryUser.isFinal === 0) {
+            await this.#telegramMessagesService.selectSummary(
+              chatId,
+              userId,
+              existTemporaryUser.id,
+              false
+            );
+          }
+
+          await this.updateTemporaryUserEditOptions(
             existMessage.temporaryUserId,
-            false
+            false,
+            -1
           );
 
           break;
@@ -474,10 +535,23 @@ export default class TelegramCommandService extends TelegramCommonService {
       return;
     }
 
-    await this.updateTemporaryUserEditMode(temporaryUserId, true);
+    const { existTemporaryUser } = telegramInfo;
+
+    if (existTemporaryUser.isFinal === 0) {
+      await this.telegramApiService.updateMessageReplyMarkup(
+        chatId,
+        messageId,
+        {}
+      );
+    }
 
     switch (typeOperation) {
       case ETelegramEditButtonType.CATEGORY: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'worker',
+          ...(existTemporaryUser.user as IWorker),
+          categoryItemId: undefined
+        });
         await this.#telegramMessagesService.selectCategory(
           chatId,
           userId,
@@ -486,6 +560,11 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.COMPANY: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'employer',
+          ...(existTemporaryUser.user as IEmployer),
+          company: undefined
+        });
         await this.#telegramMessagesService.selectCompany(
           chatId,
           userId,
@@ -494,6 +573,11 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.EMPLOYMENT_OPTIONS: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'worker',
+          ...(existTemporaryUser.user as IWorker),
+          employmentOptions: undefined
+        });
         await this.#telegramMessagesService.selectEmploymentOptions(
           chatId,
           userId,
@@ -502,6 +586,11 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.ENGLISH_LEVEL: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'worker',
+          ...(existTemporaryUser.user as IWorker),
+          englishLevel: undefined
+        });
         await this.#telegramMessagesService.selectEnglishLevel(
           chatId,
           userId,
@@ -510,6 +599,11 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.EXPERIENCE: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'worker',
+          ...(existTemporaryUser.user as IWorker),
+          workExperience: undefined
+        });
         await this.#telegramMessagesService.selectExperience(
           chatId,
           userId,
@@ -518,6 +612,11 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.EXPERIENCE_DETAILS: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'worker',
+          ...(existTemporaryUser.user as IWorker),
+          workExperienceDetails: undefined
+        });
         await this.#telegramMessagesService.selectExperienceDetails(
           chatId,
           userId,
@@ -526,6 +625,10 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.NAME: {
+        this.updateTemporaryUser(temporaryUserId, {
+          ...existTemporaryUser.user,
+          name: undefined
+        });
         await this.#telegramMessagesService.selectFullName(
           chatId,
           userId,
@@ -535,6 +638,11 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.PHONE: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'employer',
+          ...(existTemporaryUser.user as IEmployer),
+          phone: undefined
+        });
         await this.#telegramMessagesService.selectPhone(
           chatId,
           userId,
@@ -543,6 +651,10 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.POSITION: {
+        this.updateTemporaryUser(temporaryUserId, {
+          ...existTemporaryUser.user,
+          name: undefined
+        });
         await this.#telegramMessagesService.selectPosition(
           chatId,
           userId,
@@ -551,6 +663,11 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.SALARY: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'worker',
+          ...(existTemporaryUser.user as IWorker),
+          expectedSalary: undefined
+        });
         await this.#telegramMessagesService.selectSalary(
           chatId,
           userId,
@@ -559,6 +676,11 @@ export default class TelegramCommandService extends TelegramCommonService {
         break;
       }
       case ETelegramEditButtonType.SKILL: {
+        this.updateTemporaryUser(temporaryUserId, {
+          type: 'worker',
+          ...(existTemporaryUser.user as IWorker),
+          skills: undefined
+        });
         await this.#telegramMessagesService.selectSkill(
           chatId,
           userId,
@@ -573,6 +695,37 @@ export default class TelegramCommandService extends TelegramCommonService {
       messageId,
       {}
     );
+  };
+
+  public checkBackButton = async (
+    chatId: string | number,
+    messageId: number,
+    userId: string,
+    temporaryUserId: number,
+    typeMessage: ETelegramBackButtonType
+  ) => {
+    switch (typeMessage) {
+      case ETelegramBackButtonType.CATEGORY: {
+        await this.#telegramMessagesService.selectCategory(
+          chatId,
+          userId,
+          temporaryUserId,
+          messageId
+        );
+        break;
+      }
+      case ETelegramBackButtonType.SUMMARY: {
+        await this.updateTemporaryUserEditOptions(temporaryUserId, true, -1);
+        await this.#telegramMessagesService.selectSummary(
+          chatId,
+          userId,
+          temporaryUserId,
+          false,
+          messageId
+        );
+        break;
+      }
+    }
   };
 
   // BUTTONS SECTION

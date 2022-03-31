@@ -1,5 +1,7 @@
 import { arrayValuesToType } from '@custom-types/array-values.type';
 import { EUserRole } from '@db/tables';
+import ETelegramBackButtonType from '../enum/back-button-type.enum';
+import ETelegramEditButtonType from '../enum/edit-button-type.enum';
 import {
   IEmployerFinally,
   IInlineKeyboardButton,
@@ -24,7 +26,8 @@ export default class TelegramSummaryView extends TelegramCommonView {
   public selectWorkerSummary = (
     language: languageTypes,
     worker: IWorkerFinally,
-    temporaryUserId: number
+    temporaryUserId: number,
+    isEdit: boolean
   ): ITelegramTextFormatterResponse => {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
@@ -103,11 +106,19 @@ export default class TelegramSummaryView extends TelegramCommonView {
       }
     );
 
-    extra.reply_markup = this.#getFinallyButtonKeyboardMarkup(
-      language,
-      'worker',
-      temporaryUserId
-    );
+    if (isEdit) {
+      extra.reply_markup = this.#getFinallyEditButtonKeyboardMarkup(
+        language,
+        'worker',
+        temporaryUserId
+      );
+    } else {
+      extra.reply_markup = this.#getFinallyButtonKeyboardMarkup(
+        language,
+        'worker',
+        temporaryUserId
+      );
+    }
 
     return { text, extra };
   };
@@ -115,7 +126,8 @@ export default class TelegramSummaryView extends TelegramCommonView {
   public selectEmployerSummary = (
     language: languageTypes,
     employer: IEmployerFinally,
-    temporaryUserId: number
+    temporaryUserId: number,
+    isEdit: boolean
   ): ITelegramTextFormatterResponse => {
     let text = '';
     let extra: ITelegramTextFormatterExtra = {};
@@ -133,18 +145,26 @@ export default class TelegramSummaryView extends TelegramCommonView {
       phone: employer.phone
     });
 
-    extra.reply_markup = this.#getFinallyButtonKeyboardMarkup(
-      language,
-      'employer',
-      temporaryUserId
-    );
+    if (isEdit) {
+      extra.reply_markup = this.#getFinallyEditButtonKeyboardMarkup(
+        language,
+        'employer',
+        temporaryUserId
+      );
+    } else {
+      extra.reply_markup = this.#getFinallyButtonKeyboardMarkup(
+        language,
+        'employer',
+        temporaryUserId
+      );
+    }
 
     return { text, extra };
   };
 
   #getFinallyButtonKeyboardMarkup = (
     language: languageTypes,
-    userType: 'worker' | 'employer',
+    userType: arrayValuesToType<typeof EUserRole.values>,
     temporaryUserId: number
   ): IInlineKeyboardMarkup => {
     return {
@@ -152,17 +172,128 @@ export default class TelegramSummaryView extends TelegramCommonView {
         [
           {
             text: this.messages[language].DEFAULT_BUTTON.EDIT,
-            callback_data: `edit_finaly-${temporaryUserId}:${userType}`
+            callback_data: `edit_finally-${temporaryUserId}:${userType}`
           }
         ],
         [
           {
             text: this.messages[language].DEFAULT_BUTTON.SAVE,
-            callback_data: `save_finaly-${temporaryUserId}:${userType}`
+            callback_data: `save_finally-${temporaryUserId}:${userType}`
           }
         ]
       ] as IInlineKeyboardButton[][]
     };
+  };
+
+  #getFinallyEditButtonKeyboardMarkup = (
+    language: languageTypes,
+    userType: arrayValuesToType<typeof EUserRole.values>,
+    temporaryUserId: number
+  ): IInlineKeyboardMarkup => {
+    const inlineKeyboardMarkup = {
+      inline_keyboard: []
+    } as IInlineKeyboardMarkup;
+
+    if (userType === 'employer') {
+      const buttons = this.messages[language].EMPLOYER.BUTTON;
+
+      inlineKeyboardMarkup.inline_keyboard.push(
+        [
+          {
+            text: buttons.NAME,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.NAME}`
+          }
+        ],
+        [
+          {
+            text: buttons.COMPANY,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.COMPANY}`
+          }
+        ],
+        [
+          {
+            text: buttons.POSITION,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.POSITION}`
+          }
+        ],
+        [
+          {
+            text: buttons.PHONE,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.PHONE}`
+          }
+        ]
+      );
+    }
+
+    if (userType === 'worker') {
+      const buttons = this.messages[language].WORKER.BUTTON;
+
+      inlineKeyboardMarkup.inline_keyboard.push(
+        [
+          {
+            text: buttons.NAME,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.NAME}`
+          }
+        ],
+        [
+          {
+            text: buttons.CATEGORY,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.CATEGORY}`
+          }
+        ],
+        [
+          {
+            text: buttons.POSITION,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.POSITION}`
+          }
+        ],
+        [
+          {
+            text: buttons.EXPERIENCE,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.EXPERIENCE}`
+          }
+        ],
+        [
+          {
+            text: buttons.SALARY,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.SALARY}`
+          }
+        ],
+        [
+          {
+            text: buttons.ENGLISH,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.ENGLISH_LEVEL}`
+          }
+        ],
+        [
+          {
+            text: buttons.SKILLS,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.SKILL}`
+          }
+        ],
+        [
+          {
+            text: buttons.EMPLOYMENT_OPTIONS,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.EMPLOYMENT_OPTIONS}`
+          }
+        ],
+        [
+          {
+            text: buttons.EXPERIENCE_DETAILS,
+            callback_data: `edit-${temporaryUserId}:${ETelegramEditButtonType.EXPERIENCE_DETAILS}`
+          }
+        ]
+      );
+    }
+
+    inlineKeyboardMarkup.inline_keyboard.push([
+      {
+        text: this.messages[language].DEFAULT_BUTTON.BACK,
+        callback_data: `back-${temporaryUserId}:${ETelegramBackButtonType.SUMMARY}`
+      }
+    ]);
+
+    return inlineKeyboardMarkup;
   };
 
   public saveSummary = (

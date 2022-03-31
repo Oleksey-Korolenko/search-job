@@ -2,6 +2,7 @@ import { arrayValuesToType } from '@custom-types/array-values.type';
 import { EUserRole, IEmployer, IWorker, TemporaryUserType } from '@db/tables';
 import { ITelegramDBInput } from '@modules/telegram-db-processor';
 import { DB } from 'drizzle-orm';
+import ETelegramBackButtonType from '../enum/back-button-type.enum';
 import ETelegramCheckboxButtonType from '../enum/checkbox-button-type.enum';
 import ETelegramConfirmButtonType from '../enum/confirm-button-type.enum';
 import ETelegramEditButtonType from '../enum/edit-button-type.enum';
@@ -104,6 +105,21 @@ export class TelegramService extends TelegramCommonService {
       temporaryUserId
     );
 
+  public selectSummary = async (
+    chatId: number | string,
+    userId: string,
+    temporaryUserId: number,
+    isEdit: boolean,
+    messageId?: number
+  ) =>
+    this.#messageService.selectSummary(
+      chatId,
+      userId,
+      temporaryUserId,
+      isEdit,
+      messageId
+    );
+
   public saveSummary = async (
     chatId: number | string,
     userId: string,
@@ -176,6 +192,21 @@ export class TelegramService extends TelegramCommonService {
       typeOperation
     );
 
+  public checkBackButton = async (
+    chatId: string | number,
+    messageId: number,
+    userId: string,
+    temporaryUserId: number,
+    typeMessage: ETelegramBackButtonType
+  ) =>
+    this.#commandService.checkBackButton(
+      chatId,
+      messageId,
+      userId,
+      temporaryUserId,
+      typeMessage
+    );
+
   // COMMAND MODULE
 
   // COMMON MODULE
@@ -189,10 +220,11 @@ export class TelegramService extends TelegramCommonService {
   ): Promise<TemporaryUserType | undefined> =>
     this.updateTemporaryUser(temporaryUserId, user);
 
-  public updateTemporaryUserEditModeMain = async (
+  public updateTemporaryUserEditOptionsMain = async (
     temporaryUserId: number,
-    isEdit: boolean
-  ) => this.updateTemporaryUserEditMode(temporaryUserId, isEdit);
+    isEdit: boolean,
+    isFinal: number
+  ) => this.updateTemporaryUserEditOptions(temporaryUserId, isEdit, isFinal);
 
   // COMMON MODULE
 }

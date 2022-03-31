@@ -108,11 +108,16 @@ export default class TelegramCommonService extends DBConnection {
     });
   };
 
-  protected updateTemporaryUserEditMode = async (
+  protected updateTemporaryUserEditOptions = async (
     temporaryUserId: number,
-    isEdit: boolean
+    isEdit: boolean,
+    isFinal: number
   ): Promise<TemporaryUserType | undefined> =>
-    this.temporaryUserService.updateIsEdit(temporaryUserId, isEdit);
+    this.temporaryUserService.updateEditOptions(
+      temporaryUserId,
+      isEdit,
+      isFinal
+    );
 
   // TEMPORARY USER SECTION
 

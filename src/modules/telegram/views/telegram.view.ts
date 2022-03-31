@@ -221,19 +221,27 @@ export class TelegramView {
   public selectWorkerSummary = (
     language: languageTypes,
     worker: IWorkerFinally,
-    temporaryUserId: number
+    temporaryUserId: number,
+    isEdit: boolean
   ): ITelegramTextFormatterResponse =>
-    this.#summaryView.selectWorkerSummary(language, worker, temporaryUserId);
+    this.#summaryView.selectWorkerSummary(
+      language,
+      worker,
+      temporaryUserId,
+      isEdit
+    );
 
   public selectEmployerSummary = (
     language: languageTypes,
     employer: IEmployerFinally,
-    temporaryUserId: number
+    temporaryUserId: number,
+    isEdit: boolean
   ): ITelegramTextFormatterResponse =>
     this.#summaryView.selectEmployerSummary(
       language,
       employer,
-      temporaryUserId
+      temporaryUserId,
+      isEdit
     );
 
   public saveSummary = (

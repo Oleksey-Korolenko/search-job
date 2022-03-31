@@ -286,6 +286,12 @@
           "type": "boolean",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_final": {
+          "name": "is_final",
+          "type": "SMALLINT",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {}
