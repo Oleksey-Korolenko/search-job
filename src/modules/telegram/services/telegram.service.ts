@@ -78,6 +78,7 @@ export class TelegramService extends TelegramCommonService {
     temporaryUserId: number
   ) => this.#messageService.selectSalary(chatId, userId, temporaryUserId);
 
+  // TODO clear all
   public selectSkill = async (
     chatId: number | string,
     userId: string,
