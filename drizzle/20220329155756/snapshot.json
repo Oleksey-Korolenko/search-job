@@ -298,6 +298,12 @@
           "type": "user_role_type",
           "primaryKey": false,
           "notNull": true
+        },
+        "is_edit": {
+          "name": "is_edit",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {}

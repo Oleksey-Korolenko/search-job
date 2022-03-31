@@ -16,6 +16,7 @@ import {
   ITelegramTextFormatterExtra,
   ITelegramUpdateQueryBody
 } from '.';
+import { ITelegramUpdateReplyMarkupQueryBody } from './interface';
 
 export default class TelegramApiService {
   #config: TelegramConfigType;
@@ -105,6 +106,29 @@ export default class TelegramApiService {
       {
         chat_id,
         text,
+        message_id,
+        parse_mode: 'HTML',
+        ...extra
+      },
+      `Can't send message to telegram chat: [${chat_id}]!`
+    );
+  };
+
+  public updateMessageReplyMarkup = async <ResultType>(
+    chat_id: number | string,
+    message_id: number,
+    extra: ITelegramTextFormatterExtra
+  ): Promise<ITelegramResponse<ResultType>> => {
+    return this.#request<ITelegramUpdateReplyMarkupQueryBody, ResultType>(
+      {
+        ...this.#baseAttributes,
+        method: 'POST',
+        path: `/bot${this.#config.token}/editMessageReplyMarkup`
+      },
+      {},
+      ETypeOperation.DEFAULT,
+      {
+        chat_id,
         message_id,
         parse_mode: 'HTML',
         ...extra

@@ -61,4 +61,12 @@ export default class TemporaryUserQueryService extends DBConnection {
       .where(eq(this.#temporaryUser.id, id))
       .all()
       .then(res => res[0] as TemporaryUserType | undefined);
+
+  public updateIsEdit = (id: number, isEdit: boolean) =>
+    this.#temporaryUser
+      .update()
+      .set({ isEdit })
+      .where(eq(this.#temporaryUser.id, id))
+      .all()
+      .then(res => res[0] as TemporaryUserType | undefined);
 }

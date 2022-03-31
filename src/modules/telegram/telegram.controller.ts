@@ -68,7 +68,7 @@ export default async (router: typeof Router, db: DB) => {
 
     switch (operationType) {
       case ETelegramButtonType.SELECT_LANGUAGE: {
-        await telegramService.saveTelegramInfo({
+        await telegramService.saveTelegramInfoMain({
           userId: `${checkedBody.callback_query.from.id}`,
           language: item as languageTypes,
           username: checkedBody.callback_query.message.from.username
@@ -110,10 +110,14 @@ export default async (router: typeof Router, db: DB) => {
         break;
       }
       case ETelegramButtonType.SELECT_CATEGORY_ITEM: {
-        await telegramService.updateTemporaryUser(+temporaryUserId, {
-          type: 'worker',
-          categoryItemId: +item
-        });
+        const temporaryUser = await telegramService.updateTemporaryUserMain(
+          +temporaryUserId,
+          {
+            type: 'worker',
+            categoryItemId: +item
+          }
+        );
+
         await telegramService.selectSuccessWithInlineKeyboard(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.from.id}`,
@@ -123,20 +127,33 @@ export default async (router: typeof Router, db: DB) => {
           ETelegramEditButtonType.CATEGORY,
           +temporaryUserId
         );
-        await telegramService.selectExperience(
-          checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.from.id}`,
-          +temporaryUserId
-        );
+
+        if (temporaryUser.isEdit) {
+          await telegramService.updateTemporaryUserEditModeMain(
+            +temporaryUserId,
+            false
+          );
+        } else {
+          await telegramService.selectExperience(
+            checkedBody.callback_query.message.chat.id,
+            `${checkedBody.callback_query.from.id}`,
+            +temporaryUserId
+          );
+        }
+
         break;
       }
       case ETelegramButtonType.SELECT_EXPERIENCE: {
-        await telegramService.updateTemporaryUser(+temporaryUserId, {
-          type: 'worker',
-          workExperience: item as arrayValuesToType<
-            typeof EWorkExperienceInMonthsType.values
-          >
-        });
+        const temporaryUser = await telegramService.updateTemporaryUserMain(
+          +temporaryUserId,
+          {
+            type: 'worker',
+            workExperience: item as arrayValuesToType<
+              typeof EWorkExperienceInMonthsType.values
+            >
+          }
+        );
+
         await telegramService.selectSuccessWithInlineKeyboard(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.from.id}`,
@@ -146,23 +163,54 @@ export default async (router: typeof Router, db: DB) => {
           ETelegramEditButtonType.EXPERIENCE,
           +temporaryUserId
         );
-        await telegramService.selectSalary(
-          checkedBody.callback_query.message.chat.id,
-          `${checkedBody.callback_query.from.id}`,
-          +temporaryUserId
-        );
+
+        if (temporaryUser.isEdit) {
+          await telegramService.updateTemporaryUserEditModeMain(
+            +temporaryUserId,
+            false
+          );
+        } else {
+          await telegramService.selectSalary(
+            checkedBody.callback_query.message.chat.id,
+            `${checkedBody.callback_query.from.id}`,
+            +temporaryUserId
+          );
+        }
+
         break;
       }
       case ETelegramButtonType.SELECT_ENGLISH_LEVEL: {
-        await telegramService.updateTemporaryUser(+temporaryUserId, {
-          type: 'worker',
-          englishLevel: EEnglishLevelsType.values[+item]
-        });
-        await telegramService.selectSkill(
+        const temporaryUser = await telegramService.updateTemporaryUserMain(
+          +temporaryUserId,
+          {
+            type: 'worker',
+            englishLevel: EEnglishLevelsType.values[+item]
+          }
+        );
+
+        if (temporaryUser.isEdit) {
+          await telegramService.updateTemporaryUserEditModeMain(
+            +temporaryUserId,
+            false
+          );
+        } else {
+          await telegramService.selectSkill(
+            checkedBody.callback_query.message.chat.id,
+            `${checkedBody.callback_query.from.id}`,
+            +temporaryUserId
+          );
+        }
+
+        await telegramService.selectSuccessWithInlineKeyboard(
           checkedBody.callback_query.message.chat.id,
           `${checkedBody.callback_query.from.id}`,
+          checkedBody.callback_query.message.message_id,
+          checkedBody.callback_query.data,
+          checkedBody.callback_query.message.reply_markup.inline_keyboard,
+          ETelegramEditButtonType.ENGLISH_LEVEL,
           +temporaryUserId
         );
+
         break;
       }
       case ETelegramButtonType.ADD: {
@@ -207,6 +255,16 @@ export default async (router: typeof Router, db: DB) => {
           checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.from.id}`,
           item as ETelegramConfirmButtonType
+        );
+        break;
+      }
+      case ETelegramButtonType.EDIT: {
+        await telegramService.checkEditButton(
+          `${checkedBody.callback_query.message.chat.id}`,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.from.id}`,
+          +temporaryUserId,
+          item as ETelegramEditButtonType
         );
         break;
       }

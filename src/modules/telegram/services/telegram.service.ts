@@ -16,8 +16,8 @@ export class TelegramService extends TelegramCommonService {
 
   constructor(db: DB) {
     super(db);
-    this.#messageService = new TelegramMessageService(db);
-    this.#commandService = new TelegramCommandService(db);
+    this.#messageService = new TelegramMessageService(this.db);
+    this.#commandService = new TelegramCommandService(this.db);
   }
 
   // MESSAGE MODULE
@@ -144,19 +144,39 @@ export class TelegramService extends TelegramCommonService {
       userId,
       typeOperation
     );
+
+  public checkEditButton = async (
+    chatId: string | number,
+    messageId: number,
+    userId: string,
+    temporaryUserId: number,
+    typeOperation: ETelegramEditButtonType
+  ) =>
+    this.#commandService.checkEditButton(
+      chatId,
+      messageId,
+      userId,
+      temporaryUserId,
+      typeOperation
+    );
+
   // COMMAND MODULE
 
   // COMMON MODULE
 
-  public;
-  saveTelegramInfo = async (telegramInfo: ITelegramDBInput) =>
+  public saveTelegramInfoMain = async (telegramInfo: ITelegramDBInput) =>
     this.saveTelegramInfo(telegramInfo);
 
-  public updateTemporaryUser = async (
+  public updateTemporaryUserMain = async (
     temporaryUserId: number,
     user: IWorker | IEmployer
   ): Promise<TemporaryUserType | undefined> =>
     this.updateTemporaryUser(temporaryUserId, user);
+
+  public updateTemporaryUserEditModeMain = async (
+    temporaryUserId: number,
+    isEdit: boolean
+  ) => this.updateTemporaryUserEditMode(temporaryUserId, isEdit);
 
   // COMMON MODULE
 }

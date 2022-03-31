@@ -71,6 +71,5 @@ export default class TelegramMessageQueryService extends DBConnection {
           eq(this.#telegramMessage.telegramMessageType, operationType)
         ])
       )
-      .all()
-      .then(res => res[0] as TelegramMessagesType | undefined);
+      .execute();
 }

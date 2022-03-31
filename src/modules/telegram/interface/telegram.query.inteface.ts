@@ -13,6 +13,12 @@ export interface ITelegramUpdateQueryBody extends ITelegramQueryBody {
   message_id: number | string;
 }
 
+export interface ITelegramUpdateReplyMarkupQueryBody
+  extends ITelegramTextFormatterExtra {
+  message_id: number | string;
+  chat_id: number | string;
+}
+
 export interface ITelegramResponseFile {
   file_id: string;
   file_unique_id: string;

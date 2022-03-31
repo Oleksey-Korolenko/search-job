@@ -46,7 +46,7 @@ export default class TelegramMessageService extends DBConnection {
     messageId: string,
     chatId: string,
     operationType: arrayValuesToType<typeof ETelegramMessageType.values>
-  ): Promise<TelegramMessagesType | undefined> =>
+  ): Promise<void> =>
     this.#telegramMessageQueryService.deleteByTgInfo(
       userId,
       messageId,

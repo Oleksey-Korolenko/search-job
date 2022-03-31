@@ -61,16 +61,14 @@ export default class TelegramSuccessView extends TelegramCommonView {
   #getEditButtonKeyboardMarkup = (
     language: languageTypes,
     operationType: ETelegramEditButtonType,
-    temporaryUserId?: number
+    temporaryUserId: number
   ): IInlineKeyboardMarkup => {
     return {
       inline_keyboard: [
         [
           {
             text: this.messages[language].DEFAULT_BUTTON.EDIT,
-            callback_data: `edit${
-              temporaryUserId === undefined ? '' : '-' + temporaryUserId
-            }:${operationType}`
+            callback_data: `edit-${temporaryUserId}:${operationType}`
           }
         ]
       ] as IInlineKeyboardButton[][]

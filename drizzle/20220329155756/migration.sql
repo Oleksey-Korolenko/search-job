@@ -143,7 +143,8 @@ CREATE TABLE IF NOT EXISTS temporary_user (
 	"user" JSONB NOT NULL,
 	"created_at" timestamp without time zone NOT NULL,
 	"telegram_user_id" INT NOT NULL,
-	"user_role" user_role_type NOT NULL
+	"user_role" user_role_type NOT NULL,
+	"is_edit" boolean NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS workers (

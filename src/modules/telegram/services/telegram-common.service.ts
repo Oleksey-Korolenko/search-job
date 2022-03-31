@@ -47,7 +47,7 @@ export default class TelegramCommonService extends DBConnection {
     this.telegramApiService = new TelegramApiService();
     this.telegramValidator = new TelegramValidate();
 
-    this.temporaryUserService = new TemporaryUserService(db);
+    this.temporaryUserService = new TemporaryUserService(this.db);
     this.telegramDBService = new TelegramDBProcessorService(this.db);
     this.telegramMessageService = new TelegramMessageService(this.db);
 
@@ -101,6 +101,12 @@ export default class TelegramCommonService extends DBConnection {
       ...user
     });
   };
+
+  protected updateTemporaryUserEditMode = async (
+    temporaryUserId: number,
+    isEdit: boolean
+  ): Promise<TemporaryUserType | undefined> =>
+    this.temporaryUserService.updateIsEdit(temporaryUserId, isEdit);
 
   // TEMPORARY USER SECTION
 

@@ -47,6 +47,8 @@ export default class TemporaryUserTable extends AbstractTable<TemporaryUserTable
 
   public userRole = this.type(EUserRole, 'user_role').notNull();
 
+  public isEdit = this.bool('is_edit').notNull();
+
   public tableName(): string {
     return 'temporary_user';
   }

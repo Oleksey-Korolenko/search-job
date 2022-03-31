@@ -48,4 +48,10 @@ export default class TemporaryUserService extends DBConnection {
     user: IWorker | IEmployer
   ): Promise<TemporaryUserType | undefined> =>
     this.#temporaryUserQueryService.updateUser(id, user);
+
+  public updateIsEdit = (
+    id: number,
+    isEdit: boolean
+  ): Promise<TemporaryUserType | undefined> =>
+    this.#temporaryUserQueryService.updateIsEdit(id, isEdit);
 }

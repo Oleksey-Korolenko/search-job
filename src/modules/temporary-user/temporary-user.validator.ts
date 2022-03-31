@@ -15,13 +15,15 @@ export const temporaryUserInputFields: Array<keyof ITemporaryUserInput> = [
   'isReadyToSave',
   'telegramUserId',
   'user',
-  'userRole'
+  'userRole',
+  'isEdit'
 ];
 
 export class TemporaryUserValidate extends ValidationDefault {
   save = (payload: ITemporaryUserInput): ITemporaryUserInput => {
     this.#telegramUserId(payload.telegramUserId);
     this.#isReadyToSave(payload.isReadyToSave);
+    this.#isEdit(payload.isEdit);
     this.#userRole(payload.user.type);
     this.#userRole(payload.userRole);
     this.#isWorker(payload.user as IWorker);
@@ -54,6 +56,18 @@ export class TemporaryUserValidate extends ValidationDefault {
     if (!_.isBoolean(isReadyToSave)) {
       throw new ValidateError(
         `Payload atribute: [isReadyToSave] type isn't equal to boolean!`
+      );
+    }
+  };
+
+  #isEdit = (isEdit: boolean) => {
+    if (isEdit === undefined) {
+      throw new ValidateError(`Payload atribute: [isEdit] doesn't exist!`);
+    }
+
+    if (!_.isBoolean(isEdit)) {
+      throw new ValidateError(
+        `Payload atribute: [isEdit] type isn't equal to boolean!`
       );
     }
   };

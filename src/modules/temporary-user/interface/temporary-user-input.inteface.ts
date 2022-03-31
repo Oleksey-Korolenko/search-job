@@ -6,4 +6,5 @@ export interface ITemporaryUserInput {
   user: IWorker | IEmployer;
   telegramUserId: number;
   userRole: arrayValuesToType<typeof EUserRole.values>;
+  isEdit: boolean;
 }

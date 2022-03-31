@@ -48,7 +48,8 @@ export default class TelegramMessageService extends TelegramCommonService {
             telegramUserId: existTelegramInfo.id,
             user: {
               type: 'worker'
-            }
+            },
+            isEdit: false
           });
           await this.selectFullName(
             chatId,
@@ -65,7 +66,8 @@ export default class TelegramMessageService extends TelegramCommonService {
             telegramUserId: existTelegramInfo.id,
             user: {
               type: 'employer'
-            }
+            },
+            isEdit: false
           });
           await this.selectFullName(
             chatId,
@@ -421,7 +423,11 @@ export default class TelegramMessageService extends TelegramCommonService {
       temporaryUserId
     );
 
-    await this.selectEmploymentOptions(chatId, userId, temporaryUserId);
+    if (!existTemporaryUser.isEdit) {
+      await this.selectEmploymentOptions(chatId, userId, temporaryUserId);
+    } else {
+      await this.updateTemporaryUserEditMode(temporaryUserId, false);
+    }
   };
 
   // SKILLS SECTION
@@ -574,7 +580,11 @@ export default class TelegramMessageService extends TelegramCommonService {
       temporaryUserId
     );
 
-    await this.selectExperienceDetails(chatId, userId, temporaryUserId);
+    if (existTemporaryUser.isEdit) {
+      await this.updateTemporaryUserEditMode(temporaryUserId, false);
+    } else {
+      await this.selectExperienceDetails(chatId, userId, temporaryUserId);
+    }
   };
 
   // EMPLOYMENT OPTIONS SECTION
@@ -637,19 +647,28 @@ export default class TelegramMessageService extends TelegramCommonService {
       return;
     }
 
-    const { existTelegramInfo } = telegramInfo;
+    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
 
     const { text, extra } = this.telegramView.selectFullName(
       existTelegramInfo.language
     );
 
-    const result =
-      await this.telegramApiService.updateMessage<ITelegramMessage>(
+    let result;
+
+    if (!existTemporaryUser.isEdit) {
+      result = await this.telegramApiService.updateMessage<ITelegramMessage>(
         chatId,
         messageId,
         text,
         extra
       );
+    } else {
+      result = await this.telegramApiService.sendMessage<ITelegramMessage>(
+        chatId,
+        text,
+        extra
+      );
+    }
 
     await this.telegramMessageService.save({
       chatId: `${chatId}`,

@@ -13,7 +13,7 @@ export default class TelegramCommandService extends TelegramCommonService {
 
   constructor(db: DB) {
     super(db);
-    this.#telegramMessagesService = new TelegramMessageService(db);
+    this.#telegramMessagesService = new TelegramMessageService(this.db);
   }
 
   // ENTERED TEXT SECTION
@@ -44,6 +44,13 @@ export default class TelegramCommandService extends TelegramCommonService {
 
     const { existTelegramInfo, existTemporaryUser } = telegramInfo;
 
+    console.log(
+      userId,
+      chatId,
+      existMessage.messageId,
+      existMessage.telegramMessageType
+    );
+
     switch (existMessage.telegramMessageType) {
       case 'salary': {
         try {
@@ -64,29 +71,22 @@ export default class TelegramCommandService extends TelegramCommonService {
             existMessage.temporaryUserId
           );
 
-          await this.#telegramMessagesService.selectPosition(
-            chatId,
-            userId,
-            existMessage.temporaryUserId
-          );
+          if (!existTemporaryUser.isEdit) {
+            await this.#telegramMessagesService.selectPosition(
+              chatId,
+              userId,
+              existMessage.temporaryUserId
+            );
+          }
 
-          await this.telegramMessageService.deleteByTgInfo(
-            userId,
-            chatId,
-            existMessage.messageId,
-            existMessage.telegramMessageType
+          await this.updateTemporaryUserEditMode(
+            existMessage.temporaryUserId,
+            false
           );
 
           break;
         } catch (e) {
           this.catchError(e);
-
-          await this.telegramMessageService.deleteByTgInfo(
-            userId,
-            chatId,
-            existMessage.messageId,
-            existMessage.telegramMessageType
-          );
 
           const { text, extra } = this.telegramView.selectSalary(
             existTelegramInfo.language,
@@ -126,14 +126,10 @@ export default class TelegramCommandService extends TelegramCommonService {
           existMessage.temporaryUserId
         );
 
-        await this.telegramMessageService.deleteByTgInfo(
-          userId,
-          chatId,
-          existMessage.messageId,
-          existMessage.telegramMessageType
-        );
-
-        if (existTemporaryUser.userRole === 'worker') {
+        if (
+          existTemporaryUser.userRole === 'worker' &&
+          !existTemporaryUser.isEdit
+        ) {
           await this.#telegramMessagesService.selectEnglishLevel(
             chatId,
             userId,
@@ -141,13 +137,21 @@ export default class TelegramCommandService extends TelegramCommonService {
           );
         }
 
-        if (existTemporaryUser.userRole === 'employer') {
+        if (
+          existTemporaryUser.userRole === 'employer' &&
+          !existTemporaryUser.isEdit
+        ) {
           await this.#telegramMessagesService.selectCompany(
             chatId,
             userId,
             existMessage.temporaryUserId
           );
         }
+
+        await this.updateTemporaryUserEditMode(
+          existMessage.temporaryUserId,
+          false
+        );
 
         break;
       }
@@ -167,18 +171,18 @@ export default class TelegramCommandService extends TelegramCommonService {
           existMessage.temporaryUserId
         );
 
-        await this.telegramMessageService.deleteByTgInfo(
-          userId,
-          chatId,
-          existMessage.messageId,
-          existMessage.telegramMessageType
-        );
+        if (!existTemporaryUser.isEdit) {
+          await this.#telegramMessagesService.selectSummary(
+            chatId,
+            userId,
+            existMessage.temporaryUserId,
+            'worker'
+          );
+        }
 
-        await this.#telegramMessagesService.selectSummary(
-          chatId,
-          userId,
+        await this.updateTemporaryUserEditMode(
           existMessage.temporaryUserId,
-          'worker'
+          false
         );
 
         break;
@@ -199,14 +203,10 @@ export default class TelegramCommandService extends TelegramCommonService {
           existMessage.temporaryUserId
         );
 
-        await this.telegramMessageService.deleteByTgInfo(
-          userId,
-          chatId,
-          existMessage.messageId,
-          existMessage.telegramMessageType
-        );
-
-        if (existTemporaryUser.userRole === 'worker') {
+        if (
+          existTemporaryUser.userRole === 'worker' &&
+          !existTemporaryUser.isEdit
+        ) {
           await this.#telegramMessagesService.selectCategory(
             chatId,
             userId,
@@ -214,13 +214,21 @@ export default class TelegramCommandService extends TelegramCommonService {
           );
         }
 
-        if (existTemporaryUser.userRole === 'employer') {
+        if (
+          existTemporaryUser.userRole === 'employer' &&
+          !existTemporaryUser.isEdit
+        ) {
           await this.#telegramMessagesService.selectPosition(
             chatId,
             userId,
             existMessage.temporaryUserId
           );
         }
+
+        await this.updateTemporaryUserEditMode(
+          existMessage.temporaryUserId,
+          false
+        );
 
         break;
       }
@@ -240,17 +248,17 @@ export default class TelegramCommandService extends TelegramCommonService {
           existMessage.temporaryUserId
         );
 
-        await this.telegramMessageService.deleteByTgInfo(
-          userId,
-          chatId,
-          existMessage.messageId,
-          existMessage.telegramMessageType
-        );
+        if (!existTemporaryUser.isEdit) {
+          await this.#telegramMessagesService.selectPhone(
+            chatId,
+            userId,
+            existMessage.temporaryUserId
+          );
+        }
 
-        await this.#telegramMessagesService.selectPhone(
-          chatId,
-          userId,
-          existMessage.temporaryUserId
+        await this.updateTemporaryUserEditMode(
+          existMessage.temporaryUserId,
+          false
         );
 
         break;
@@ -275,13 +283,6 @@ export default class TelegramCommandService extends TelegramCommonService {
           +existMessage.messageId,
           existTelegramInfo.language,
           preparedSkills
-        );
-
-        await this.telegramMessageService.deleteByTgInfo(
-          userId,
-          chatId,
-          existMessage.messageId,
-          existMessage.telegramMessageType
         );
 
         await this.#telegramMessagesService.selectSkill(
@@ -311,30 +312,23 @@ export default class TelegramCommandService extends TelegramCommonService {
             existMessage.temporaryUserId
           );
 
-          await this.#telegramMessagesService.selectSummary(
-            chatId,
-            userId,
-            existMessage.temporaryUserId,
-            'employer'
-          );
+          if (!existTemporaryUser.isEdit) {
+            await this.#telegramMessagesService.selectSummary(
+              chatId,
+              userId,
+              existMessage.temporaryUserId,
+              'employer'
+            );
+          }
 
-          await this.telegramMessageService.deleteByTgInfo(
-            userId,
-            chatId,
-            existMessage.messageId,
-            existMessage.telegramMessageType
+          await this.updateTemporaryUserEditMode(
+            existMessage.temporaryUserId,
+            false
           );
 
           break;
         } catch (e) {
           this.catchError(e);
-
-          await this.telegramMessageService.deleteByTgInfo(
-            userId,
-            chatId,
-            existMessage.messageId,
-            existMessage.telegramMessageType
-          );
 
           const { text, extra } = this.telegramView.selectPhone(
             existTelegramInfo.language,
@@ -359,6 +353,13 @@ export default class TelegramCommandService extends TelegramCommonService {
         }
       }
     }
+
+    await this.telegramMessageService.deleteByTgInfo(
+      userId,
+      existMessage.messageId,
+      chatId,
+      existMessage.telegramMessageType
+    );
   };
 
   // ENTERED TEXT SECTION
@@ -454,6 +455,124 @@ export default class TelegramCommandService extends TelegramCommonService {
       }
       // TODO something for default case
     }
+  };
+
+  public checkEditButton = async (
+    chatId: string | number,
+    messageId: number,
+    userId: string,
+    temporaryUserId: number,
+    typeOperation: ETelegramEditButtonType
+  ) => {
+    const telegramInfo = await this.telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    await this.updateTemporaryUserEditMode(temporaryUserId, true);
+
+    switch (typeOperation) {
+      case ETelegramEditButtonType.CATEGORY: {
+        await this.#telegramMessagesService.selectCategory(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.COMPANY: {
+        await this.#telegramMessagesService.selectCompany(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.EMPLOYMENT_OPTIONS: {
+        await this.#telegramMessagesService.selectEmploymentOptions(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.ENGLISH_LEVEL: {
+        await this.#telegramMessagesService.selectEnglishLevel(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.EXPERIENCE: {
+        await this.#telegramMessagesService.selectExperience(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.EXPERIENCE_DETAILS: {
+        await this.#telegramMessagesService.selectExperienceDetails(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.NAME: {
+        await this.#telegramMessagesService.selectFullName(
+          chatId,
+          userId,
+          messageId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.PHONE: {
+        await this.#telegramMessagesService.selectPhone(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.POSITION: {
+        await this.#telegramMessagesService.selectPosition(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.SALARY: {
+        await this.#telegramMessagesService.selectSalary(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+      case ETelegramEditButtonType.SKILL: {
+        await this.#telegramMessagesService.selectSkill(
+          chatId,
+          userId,
+          temporaryUserId
+        );
+        break;
+      }
+    }
+
+    await this.telegramApiService.updateMessageReplyMarkup(
+      chatId,
+      messageId,
+      {}
+    );
   };
 
   // BUTTONS SECTION
