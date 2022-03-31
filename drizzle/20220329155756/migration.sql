@@ -95,8 +95,6 @@ CREATE TABLE IF NOT EXISTS employers (
 	"name" character varying NOT NULL,
 	"position" character varying NOT NULL,
 	"company" character varying NOT NULL,
-	"is_uses_root_telegram_acc" boolean NOT NULL,
-	"extra_telegram_acc" character varying,
 	"phone" character varying NOT NULL,
 	"telegram_user_id" INT NOT NULL
 );

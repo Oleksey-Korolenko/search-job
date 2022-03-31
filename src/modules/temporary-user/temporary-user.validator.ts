@@ -211,8 +211,6 @@ export class TemporaryUserValidate extends ValidationDefault {
     this.#position(employer.position);
     this.#name(employer.name);
     this.#company(employer.company);
-    this.#isUsesRootTelegramAcc(employer.isUsesRootTelegramAcc);
-    this.#extraTelegramAcc(employer.extraTelegramAcc);
     this.#phone(employer.phone);
   };
 
@@ -236,30 +234,6 @@ export class TemporaryUserValidate extends ValidationDefault {
     if (!_.isString(company)) {
       throw new ValidateError(
         `Payload atribute: [company] type isn't equal to string!`
-      );
-    }
-  };
-
-  #isUsesRootTelegramAcc = (isUsesRootTelegramAcc?: boolean) => {
-    if (isUsesRootTelegramAcc === undefined) {
-      return;
-    }
-
-    if (!_.isBoolean(isUsesRootTelegramAcc)) {
-      throw new ValidateError(
-        `Payload atribute: [isUsesRootTelegramAcc] type isn't equal to boolean!`
-      );
-    }
-  };
-
-  #extraTelegramAcc = (extraTelegramAcc?: string) => {
-    if (extraTelegramAcc === undefined) {
-      return;
-    }
-
-    if (!_.isString(extraTelegramAcc)) {
-      throw new ValidateError(
-        `Payload atribute: [extraTelegramAcc] type isn't equal to string!`
       );
     }
   };

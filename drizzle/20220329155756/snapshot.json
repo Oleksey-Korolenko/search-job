@@ -87,18 +87,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "is_uses_root_telegram_acc": {
-          "name": "is_uses_root_telegram_acc",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "extra_telegram_acc": {
-          "name": "extra_telegram_acc",
-          "type": "character varying",
-          "primaryKey": false,
-          "notNull": false
-        },
         "phone": {
           "name": "phone",
           "type": "character varying",

@@ -22,8 +22,6 @@ export interface IEmployer {
   name?: string;
   position?: string;
   company?: string;
-  isUsesRootTelegramAcc?: boolean;
-  extraTelegramAcc?: string;
   phone?: string;
 }
 

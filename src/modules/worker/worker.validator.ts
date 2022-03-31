@@ -5,7 +5,7 @@ import { IWorkerInput } from './interface';
 import { EEnglishLevelsType, EWorkExperienceInMonthsType } from '@db/tables';
 import { arrayValuesToType } from '@custom-types/array-values.type';
 
-export const telegramMessageInputFields: Array<keyof IWorkerInput> = [
+export const workerInputFields: Array<keyof IWorkerInput> = [
   'name',
   'categoryItemId',
   'workExperience',
@@ -29,7 +29,7 @@ export class WorkerValidate extends ValidationDefault {
     this.#workExperienceDetails(payload.workExperienceDetails);
     this.#telegramUserId(payload.telegramUserId);
 
-    return this.pick<IWorkerInput>(payload, telegramMessageInputFields);
+    return this.pick<IWorkerInput>(payload, workerInputFields);
   };
 
   #name = (name: string) => {
