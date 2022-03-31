@@ -92,13 +92,15 @@ const messagesInuarainian = {
     SKILLS: 'Головні навички:\n\n',
     CITIES: '\nМіста у яких шукається робота:\n\n',
     EMPLOYMENT_OPTIONS: '\nДоступні варіанти зайнятості:\n\n',
-    EXPERIENCE_DETAILS: '\nДетальна інформація:\n\n'
+    EXPERIENCE_DETAILS: '\nДетальна інформація:\n\n',
+    SAVE: 'Ваш обліковий запис робітника успішно збережено'
   },
   EMPLOYER: {
     TITLE: '<strong>{name}</strong>\n\n',
     COMPANY:
       'Компанія <strong>{company}</strong>. Посада <strong>{position}</strong>.\n\n',
-    PHONE: 'Номер телефону: <strong>{phone}</strong>\n'
+    PHONE: 'Номер телефону: <strong>{phone}</strong>\n',
+    SAVE: 'Ваш обліковий запис роботодавця успішно збережено'
   },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',

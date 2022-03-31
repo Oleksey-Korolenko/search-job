@@ -33,8 +33,6 @@ export const EUserRole = createEnum({
 export default class TemporaryUserTable extends AbstractTable<TemporaryUserTable> {
   public id = this.serial('id').primaryKey();
 
-  public isReadyToSave = this.bool('is_ready_to_save').notNull();
-
   public user = this.jsonb<IWorker | IEmployer>('user').notNull();
 
   public createdAt = this.timestamp('created_at').notNull();

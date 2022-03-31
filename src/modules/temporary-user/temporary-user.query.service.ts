@@ -69,4 +69,10 @@ export default class TemporaryUserQueryService extends DBConnection {
       .where(eq(this.#temporaryUser.id, id))
       .all()
       .then(res => res[0] as TemporaryUserType | undefined);
+
+  public deleteTemporaryUser = (id: number) =>
+    this.#temporaryUser
+      .delete()
+      .where(eq(this.#temporaryUser.id, id))
+      .execute();
 }

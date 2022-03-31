@@ -104,6 +104,21 @@ export class TelegramService extends TelegramCommonService {
       temporaryUserId
     );
 
+  public saveSummary = async (
+    chatId: number | string,
+    userId: string,
+    messageId: number,
+    temporaryUserId: number,
+    userRole: arrayValuesToType<typeof EUserRole.values>
+  ) =>
+    this.#messageService.saveSummary(
+      chatId,
+      userId,
+      messageId,
+      temporaryUserId,
+      userRole
+    );
+
   // MESSAGE MODULE
 
   // COMMAND MODULE

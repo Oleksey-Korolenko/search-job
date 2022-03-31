@@ -213,6 +213,16 @@ export default async (router: typeof Router, db: DB) => {
 
         break;
       }
+      case ETelegramButtonType.SAVE_FINALLY: {
+        await telegramService.saveSummary(
+          checkedBody.callback_query.message.chat.id,
+          `${checkedBody.callback_query.from.id}`,
+          checkedBody.callback_query.message.message_id,
+          +temporaryUserId,
+          item as arrayValuesToType<typeof EUserRole.values>
+        );
+        break;
+      }
       case ETelegramButtonType.ADD: {
         await telegramService.checkCheckboxButton(
           checkedBody.callback_query.message.chat.id,

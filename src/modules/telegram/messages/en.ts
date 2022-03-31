@@ -93,13 +93,15 @@ const messagesInEnglish = {
     SKILLS: 'Main skills:\n\n',
     CITIES: '\nCities looking for work:\n\n',
     EMPLOYMENT_OPTIONS: '\nAvailable employment options:\n\n',
-    EXPERIENCE_DETAILS: '\nDetails:\n\n'
+    EXPERIENCE_DETAILS: '\nDetails:\n\n',
+    SAVE: 'Your worker account has been successfully saved'
   },
   EMPLOYER: {
     TITLE: '<strong>{name}</strong>\n\n',
     COMPANY:
       'Company <strong>{company}</strong>. Position <strong>{position}</strong>.\n\n',
-    PHONE: 'Phone number: <strong>{phone}</strong>\n'
+    PHONE: 'Phone number: <strong>{phone}</strong>\n',
+    SAVE: 'Your employer account has been successfully saved'
   },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',

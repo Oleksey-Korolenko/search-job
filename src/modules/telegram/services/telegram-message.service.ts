@@ -1,5 +1,7 @@
 import { arrayValuesToType } from '@custom-types/array-values.type';
 import { EUserRole, IEmployer, IWorker } from '@db/tables';
+import { IEmployerInput } from '@modules/employer';
+import { IWorkerInput } from '@modules/worker';
 import { DB } from 'drizzle-orm';
 import ETelegramCheckboxButtonType from '../enum/checkbox-button-type.enum';
 import ETelegramEditButtonType from '../enum/edit-button-type.enum';
@@ -833,7 +835,7 @@ export default class TelegramMessageService extends TelegramCommonService {
     chatId: number | string,
     userId: string,
     temporaryUserId: number,
-    userRole: 'worker' | 'employer'
+    userRole: arrayValuesToType<typeof EUserRole.values>
   ) => {
     const telegramInfo = await this.telegramCheck(
       chatId,
@@ -897,6 +899,78 @@ export default class TelegramMessageService extends TelegramCommonService {
 
       await this.telegramApiService.sendMessage(chatId, text, extra);
     }
+  };
+
+  public saveSummary = async (
+    chatId: number | string,
+    userId: string,
+    messageId: number,
+    temporaryUserId: number,
+    userRole: arrayValuesToType<typeof EUserRole.values>
+  ) => {
+    const telegramInfo = await this.telegramCheck(
+      chatId,
+      userId,
+      temporaryUserId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
+
+    if (userRole === 'worker') {
+      const worker = existTemporaryUser.user as IWorker;
+
+      const preparedWorker = {
+        name: worker.name,
+        categoryItemId: worker.categoryItemId,
+        workExperience: worker.workExperience,
+        expectedSalary: worker.expectedSalary,
+        position: worker.position,
+        englishLevel: worker.englishLevel,
+        workExperienceDetails: worker.workExperienceDetails,
+        skills: worker.skills,
+        telegramUserId: existTelegramInfo.id
+      } as IWorkerInput;
+
+      const savedWorker = await this.workerService.save(preparedWorker);
+
+      await this.employmentOptionsService.addedEmploymentOptionsToWorker(
+        savedWorker.id,
+        worker.employmentOptions
+      );
+
+      const text = this.telegramView.saveSummary(
+        existTelegramInfo.language,
+        'worker'
+      );
+
+      await this.telegramApiService.updateMessage(chatId, messageId, text);
+    }
+
+    if (userRole === 'employer') {
+      const employer = existTemporaryUser.user as IEmployer;
+
+      const preparedEmployer = {
+        name: employer.name,
+        company: employer.company,
+        position: employer.position,
+        phone: employer.phone
+      } as IEmployerInput;
+
+      await this.employerService.save(preparedEmployer);
+
+      const text = this.telegramView.saveSummary(
+        existTelegramInfo.language,
+        'employer'
+      );
+
+      await this.telegramApiService.updateMessage(chatId, messageId, text);
+    }
+
+    await this.temporaryUserService.deleteTemporaryUser(existTemporaryUser.id);
   };
 
   // SUMMARY SECTION

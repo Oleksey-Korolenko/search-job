@@ -1,4 +1,5 @@
-import { CategoryItemType, CategoryType } from '@db/tables';
+import { arrayValuesToType } from '@custom-types/array-values.type';
+import { CategoryItemType, CategoryType, EUserRole } from '@db/tables';
 import ETelegramConfirmButtonType from '../enum/confirm-button-type.enum';
 import ETelegramEditButtonType from '../enum/edit-button-type.enum';
 import {
@@ -234,6 +235,11 @@ export class TelegramView {
       employer,
       temporaryUserId
     );
+
+  public saveSummary = (
+    language: languageTypes,
+    role: arrayValuesToType<typeof EUserRole.values>
+  ): string => this.#summaryView.saveSummary(language, role);
 
   // SUMMARY VIEW
 

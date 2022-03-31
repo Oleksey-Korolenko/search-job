@@ -252,12 +252,6 @@
           "primaryKey": true,
           "notNull": false
         },
-        "is_ready_to_save": {
-          "name": "is_ready_to_save",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
         "user": {
           "name": "user",
           "type": "JSONB",

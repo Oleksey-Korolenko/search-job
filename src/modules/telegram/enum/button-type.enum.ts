@@ -13,7 +13,8 @@ enum ETelegramButtonType {
   SAVE = 'save',
   YES = 'yes',
   NO = 'no',
-  EDIT = 'edit'
+  EDIT = 'edit',
+  SAVE_FINALLY = 'save_finaly'
 }
 
 export default ETelegramButtonType;

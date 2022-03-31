@@ -8,12 +8,14 @@ import {
 import { LoggerService } from '@logger/logger.service';
 import CategoryItemService from '@modules/category-item/category-item.service';
 import CategoryService from '@modules/category/category.service';
+import EmployerService from '@modules/employer/employer.service';
 import EmploymentOptionsService from '@modules/employment-options/employment-options.service';
 import { ITelegramDBInput } from '@modules/telegram-db-processor';
 import TelegramDBProcessorService from '@modules/telegram-db-processor/telegram-db.service';
 import TelegramMessageService from '@modules/telegram-messages/telegram-messages.service';
 import { ITemporaryUserInput } from '@modules/temporary-user';
 import TemporaryUserService from '@modules/temporary-user/temporary-user.service';
+import WorkerService from '@modules/worker/worker.service';
 import { DB } from 'drizzle-orm';
 import { Logger } from 'winston';
 import ETelegramCheckboxButtonType from '../enum/checkbox-button-type.enum';
@@ -38,6 +40,8 @@ export default class TelegramCommonService extends DBConnection {
   protected categoryService: CategoryService;
   protected categoryItemService: CategoryItemService;
   protected employmentOptionsService: EmploymentOptionsService;
+  protected workerService: WorkerService;
+  protected employerService: EmployerService;
 
   #logger: Logger;
 
@@ -54,6 +58,8 @@ export default class TelegramCommonService extends DBConnection {
     this.categoryService = new CategoryService(this.db);
     this.categoryItemService = new CategoryItemService(this.db);
     this.employmentOptionsService = new EmploymentOptionsService(this.db);
+    this.workerService = new WorkerService(this.db);
+    this.employerService = new EmployerService(this.db);
 
     this.#logger = new LoggerService().getLogger();
   }

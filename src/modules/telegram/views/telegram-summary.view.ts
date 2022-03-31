@@ -1,3 +1,5 @@
+import { arrayValuesToType } from '@custom-types/array-values.type';
+import { EUserRole } from '@db/tables';
 import {
   IEmployerFinally,
   IInlineKeyboardButton,
@@ -161,5 +163,21 @@ export default class TelegramSummaryView extends TelegramCommonView {
         ]
       ] as IInlineKeyboardButton[][]
     };
+  };
+
+  public saveSummary = (
+    language: languageTypes,
+    role: arrayValuesToType<typeof EUserRole.values>
+  ): string => {
+    let text = '';
+
+    if (role === 'worker') {
+      text += this.preparedText(this.messages[language].WORKER.SAVE, {});
+    }
+    if (role === 'employer') {
+      text += this.preparedText(this.messages[language].EMPLOYER.SAVE, {});
+    }
+
+    return text;
   };
 }

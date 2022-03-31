@@ -137,7 +137,6 @@ CREATE TABLE IF NOT EXISTS telegram (
 
 CREATE TABLE IF NOT EXISTS temporary_user (
 	"id" SERIAL PRIMARY KEY,
-	"is_ready_to_save" boolean NOT NULL,
 	"user" JSONB NOT NULL,
 	"created_at" timestamp without time zone NOT NULL,
 	"telegram_user_id" INT NOT NULL,
