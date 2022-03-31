@@ -98,8 +98,27 @@ export default class TelegramMessageService extends TelegramCommonService {
       return;
     }
 
+    const worker = await this.workerService.getByTelegramId(
+      existTelegramInfo.id
+    );
+
+    const employer = await this.employerService.getByTelegramId(
+      existTelegramInfo.id
+    );
+
+    if (employer !== undefined && worker !== undefined) {
+      await this.existAccountError(
+        chatId,
+        messageId,
+        existTelegramInfo.language
+      );
+      return;
+    }
+
     const { text, extra } = this.telegramView.selectRole(
-      existTelegramInfo.language
+      existTelegramInfo.language,
+      worker === undefined ? true : false,
+      employer === undefined ? true : false
     );
 
     await this.telegramApiService.updateMessage(chatId, messageId, text, extra);
@@ -293,10 +312,11 @@ export default class TelegramMessageService extends TelegramCommonService {
       return;
     }
 
-    const { existTelegramInfo } = telegramInfo;
+    const { existTelegramInfo, existTemporaryUser } = telegramInfo;
 
     const { text, extra } = this.telegramView.selectPosition(
-      existTelegramInfo.language
+      existTelegramInfo.language,
+      existTemporaryUser.userRole
     );
 
     const result = await this.telegramApiService.sendMessage<ITelegramMessage>(
@@ -455,6 +475,13 @@ export default class TelegramMessageService extends TelegramCommonService {
     if (existTemporaryUser.isFinal === 0) {
       await this.selectSummary(chatId, userId, existTemporaryUser.id, false);
     }
+
+    await this.telegramMessageService.deleteByTgInfo(
+      userId,
+      `${messageId}`,
+      `${chatId}`,
+      'skills'
+    );
   };
 
   // SKILLS SECTION
@@ -992,7 +1019,7 @@ export default class TelegramMessageService extends TelegramCommonService {
     if (userRole === 'worker') {
       const worker = existTemporaryUser.user as IWorker;
 
-      const preparedWorker = {
+      const preparedWorker: IWorkerInput = {
         name: worker.name,
         categoryItemId: worker.categoryItemId,
         workExperience: worker.workExperience,
@@ -1002,7 +1029,7 @@ export default class TelegramMessageService extends TelegramCommonService {
         workExperienceDetails: worker.workExperienceDetails,
         skills: worker.skills,
         telegramUserId: existTelegramInfo.id
-      } as IWorkerInput;
+      };
 
       const savedWorker = await this.workerService.save(preparedWorker);
 
@@ -1020,12 +1047,13 @@ export default class TelegramMessageService extends TelegramCommonService {
     if (userRole === 'employer') {
       const employer = existTemporaryUser.user as IEmployer;
 
-      const preparedEmployer = {
+      const preparedEmployer: IEmployerInput = {
         name: employer.name,
         company: employer.company,
         position: employer.position,
-        phone: employer.phone
-      } as IEmployerInput;
+        phone: employer.phone,
+        telegramUserId: existTelegramInfo.id
+      };
 
       await this.employerService.save(preparedEmployer);
 
@@ -1061,27 +1089,28 @@ export default class TelegramMessageService extends TelegramCommonService {
       userId
     );
 
+    const worker = await this.workerService.getByTelegramId(telegramUser.id);
+
+    const employer = await this.employerService.getByTelegramId(
+      telegramUser.id
+    );
+
+    if (worker !== undefined && employer !== undefined) {
+      await this.existAccountError(chatId, messageId, telegramUser.language);
+      return;
+    }
+
     if (temporaryUserByUserId.length === 1) {
       switch (temporaryUserByUserId[0].userRole) {
         case 'employer': {
-          const temporaryUser = await this.saveTemporaryUser({
-            isFinal: -1,
-            userRole: 'employer',
-            telegramUserId: telegramUser.id,
-            user: {
-              type: 'employer'
-            },
-            isEdit: false
-          });
-          await this.selectFullName(
-            chatId,
-            userId,
-            messageId,
-            temporaryUser.id
-          );
-          break;
-        }
-        case 'worker': {
+          if (employer !== undefined) {
+            await this.existAccountError(
+              chatId,
+              messageId,
+              telegramUser.language
+            );
+            return;
+          }
           const temporaryUser = await this.saveTemporaryUser({
             isFinal: -1,
             userRole: 'worker',
@@ -1099,7 +1128,55 @@ export default class TelegramMessageService extends TelegramCommonService {
           );
           break;
         }
+        case 'worker': {
+          if (worker !== undefined) {
+            await this.existAccountError(
+              chatId,
+              messageId,
+              telegramUser.language
+            );
+            return;
+          }
+          const temporaryUser = await this.saveTemporaryUser({
+            isFinal: -1,
+            userRole: 'employer',
+            telegramUserId: telegramUser.id,
+            user: {
+              type: 'employer'
+            },
+            isEdit: false
+          });
+          await this.selectFullName(
+            chatId,
+            userId,
+            messageId,
+            temporaryUser.id
+          );
+          break;
+        }
       }
+    } else if (employer !== undefined) {
+      const temporaryUser = await this.saveTemporaryUser({
+        isFinal: -1,
+        userRole: 'worker',
+        telegramUserId: telegramUser.id,
+        user: {
+          type: 'worker'
+        },
+        isEdit: false
+      });
+      await this.selectFullName(chatId, userId, messageId, temporaryUser.id);
+    } else if (worker !== undefined) {
+      const temporaryUser = await this.saveTemporaryUser({
+        isFinal: -1,
+        userRole: 'employer',
+        telegramUserId: telegramUser.id,
+        user: {
+          type: 'employer'
+        },
+        isEdit: false
+      });
+      await this.selectFullName(chatId, userId, messageId, temporaryUser.id);
     } else {
       await this.selectRole(chatId, messageId, userId);
     }
@@ -1114,7 +1191,7 @@ export default class TelegramMessageService extends TelegramCommonService {
   ) => {
     const telegramUser = await this.getTelegramUser(userId, chatId);
 
-    const text = this.telegramView.clearMessage(telegramUser.language);
+    const text = this.telegramView.clearMessageMain(telegramUser.language);
 
     await this.telegramApiService.updateMessage<ITelegramMessage>(
       chatId,
@@ -1124,4 +1201,22 @@ export default class TelegramMessageService extends TelegramCommonService {
   };
 
   // TEMPORARY USER ERROR
+
+  // ERROR
+
+  public existAccountError = async (
+    chatId: string | number,
+    messageId: number,
+    language: languageTypes
+  ) => {
+    const text = this.telegramView.selectExistAccError(language);
+
+    await this.telegramApiService.updateMessage<ITelegramMessage>(
+      chatId,
+      messageId,
+      text
+    );
+  };
+
+  // ERROR
 }

@@ -23,7 +23,7 @@ import TelegramSalaryView from './telegram-salary.view';
 import TelegramSkillsView from './telegram-skills.view';
 import TelegramSuccessView from './telegram-success.view';
 import TelegramSummaryView from './telegram-summary.view';
-import TelegramTemporaryUserView from './telegram-temporary-user.view';
+import TelegramErrorView from './telegram-error.view';
 import TelegramUserRoleView from './telegram-user-role.view';
 import TelegramUsernameView from './telegram-username.view';
 
@@ -43,7 +43,7 @@ export class TelegramView extends TelegramCommonView {
   #languageView: TelegramLanguageView;
   #summaryView: TelegramSummaryView;
   #successView: TelegramSuccessView;
-  #temporaryUserView: TelegramTemporaryUserView;
+  #errorView: TelegramErrorView;
 
   constructor() {
     super();
@@ -62,7 +62,7 @@ export class TelegramView extends TelegramCommonView {
     this.#languageView = new TelegramLanguageView();
     this.#summaryView = new TelegramSummaryView();
     this.#successView = new TelegramSuccessView();
-    this.#temporaryUserView = new TelegramTemporaryUserView();
+    this.#errorView = new TelegramErrorView();
   }
 
   // USERNAME VIEW
@@ -122,9 +122,10 @@ export class TelegramView extends TelegramCommonView {
   // POSITION VIEW
 
   public selectPosition = (
-    language: languageTypes
+    language: languageTypes,
+    role: arrayValuesToType<typeof EUserRole.values>
   ): ITelegramTextFormatterResponse =>
-    this.#positionView.selectPosition(language);
+    this.#positionView.selectPosition(language, role);
 
   // POSITION VIEW
 
@@ -209,8 +210,11 @@ export class TelegramView extends TelegramCommonView {
   // USER ROLE VIEW
 
   public selectRole = (
-    language: languageTypes
-  ): ITelegramTextFormatterResponse => this.#userRoleView.selectRole(language);
+    language: languageTypes,
+    isWorker: boolean,
+    isEmployer: boolean
+  ): ITelegramTextFormatterResponse =>
+    this.#userRoleView.selectRole(language, isWorker, isEmployer);
 
   // USER ROLE VIEW
 
@@ -275,16 +279,20 @@ export class TelegramView extends TelegramCommonView {
 
   // SUCCESS VIEW
 
-  // TEMPORARY USER VIEW
+  // ERROR VIEW
 
   public selectTemporaryUserError = (language: languageTypes) =>
-    this.#temporaryUserView.selectTemporaryUserError(language);
+    this.#errorView.selectTemporaryUserError(language);
 
-  // TEMPORARY USER VIEW
+  public selectExistAccError = (language: languageTypes): string =>
+    this.#errorView.selectExistAccError(language);
+
+  // ERROR VIEW
 
   // COMMON VIEW
 
-  public clearMessage = (language: languageTypes): string =>
+  public;
+  clearMessageMain = (language: languageTypes): string =>
     this.clearMessage(language);
 
   // COMMON VIEW

@@ -335,7 +335,7 @@ export default async (router: typeof Router, db: DB) => {
         break;
       }
       case ETelegramButtonType.YES_TEMPORARY: {
-        await telegramService.temporaryUserNoButton(
+        await telegramService.temporaryUserYesButton(
           `${checkedBody.callback_query.message.chat.id}`,
           checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.from.id}`
@@ -359,8 +359,6 @@ export default async (router: typeof Router, db: DB) => {
   };
 
   routes.post('/update', async (req: Request, res: Response) => {
-    console.log(req.body);
-
     if ({}.hasOwnProperty.call(req.body, 'message')) {
       const checkedBody = req.body as
         | ITelegramUpdateResponse

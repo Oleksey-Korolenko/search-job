@@ -7,7 +7,7 @@ import {
 import { languageTypes } from '../messages';
 import TelegramCommonView from './telegram-common.view';
 
-export default class TelegramTemporaryUserView extends TelegramCommonView {
+export default class TelegramErrorView extends TelegramCommonView {
   public selectTemporaryUserError = (
     language: languageTypes
   ): ITelegramTextFormatterResponse => {
@@ -19,6 +19,17 @@ export default class TelegramTemporaryUserView extends TelegramCommonView {
     extra.reply_markup = this.#getYesOrNoButtonKeyboardMarkup(language);
 
     return { text, extra };
+  };
+
+  public selectExistAccError = (language: languageTypes): string => {
+    let text = '';
+
+    text += this.preparedText(
+      this.messages[language].TEMPORARY_USER.EXIST_ACC,
+      {}
+    );
+
+    return text;
   };
 
   #getYesOrNoButtonKeyboardMarkup = (

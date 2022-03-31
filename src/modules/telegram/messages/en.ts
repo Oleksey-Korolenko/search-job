@@ -43,7 +43,8 @@ const messagesInEnglish = {
       "Sorry, but we don't know that number. Do you want to try to enter a salary again?"
   },
   POSITION: {
-    DEFAULT: 'Please select which position you are applying for'
+    EMPLOYER: 'Please select what position you hold in the company',
+    WORKER: 'Please select which position you are applying for'
   },
   ENGLISH_LEVEL: {
     DEFAULT: 'Please select what level of English you have',
@@ -122,7 +123,8 @@ const messagesInEnglish = {
   },
   TEMPORARY_USER: {
     ERROR:
-      'Sorry, we could not find any intermediate data for your profile. Do you want to start entering your profile data again?'
+      'Sorry, we could not find any intermediate data for your profile. Do you want to start entering your profile data again?',
+    EXIST_ACC: 'Account is already registered.'
   },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',

@@ -46,13 +46,6 @@ export default class TelegramCommandService extends TelegramCommonService {
 
     const { existTelegramInfo, existTemporaryUser } = telegramInfo;
 
-    console.log(
-      userId,
-      chatId,
-      existMessage.messageId,
-      existMessage.telegramMessageType
-    );
-
     switch (existMessage.telegramMessageType) {
       case 'salary': {
         try {
@@ -155,7 +148,7 @@ export default class TelegramCommandService extends TelegramCommonService {
           existTemporaryUser.userRole === 'employer' &&
           !existTemporaryUser.isEdit
         ) {
-          await this.#telegramMessagesService.selectCompany(
+          await this.#telegramMessagesService.selectPhone(
             chatId,
             userId,
             existMessage.temporaryUserId,
@@ -255,7 +248,7 @@ export default class TelegramCommandService extends TelegramCommonService {
           existTemporaryUser.userRole === 'employer' &&
           !existTemporaryUser.isEdit
         ) {
-          await this.#telegramMessagesService.selectPosition(
+          await this.#telegramMessagesService.selectCompany(
             chatId,
             userId,
             existMessage.temporaryUserId,
@@ -297,7 +290,7 @@ export default class TelegramCommandService extends TelegramCommonService {
         );
 
         if (!existTemporaryUser.isEdit) {
-          await this.#telegramMessagesService.selectPhone(
+          await this.#telegramMessagesService.selectPosition(
             chatId,
             userId,
             existMessage.temporaryUserId,
@@ -528,7 +521,7 @@ export default class TelegramCommandService extends TelegramCommonService {
 
     const { existTelegramInfo } = telegramInfo;
 
-    const text = this.telegramView.clearMessage(existTelegramInfo.language);
+    const text = this.telegramView.clearMessageMain(existTelegramInfo.language);
 
     await this.telegramApiService.updateMessage<ITelegramMessage>(
       chatId,
