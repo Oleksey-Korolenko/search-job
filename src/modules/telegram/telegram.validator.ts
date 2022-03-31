@@ -22,6 +22,12 @@ export class TelegramValidate extends ValidationDefault {
       throw new ValidateError(`Payload atribute: [phone] doesn't exist!`);
     }
 
+    if (phone.match(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g) === null) {
+      throw new ValidateError(
+        `Payload atribute: [phone] type isn't equal to phone number!`
+      );
+    }
+
     return phone;
   };
 }

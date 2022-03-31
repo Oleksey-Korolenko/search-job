@@ -130,4 +130,15 @@ export default class TelegramCommonView {
       ].filter(Boolean) as IInlineKeyboardButton[][]
     };
   };
+
+  protected clearMessage = (language: languageTypes): string => {
+    let text = '';
+
+    text += this.preparedText(
+      this.messages[language].DEFAULT_MESSAGE.CLEAR,
+      {}
+    );
+
+    return text;
+  };
 }

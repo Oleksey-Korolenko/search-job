@@ -139,7 +139,8 @@ export default async (router: typeof Router, db: DB) => {
           await telegramService.selectExperience(
             checkedBody.callback_query.message.chat.id,
             `${checkedBody.callback_query.from.id}`,
-            +temporaryUserId
+            +temporaryUserId,
+            checkedBody.callback_query.message.message_id
           );
         }
 
@@ -185,7 +186,8 @@ export default async (router: typeof Router, db: DB) => {
           await telegramService.selectSalary(
             checkedBody.callback_query.message.chat.id,
             `${checkedBody.callback_query.from.id}`,
-            +temporaryUserId
+            +temporaryUserId,
+            checkedBody.callback_query.message.message_id
           );
         }
 
@@ -219,7 +221,8 @@ export default async (router: typeof Router, db: DB) => {
           await telegramService.selectSkill(
             checkedBody.callback_query.message.chat.id,
             `${checkedBody.callback_query.from.id}`,
-            +temporaryUserId
+            +temporaryUserId,
+            checkedBody.callback_query.message.message_id
           );
         }
 
@@ -311,6 +314,31 @@ export default async (router: typeof Router, db: DB) => {
           checkedBody.callback_query.message.message_id,
           `${checkedBody.callback_query.from.id}`,
           item as ETelegramConfirmButtonType
+        );
+        break;
+      }
+      case ETelegramButtonType.NO: {
+        await telegramService.checkNoButton(
+          `${checkedBody.callback_query.message.chat.id}`,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.from.id}`,
+          item as ETelegramConfirmButtonType
+        );
+        break;
+      }
+      case ETelegramButtonType.NO_TEMPORARY: {
+        await telegramService.temporaryUserNoButton(
+          `${checkedBody.callback_query.message.chat.id}`,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.from.id}`
+        );
+        break;
+      }
+      case ETelegramButtonType.YES_TEMPORARY: {
+        await telegramService.temporaryUserNoButton(
+          `${checkedBody.callback_query.message.chat.id}`,
+          checkedBody.callback_query.message.message_id,
+          `${checkedBody.callback_query.from.id}`
         );
         break;
       }

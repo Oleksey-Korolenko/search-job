@@ -10,6 +10,7 @@ import {
 } from '../interface';
 import { languageTypes } from '../messages';
 import TelegramCategoryView from './telegram-category.view';
+import TelegramCommonView from './telegram-common.view';
 import TelegramCompanyView from './telegram-company.view';
 import TelegramEmploymentOptionsView from './telegram-employment-options.view';
 import TelegramEnglishLevelView from './telegram-english-level.view';
@@ -22,10 +23,11 @@ import TelegramSalaryView from './telegram-salary.view';
 import TelegramSkillsView from './telegram-skills.view';
 import TelegramSuccessView from './telegram-success.view';
 import TelegramSummaryView from './telegram-summary.view';
+import TelegramTemporaryUserView from './telegram-temporary-user.view';
 import TelegramUserRoleView from './telegram-user-role.view';
 import TelegramUsernameView from './telegram-username.view';
 
-export class TelegramView {
+export class TelegramView extends TelegramCommonView {
   #usernameView: TelegramUsernameView;
   #categoryView: TelegramCategoryView;
   #experienceView: TelegramExperienceView;
@@ -41,8 +43,10 @@ export class TelegramView {
   #languageView: TelegramLanguageView;
   #summaryView: TelegramSummaryView;
   #successView: TelegramSuccessView;
+  #temporaryUserView: TelegramTemporaryUserView;
 
   constructor() {
+    super();
     this.#usernameView = new TelegramUsernameView();
     this.#categoryView = new TelegramCategoryView();
     this.#experienceView = new TelegramExperienceView();
@@ -58,6 +62,7 @@ export class TelegramView {
     this.#languageView = new TelegramLanguageView();
     this.#summaryView = new TelegramSummaryView();
     this.#successView = new TelegramSuccessView();
+    this.#temporaryUserView = new TelegramTemporaryUserView();
   }
 
   // USERNAME VIEW
@@ -269,4 +274,18 @@ export class TelegramView {
     );
 
   // SUCCESS VIEW
+
+  // TEMPORARY USER VIEW
+
+  public selectTemporaryUserError = (language: languageTypes) =>
+    this.#temporaryUserView.selectTemporaryUserError(language);
+
+  // TEMPORARY USER VIEW
+
+  // COMMON VIEW
+
+  public clearMessage = (language: languageTypes): string =>
+    this.clearMessage(language);
+
+  // COMMON VIEW
 }

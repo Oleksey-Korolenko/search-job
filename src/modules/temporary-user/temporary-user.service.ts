@@ -43,6 +43,22 @@ export default class TemporaryUserService extends DBConnection {
     )[0];
   };
 
+  public getByUserId = async (
+    userId: string
+  ): Promise<ITemporaryUserWithRelations[]> => {
+    const temporaryUser = await this.#temporaryUserQueryService.getByUserId(
+      userId
+    );
+
+    return temporaryUser.map(
+      (temporaryUserT, telegramT) =>
+        ({
+          ...temporaryUserT,
+          telegramUser: telegramT
+        } as ITemporaryUserWithRelations)
+    );
+  };
+
   public updateUser = (
     id: number,
     user: IWorker | IEmployer

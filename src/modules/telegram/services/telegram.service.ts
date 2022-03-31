@@ -43,13 +43,15 @@ export class TelegramService extends TelegramCommonService {
     chatId: number | string,
     userId: string,
     temporaryUserId: number,
-    messageId?: number
+    messageId: number,
+    isUpdate: boolean
   ) =>
     this.#messageService.selectCategory(
       chatId,
       userId,
       temporaryUserId,
-      messageId
+      messageId,
+      isUpdate
     );
 
   public selectCategoryItems = async (
@@ -70,21 +72,41 @@ export class TelegramService extends TelegramCommonService {
   public selectExperience = async (
     chatId: number | string,
     userId: string,
-    temporaryUserId: number
-  ) => this.#messageService.selectExperience(chatId, userId, temporaryUserId);
+    temporaryUserId: number,
+    messageId: number
+  ) =>
+    this.#messageService.selectExperience(
+      chatId,
+      userId,
+      temporaryUserId,
+      messageId
+    );
 
   public selectSalary = async (
     chatId: number | string,
     userId: string,
-    temporaryUserId: number
-  ) => this.#messageService.selectSalary(chatId, userId, temporaryUserId);
+    temporaryUserId: number,
+    messageId: number
+  ) =>
+    this.#messageService.selectSalary(
+      chatId,
+      userId,
+      temporaryUserId,
+      messageId
+    );
 
-  // TODO clear all
   public selectSkill = async (
     chatId: number | string,
     userId: string,
-    temporaryUserId: number
-  ) => this.#messageService.selectSkill(chatId, userId, temporaryUserId);
+    temporaryUserId: number,
+    messageId: number
+  ) =>
+    this.#messageService.selectSkill(
+      chatId,
+      userId,
+      temporaryUserId,
+      messageId
+    );
 
   public selectSuccessWithInlineKeyboard = (
     chatId: number | string,
@@ -134,6 +156,18 @@ export class TelegramService extends TelegramCommonService {
       temporaryUserId,
       userRole
     );
+
+  public temporaryUserYesButton = async (
+    chatId: string,
+    messageId: number,
+    userId: string
+  ) => this.#messageService.temporaryUserYesButton(chatId, messageId, userId);
+
+  public temporaryUserNoButton = async (
+    chatId: string,
+    messageId: number,
+    userId: string
+  ) => this.#messageService.temporaryUserNoButton(chatId, messageId, userId);
 
   // MESSAGE MODULE
 
@@ -207,11 +241,24 @@ export class TelegramService extends TelegramCommonService {
       typeMessage
     );
 
+  public checkNoButton = async (
+    chatId: string,
+    messageId: number,
+    userId: string,
+    typeOperation: ETelegramConfirmButtonType
+  ) =>
+    this.#commandService.checkNoButton(
+      chatId,
+      messageId,
+      userId,
+      typeOperation
+    );
   // COMMAND MODULE
 
   // COMMON MODULE
 
-  public saveTelegramInfoMain = async (telegramInfo: ITelegramDBInput) =>
+  public;
+  saveTelegramInfoMain = async (telegramInfo: ITelegramDBInput) =>
     this.saveTelegramInfo(telegramInfo);
 
   public updateTemporaryUserMain = async (

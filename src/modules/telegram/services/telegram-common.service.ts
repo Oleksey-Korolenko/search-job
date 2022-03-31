@@ -24,6 +24,7 @@ import {
   INotPreparedTranslate,
   ITelegramInfo
 } from '../interface';
+import { languageTypes } from '../messages';
 import TelegramApiService from '../telegram.api.service';
 import { TelegramValidate } from '../telegram.validator';
 import { TelegramView } from '../views';
@@ -79,15 +80,26 @@ export default class TelegramCommonService extends DBConnection {
 
   protected getTemporaryUserById = async (
     temporaryUserId: number,
-    chatId: number | string
+    language: languageTypes,
+    chatId: number | string,
+    messageId: number
   ): Promise<TemporaryUserType | undefined> => {
     const existTemporaryUser = await this.temporaryUserService.getById(
       temporaryUserId
     );
 
     if (existTemporaryUser === undefined) {
-      // await this.selectLanguage(chatId);
-      // TODO сделать что-то для вывода ошибки
+      const { text, extra } =
+        this.telegramView.selectTemporaryUserError(language);
+
+      await this.telegramApiService.sendMessage(chatId, text, extra);
+
+      await this.telegramApiService.updateMessageReplyMarkup(
+        chatId,
+        messageId,
+        {}
+      );
+
       return undefined;
     }
 
@@ -166,7 +178,8 @@ export default class TelegramCommonService extends DBConnection {
   protected telegramCheck = async (
     chatId: number | string,
     userId: string,
-    temporaryUserId: number
+    temporaryUserId: number,
+    messageId: number
   ): Promise<ITelegramInfo | undefined> => {
     const existTelegramInfo = await this.getTelegramUser(userId, chatId);
 
@@ -176,7 +189,9 @@ export default class TelegramCommonService extends DBConnection {
 
     const existTemporaryUser = await this.getTemporaryUserById(
       temporaryUserId,
-      chatId
+      existTelegramInfo.language,
+      chatId,
+      messageId
     );
 
     if (existTemporaryUser === undefined) {

@@ -118,6 +118,10 @@ const messagesInuarainian = {
       PHONE: 'Номер телефону'
     }
   },
+  TEMPORARY_USER: {
+    ERROR:
+      'Нам жаль, але ми не змогли знайти проміжні дані вашого профілю. Ви бажаєте розпочати заповнювати свій профіль знову?'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Редагувати ✏️',
     BACK: 'Назад ⬅️',
@@ -131,7 +135,8 @@ const messagesInuarainian = {
     INDENT: '\n',
     LIST_ITEM: '<strong>{item}</strong>\n',
     SUCCESS: 'Був обран пункт <strong>{item}</strong>',
-    SUCCESS_LIST: 'Були обрани пункти:\n\n'
+    SUCCESS_LIST: 'Були обрани пункти:\n\n',
+    CLEAR: 'Добре, ви можете обрати інші дії'
   }
 };
 

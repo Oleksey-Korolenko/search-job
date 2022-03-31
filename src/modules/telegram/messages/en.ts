@@ -120,6 +120,10 @@ const messagesInEnglish = {
       PHONE: 'Phone'
     }
   },
+  TEMPORARY_USER: {
+    ERROR:
+      'Sorry, we could not find any intermediate data for your profile. Do you want to start entering your profile data again?'
+  },
   DEFAULT_BUTTON: {
     EDIT: 'Edit ✏️',
     BACK: 'Back ⬅️',
@@ -133,7 +137,8 @@ const messagesInEnglish = {
     INDENT: '\n',
     LIST_ITEM: '<strong>{item}</strong>\n',
     SUCCESS: 'The item <strong>{item}</strong> was selected',
-    SUCCESS_LIST: 'A items what have already been selected:\n\n'
+    SUCCESS_LIST: 'A items what have already been selected:\n\n',
+    CLEAR: 'Well, you can choose other actions'
   }
 };
 

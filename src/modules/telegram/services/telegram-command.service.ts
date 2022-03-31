@@ -36,7 +36,8 @@ export default class TelegramCommandService extends TelegramCommonService {
     const telegramInfo = await this.telegramCheck(
       chatId,
       userId,
-      existMessage.temporaryUserId
+      existMessage.temporaryUserId,
+      +existMessage.messageId
     );
 
     if (telegramInfo === undefined) {
@@ -76,7 +77,8 @@ export default class TelegramCommandService extends TelegramCommonService {
             await this.#telegramMessagesService.selectPosition(
               chatId,
               userId,
-              existMessage.temporaryUserId
+              existMessage.temporaryUserId,
+              +existMessage.messageId
             );
           }
 
@@ -144,7 +146,8 @@ export default class TelegramCommandService extends TelegramCommonService {
           await this.#telegramMessagesService.selectEnglishLevel(
             chatId,
             userId,
-            existMessage.temporaryUserId
+            existMessage.temporaryUserId,
+            +existMessage.messageId
           );
         }
 
@@ -155,7 +158,8 @@ export default class TelegramCommandService extends TelegramCommonService {
           await this.#telegramMessagesService.selectCompany(
             chatId,
             userId,
-            existMessage.temporaryUserId
+            existMessage.temporaryUserId,
+            +existMessage.messageId
           );
         }
 
@@ -241,7 +245,9 @@ export default class TelegramCommandService extends TelegramCommonService {
           await this.#telegramMessagesService.selectCategory(
             chatId,
             userId,
-            existMessage.temporaryUserId
+            existMessage.temporaryUserId,
+            +existMessage.messageId,
+            false
           );
         }
 
@@ -252,7 +258,8 @@ export default class TelegramCommandService extends TelegramCommonService {
           await this.#telegramMessagesService.selectPosition(
             chatId,
             userId,
-            existMessage.temporaryUserId
+            existMessage.temporaryUserId,
+            +existMessage.messageId
           );
         }
 
@@ -293,7 +300,8 @@ export default class TelegramCommandService extends TelegramCommonService {
           await this.#telegramMessagesService.selectPhone(
             chatId,
             userId,
-            existMessage.temporaryUserId
+            existMessage.temporaryUserId,
+            +existMessage.messageId
           );
         }
 
@@ -319,15 +327,17 @@ export default class TelegramCommandService extends TelegramCommonService {
 
         const preparedSkills = text.split(',').map(it => it.trim());
 
-        this.updateTemporaryUser(existMessage.temporaryUserId, {
-          type: 'worker',
-          skills: [
+        const preparedSkillsWithoutTwice = Array.from(
+          new Set([
             ...(worker?.skills === undefined ? [] : worker.skills),
             ...preparedSkills
-          ]
-        });
+          ])
+        );
 
-        // TODO remove twice skills
+        this.updateTemporaryUser(existMessage.temporaryUserId, {
+          type: 'worker',
+          skills: preparedSkillsWithoutTwice
+        });
 
         await this.#telegramMessagesService.selectEnterSkills(
           chatId,
@@ -339,7 +349,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectSkill(
           chatId,
           userId,
-          existMessage.temporaryUserId
+          existMessage.temporaryUserId,
+          +existMessage.messageId
         );
 
         break;
@@ -447,7 +458,8 @@ export default class TelegramCommandService extends TelegramCommonService {
     const telegramInfo = await this.telegramCheck(
       chatId,
       userId,
-      existMessage.temporaryUserId
+      existMessage.temporaryUserId,
+      +existMessage.messageId
     );
 
     if (telegramInfo === undefined) {
@@ -457,7 +469,7 @@ export default class TelegramCommandService extends TelegramCommonService {
     const { existTelegramInfo } = telegramInfo;
 
     switch (typeOperation) {
-      case 'salary': {
+      case ETelegramConfirmButtonType.SALARY: {
         const { text, extra } = this.telegramView.selectSalary(
           existTelegramInfo.language,
           false
@@ -470,7 +482,66 @@ export default class TelegramCommandService extends TelegramCommonService {
           extra
         );
       }
+      case ETelegramConfirmButtonType.PHONE: {
+        const { text, extra } = this.telegramView.selectPhone(
+          existTelegramInfo.language,
+          false
+        );
+
+        await this.telegramApiService.updateMessage<ITelegramMessage>(
+          chatId,
+          messageId,
+          text,
+          extra
+        );
+      }
     }
+  };
+
+  public checkNoButton = async (
+    chatId: string,
+    messageId: number,
+    userId: string,
+    typeOperation: ETelegramConfirmButtonType
+  ) => {
+    const existMessage =
+      await this.telegramMessageService.getByTgInfoWithOperationType(
+        userId,
+        chatId,
+        typeOperation as arrayValuesToType<typeof ETelegramMessageType.values>
+      );
+
+    if (existMessage === undefined) {
+      return;
+    }
+
+    const telegramInfo = await this.telegramCheck(
+      chatId,
+      userId,
+      existMessage.temporaryUserId,
+      +existMessage.messageId
+    );
+
+    if (telegramInfo === undefined) {
+      return;
+    }
+
+    const { existTelegramInfo } = telegramInfo;
+
+    const text = this.telegramView.clearMessage(existTelegramInfo.language);
+
+    await this.telegramApiService.updateMessage<ITelegramMessage>(
+      chatId,
+      messageId,
+      text
+    );
+
+    await this.telegramMessageService.deleteByTgInfo(
+      userId,
+      existMessage.messageId,
+      chatId,
+      existMessage.telegramMessageType
+    );
   };
 
   public checkCheckboxButton = async (
@@ -514,7 +585,6 @@ export default class TelegramCommandService extends TelegramCommonService {
         }
         break;
       }
-      // TODO something for default case
     }
   };
 
@@ -528,7 +598,8 @@ export default class TelegramCommandService extends TelegramCommonService {
     const telegramInfo = await this.telegramCheck(
       chatId,
       userId,
-      temporaryUserId
+      temporaryUserId,
+      messageId
     );
 
     if (telegramInfo === undefined) {
@@ -555,7 +626,9 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectCategory(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId,
+          false
         );
         break;
       }
@@ -568,7 +641,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectCompany(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -581,7 +655,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectEmploymentOptions(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -594,7 +669,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectEnglishLevel(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -607,7 +683,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectExperience(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -620,7 +697,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectExperienceDetails(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -646,7 +724,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectPhone(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -658,7 +737,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectPosition(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -671,7 +751,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectSalary(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -684,7 +765,8 @@ export default class TelegramCommandService extends TelegramCommonService {
         await this.#telegramMessagesService.selectSkill(
           chatId,
           userId,
-          temporaryUserId
+          temporaryUserId,
+          messageId
         );
         break;
       }
@@ -710,7 +792,8 @@ export default class TelegramCommandService extends TelegramCommonService {
           chatId,
           userId,
           temporaryUserId,
-          messageId
+          messageId,
+          true
         );
         break;
       }

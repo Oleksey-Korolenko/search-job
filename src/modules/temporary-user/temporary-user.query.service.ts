@@ -54,6 +54,17 @@ export default class TemporaryUserQueryService extends DBConnection {
       )
       .execute();
 
+  public getByUserId = (userId: string) =>
+    this.#temporaryUser
+      .select()
+      .where(eq(this.#telegram.userId, userId))
+      .leftJoin(
+        TelegramTable,
+        temporaryUser => temporaryUser.id,
+        telegram => telegram.id
+      )
+      .execute();
+
   public updateUser = (id: number, user: IWorker | IEmployer) =>
     this.#temporaryUser
       .update()
